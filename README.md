@@ -1,4 +1,4 @@
-# 🐾 Arkive API — .NET
+# Arkive API — .NET
 
 API RESTful desenvolvida em **ASP.NET Core** para o gerenciamento do catálogo clínico veterinário da plataforma **ArkIve**, solução proposta para o **Challenge 2026 FIAP × Clyvo Vet**.
 
@@ -6,7 +6,7 @@ A API é responsável pelo cadastro e manutenção de **espécies, raças, categ
 
 ---
 
-## 👥 Integrantes
+## Integrantes
 
 | Nome | RM |
 |------|----|
@@ -17,7 +17,7 @@ A API é responsável pelo cadastro e manutenção de **espécies, raças, categ
 
 ---
 
-## 🏗️ Estrutura do Projeto
+## Estrutura do Projeto
 
 ```
 Arkive_API/
@@ -31,7 +31,7 @@ Arkive_API/
 
 ---
 
-## ⚙️ Tecnologias
+## Tecnologias
 
 - .NET 8
 - ASP.NET Core Web API
@@ -41,7 +41,7 @@ Arkive_API/
 
 ---
 
-## 🚀 Instalação e Execução
+## Instalação e Execução
 
 ### Pré-requisitos
 
@@ -85,9 +85,9 @@ https://localhost:7000/swagger
 
 ---
 
-## 📋 Rotas
+## Rotas
 
-### 🐾 Espécies — `/api/especies`
+### Espécies — `/api/especies`
 
 | Método | Rota | Descrição | Retorno |
 |--------|------|-----------|---------|
@@ -107,7 +107,7 @@ https://localhost:7000/swagger
 
 ---
 
-### 🏷️ Categorias de Doença — `/api/categorias-doenca`
+### Categorias de Doença — `/api/categorias-doenca`
 
 | Método | Rota | Descrição | Retorno |
 |--------|------|-----------|---------|
@@ -127,7 +127,7 @@ https://localhost:7000/swagger
 
 ---
 
-### 🐕 Raças — `/api/racas`
+### Raças — `/api/racas`
 
 | Método | Rota | Descrição | Retorno |
 |--------|------|-----------|---------|
@@ -149,7 +149,7 @@ https://localhost:7000/swagger
 
 ---
 
-### 🦠 Doenças — `/api/doencas`
+### Doenças — `/api/doencas`
 
 | Método | Rota | Descrição | Retorno |
 |--------|------|-----------|---------|
@@ -178,7 +178,7 @@ https://localhost:7000/swagger
 
 ---
 
-### 🔗 Predisposições — `/api/predisposicoes`
+### Predisposições — `/api/predisposicoes`
 
 | Método | Rota | Descrição | Retorno |
 |--------|------|-----------|---------|
@@ -204,7 +204,7 @@ https://localhost:7000/swagger
 
 ---
 
-### 💬 Feedbacks NPS — `/api/feedbacks-nps`
+### Feedbacks NPS — `/api/feedbacks-nps`
 
 | Método | Rota | Descrição | Retorno |
 |--------|------|-----------|---------|
@@ -233,7 +233,7 @@ https://localhost:7000/swagger
 
 ---
 
-## 🧪 Evidências de Testes
+## Evidências de Testes
 
 Prints de todos os endpoints testados estão na pasta `prints/`, organizados por recurso:
 
@@ -247,9 +247,20 @@ prints/
 └── Raca/              (9 endpoints)
 ```
 
+| Controller | Endpoints | Evidência |
+| :--- | :---: | :--- |
+| **CategoriaDoenca** | 8 endpoints | [Visualizar Prints](prints/CategoriaDoenca/) |
+| **Doenca** | 10 endpoints | [Visualizar Prints](prints/Doenca/) |
+| **Especie** | 8 endpoints | [Visualizar Prints](prints/Especie/) |
+| **FeedbackNPS** | 10 endpoints | [Visualizar Prints](prints/FeedbackNPS/) |
+| **Predisposicao** | 7 endpoints | [Visualizar Prints](prints/Predisposicao/) |
+| **Raca** | 9 endpoints | [Visualizar Prints](prints/Raca/) |
+
+> **Total:** 52 endpoints testados e documentados.
+
 ---
 
-## 📌 Observações
+## Observações
 
 - O banco Oracle é compartilhado com a **API Java** da equipe. As tabelas de `Responsavel`, `Animal`, `Clinica`, `Consulta` e `Veterinario` são gerenciadas pela API Java — a API .NET realiza apenas leitura dessas tabelas para validação de FKs.
 - Exclusões nas entidades principais (`Especie`, `Raca`, `CategoriaDoenca`, `Doenca`) são **lógicas** via `ST_ATIVO`, preservando a integridade referencial do banco.
