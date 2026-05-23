@@ -17,6 +17,12 @@ A API é responsável pelo cadastro e manutenção de **espécies, raças, categ
 
 ---
 
+## Repositório
+ 
+[![GitHub](https://img.shields.io/badge/GitHub-Acessar%20Repositório-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/2TDSPO-1-2/dotnet-advanced-bizdev)
+
+---
+
 ## Estrutura do Projeto
 
 ```
