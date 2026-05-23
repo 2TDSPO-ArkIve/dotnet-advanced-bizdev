@@ -37,6 +37,16 @@ Arkive_API/
 
 ---
 
+## Modelagem do Banco
+
+A modelagem relacional completa do banco está disponível para visualização:
+
+[Visualizar Diagrama Relacional](prints/ARKIVE_Relational.pdf)
+
+> Este repositório gerencia as tabelas: `TB_ARKIVE_ESPECIE`, `TB_ARKIVE_RACA`, `TB_ARKIVE_CATEGORIA_DOENCA`, `TB_ARKIVE_DOENCA`, `TB_ARKIVE_PREDISPOSICAO` e `TB_ARKIVE_FEEDBACK_NPS`. As demais tabelas do ecossistema são de responsabilidade da **API Java** da equipe.
+
+---
+
 ## Tecnologias
 
 - .NET 8
