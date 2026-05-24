@@ -91,12 +91,12 @@ Add-Migration InicialMigration
 dotnet run
 ```
 
-A API estará disponível em `https://localhost:7000` (ou a porta configurada em `launchSettings.json`).
+A API estará disponível em `https://localhost:7251` (ou a porta configurada em `launchSettings.json`).
 
 ### 5. Acesse o Swagger
 
 ```
-https://localhost:7000/swagger
+https://localhost:7251/swagger
 ```
 
 ---
