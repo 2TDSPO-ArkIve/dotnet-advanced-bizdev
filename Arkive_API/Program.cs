@@ -1,4 +1,4 @@
-using Arkive_API.Data;
+using Arkive_API.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

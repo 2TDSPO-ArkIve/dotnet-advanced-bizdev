@@ -1,10 +1,10 @@
-﻿using Arkive_API.Data;
-using Arkive_API.Models;
+﻿using Arkive_API.Domain.Entities;
+using Arkive_API.Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace Arkive_API.Controllers
+namespace Arkive_API.Presentation.Controllers
 {
     [Route("api/categorias-doenca")]
     [ApiController]

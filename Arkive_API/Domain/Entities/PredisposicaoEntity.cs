@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Arkive_API.Models
+namespace Arkive_API.Domain.Entities
 {
     [Table("TB_ARKIVE_PREDISPOSICAO")]
     [Index(nameof(IdEspecie), nameof(IdRaca), nameof(IdDoenca), IsUnique = true, Name = "UX_ARKIVE_PREDISPOSICAO")]
