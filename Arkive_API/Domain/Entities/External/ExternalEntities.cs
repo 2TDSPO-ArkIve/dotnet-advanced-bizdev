@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Arkive_API.Models.External
+namespace Arkive_API.Domain.Entities.External
 {
     [Table("TB_ARKIVE_RESPONSAVEL")]
     public class ResponsavelExternal

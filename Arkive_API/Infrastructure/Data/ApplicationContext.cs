@@ -1,8 +1,8 @@
-﻿using Arkive_API.Models;
-using Arkive_API.Models.External;
+﻿using Arkive_API.Domain.Entities;
+using Arkive_API.Domain.Entities.External;
 using Microsoft.EntityFrameworkCore;
 
-namespace Arkive_API.Data
+namespace Arkive_API.Infrastructure.Data
 {
     public class ApplicationContext : DbContext
     {

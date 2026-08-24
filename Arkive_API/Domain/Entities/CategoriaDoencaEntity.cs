@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
-namespace Arkive_API.Models
+namespace Arkive_API.Domain.Entities
 {
     [Table("TB_ARKIVE_CATEGORIA_DOENCA")]
     [Index(nameof(Nome), IsUnique = true, Name = "UQ_ARKIVE_CATEGORIA_NOME")]
