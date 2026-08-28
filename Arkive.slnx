@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="Arkive_API/Arkive_API.csproj" />
+  <Project Path="Arkive_Tests/Arkive_Tests.csproj" Id="911d7127-7b22-4b71-9fcb-1a59cd6a477c" />
 </Solution>
