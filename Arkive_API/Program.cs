@@ -14,6 +14,9 @@ builder.Services.AddDbContext<ApplicationContext>(options => {
 
 builder.Services.AddScoped<ICategoriaDoencaRepository, CategoriaDoencaRepository>();
 builder.Services.AddScoped<ICategoriaDoencaUseCase, CategoriaDoencaUseCase>();
+builder.Services.AddScoped<IEspecieRepository, EspecieRepository>();
+builder.Services.AddScoped<IEspecieUseCase, EspecieUseCase>();
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

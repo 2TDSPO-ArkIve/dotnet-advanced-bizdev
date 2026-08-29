@@ -1,8 +1,10 @@
-﻿using Arkive_API.Domain.Entities;
-using Arkive_API.Infrastructure.Data;
+using Arkive_API.Application.Dtos;
+using Arkive_API.Application.Interfaces;
+using Arkive_API.Doc.Samples;
+using Arkive_API.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace Arkive_API.Presentation.Controllers
 {
@@ -10,11 +12,11 @@ namespace Arkive_API.Presentation.Controllers
     [ApiController]
     public class EspecieController : ControllerBase
     {
-        private readonly ApplicationContext _context;
+        private readonly IEspecieUseCase _especieUseCase;
 
-        public EspecieController(ApplicationContext context)
+        public EspecieController(IEspecieUseCase especieUseCase)
         {
-            _context = context;
+            _especieUseCase = especieUseCase;
         }
 
         [HttpGet]
@@ -25,11 +27,12 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<EspecieEntity>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma espécie encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
+        [SwaggerResponseExample(statusCode: 200, typeof(EspecieResponseListSample))]
         public async Task<IActionResult> GetAllEspecies()
         {
             try
             {
-                var resultado = await _context.Especie.ToListAsync();
+                var resultado = await _especieUseCase.ObterTodasAsync();
 
                 if (!resultado.Any())
                     return NoContent();
@@ -54,9 +57,7 @@ namespace Arkive_API.Presentation.Controllers
         {
             try
             {
-                var resultado = await _context.Especie
-                    .Where(x => x.StAtivo == "S")
-                    .ToListAsync();
+                var resultado = await _especieUseCase.ObterAtivasAsync();
 
                 if (!resultado.Any())
                     return NoContent();
@@ -81,9 +82,7 @@ namespace Arkive_API.Presentation.Controllers
         {
             try
             {
-                var resultado = await _context.Especie
-                    .Where(x => x.StAtivo == "N")
-                    .ToListAsync();
+                var resultado = await _especieUseCase.ObterInativasAsync();
 
                 if (!resultado.Any())
                     return NoContent();
@@ -104,12 +103,12 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 200, description: "Espécie retornada com sucesso", type: typeof(EspecieEntity))]
         [SwaggerResponse(statusCode: 404, description: "Espécie não encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
+        [SwaggerResponseExample(statusCode: 200, typeof(EspecieResponseSample))]
         public async Task<IActionResult> GetEspecieById(int id)
         {
             try
             {
-                var especie = await _context.Especie
-                    .FirstOrDefaultAsync(x => x.Id == id);
+                var especie = await _especieUseCase.ObterPorIdAsync(id);
 
                 if (especie is null)
                     return NotFound();
@@ -127,18 +126,16 @@ namespace Arkive_API.Presentation.Controllers
             Summary = "Cria uma nova espécie",
             Description = "Cadastra uma nova espécie no sistema."
         )]
+        [SwaggerRequestExample(typeof(EspecieRequestDto), typeof(EspecieRequestSample))]
         [SwaggerResponse(statusCode: 201, description: "Espécie criada com sucesso", type: typeof(EspecieEntity))]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao criar a espécie", type: typeof(string))]
-        public async Task<IActionResult> CreateEspecie(EspecieEntity model)
+        public async Task<IActionResult> CreateEspecie(EspecieRequestDto model)
         {
             try
             {
-                model.StAtivo = "S";
+                var especie = await _especieUseCase.AdicionarAsync(model);
 
-                _context.Especie.Add(model);
-                await _context.SaveChangesAsync();
-
-                return CreatedAtAction(nameof(GetEspecieById), new { id = model.Id }, model);
+                return CreatedAtAction(nameof(GetEspecieById), new { id = especie?.Id ?? 0 }, especie);
             }
             catch (Exception ex)
             {
@@ -154,21 +151,14 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 200, description: "Espécie atualizada com sucesso", type: typeof(EspecieEntity))]
         [SwaggerResponse(statusCode: 404, description: "Espécie não encontrada ou inativa")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao atualizar a espécie", type: typeof(string))]
-        public async Task<IActionResult> UpdateEspecie(int id, EspecieEntity model)
+        public async Task<IActionResult> UpdateEspecie(int id, EspecieRequestDto model)
         {
             try
             {
-                var especie = await _context.Especie
-                    .Where(x => x.StAtivo == "S")
-                    .FirstOrDefaultAsync(x => x.Id == id);
+                var especie = await _especieUseCase.EditarAsync(id, model);
 
                 if (especie is null)
                     return NotFound();
-
-                especie.Especie = model.Especie;
-
-                _context.Especie.Update(especie);
-                await _context.SaveChangesAsync();
 
                 return Ok(especie);
             }
@@ -190,17 +180,10 @@ namespace Arkive_API.Presentation.Controllers
         {
             try
             {
-                var especie = await _context.Especie
-                    .Where(x => x.StAtivo == "N")
-                    .FirstOrDefaultAsync(x => x.Id == id);
+                var especie = await _especieUseCase.ReativarAsync(id);
 
                 if (especie is null)
                     return NotFound();
-
-                especie.StAtivo = "S";
-
-                _context.Especie.Update(especie);
-                await _context.SaveChangesAsync();
 
                 return Ok(especie);
             }
@@ -222,17 +205,10 @@ namespace Arkive_API.Presentation.Controllers
         {
             try
             {
-                var especie = await _context.Especie
-                    .Where(x => x.StAtivo == "S")
-                    .FirstOrDefaultAsync(x => x.Id == id);
+                var especie = await _especieUseCase.InativarAsync(id);
 
                 if (especie is null)
                     return NotFound();
-
-                especie.StAtivo = "N";
-
-                _context.Especie.Update(especie);
-                await _context.SaveChangesAsync();
 
                 return Ok(especie);
             }
