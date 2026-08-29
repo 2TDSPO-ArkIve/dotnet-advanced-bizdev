@@ -18,6 +18,8 @@ builder.Services.AddScoped<IEspecieRepository, EspecieRepository>();
 builder.Services.AddScoped<IEspecieUseCase, EspecieUseCase>();
 builder.Services.AddScoped<IDoencaRepository, DoencaRepository>();
 builder.Services.AddScoped<IDoencaUseCase, DoencaUseCase>();
+builder.Services.AddScoped<IRacaRepository, RacaRepository>();
+builder.Services.AddScoped<IRacaUseCase, RacaUseCase>();
 
 
 

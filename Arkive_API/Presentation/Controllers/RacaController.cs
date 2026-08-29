@@ -1,8 +1,11 @@
-﻿using Arkive_API.Domain.Entities;
-using Arkive_API.Infrastructure.Data;
+using Arkive_API.Application.Dtos;
+using Arkive_API.Application.Exceptions;
+using Arkive_API.Application.Interfaces;
+using Arkive_API.Doc.Samples;
+using Arkive_API.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace Arkive_API.Presentation.Controllers
 {
@@ -10,11 +13,11 @@ namespace Arkive_API.Presentation.Controllers
     [ApiController]
     public class RacaController : ControllerBase
     {
-        private readonly ApplicationContext _context;
+        private readonly IRacaUseCase _racaUseCase;
 
-        public RacaController(ApplicationContext context)
+        public RacaController(IRacaUseCase racaUseCase)
         {
-            _context = context;
+            _racaUseCase = racaUseCase;
         }
 
         [HttpGet]
@@ -25,13 +28,12 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<RacaEntity>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma raça encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
+        [SwaggerResponseExample(statusCode: 200, typeof(RacaResponseListSample))]
         public async Task<IActionResult> GetAllRacas()
         {
             try
             {
-                var resultado = await _context.Raca
-                    .Include(x => x.Especie)
-                    .ToListAsync();
+                var resultado = await _racaUseCase.ObterTodasAsync();
 
                 if (!resultado.Any())
                     return NoContent();
@@ -56,10 +58,7 @@ namespace Arkive_API.Presentation.Controllers
         {
             try
             {
-                var resultado = await _context.Raca
-                    .Include(x => x.Especie)
-                    .Where(x => x.StAtivo == "S")
-                    .ToListAsync();
+                var resultado = await _racaUseCase.ObterAtivasAsync();
 
                 if (!resultado.Any())
                     return NoContent();
@@ -84,10 +83,7 @@ namespace Arkive_API.Presentation.Controllers
         {
             try
             {
-                var resultado = await _context.Raca
-                    .Include(x => x.Especie)
-                    .Where(x => x.StAtivo == "N")
-                    .ToListAsync();
+                var resultado = await _racaUseCase.ObterInativasAsync();
 
                 if (!resultado.Any())
                     return NoContent();
@@ -108,13 +104,12 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 200, description: "Raça retornada com sucesso", type: typeof(RacaEntity))]
         [SwaggerResponse(statusCode: 404, description: "Raça não encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
+        [SwaggerResponseExample(statusCode: 200, typeof(RacaResponseSample))]
         public async Task<IActionResult> GetRacaById(int id)
         {
             try
             {
-                var raca = await _context.Raca
-                    .Include(x => x.Especie)
-                    .FirstOrDefaultAsync(x => x.Id == id);
+                var raca = await _racaUseCase.ObterPorIdAsync(id);
 
                 if (raca is null)
                     return NotFound();
@@ -139,10 +134,7 @@ namespace Arkive_API.Presentation.Controllers
         {
             try
             {
-                var resultado = await _context.Raca
-                    .Include(x => x.Especie)
-                    .Where(x => x.StAtivo == "S" && x.IdEspecie == idEspecie)
-                    .ToListAsync();
+                var resultado = await _racaUseCase.ObterPorEspecieAsync(idEspecie);
 
                 if (!resultado.Any())
                     return NoContent();
@@ -160,26 +152,21 @@ namespace Arkive_API.Presentation.Controllers
             Summary = "Cria uma nova raça",
             Description = "Cadastra uma nova raça vinculada a uma espécie ativa existente."
         )]
+        [SwaggerRequestExample(typeof(RacaRequestDto), typeof(RacaRequestSample))]
         [SwaggerResponse(statusCode: 201, description: "Raça criada com sucesso", type: typeof(RacaEntity))]
         [SwaggerResponse(statusCode: 404, description: "Espécie informada não encontrada ou inativa")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao criar a raça", type: typeof(string))]
-        public async Task<IActionResult> CreateRaca(RacaEntity model)
+        public async Task<IActionResult> CreateRaca(RacaRequestDto model)
         {
             try
             {
-                var especie = await _context.Especie
-                    .FirstOrDefaultAsync(x => x.Id == model.IdEspecie && x.StAtivo == "S");
+                var raca = await _racaUseCase.AdicionarAsync(model);
 
-                if (especie is null)
-                    return NotFound($"Espécie com ID {model.IdEspecie} não encontrada.");
-
-                model.StAtivo = "S";
-                model.Porte = model.Porte?.ToUpper();
-
-                _context.Raca.Add(model);
-                await _context.SaveChangesAsync();
-
-                return CreatedAtAction(nameof(GetRacaById), new { id = model.Id }, model);
+                return CreatedAtAction(nameof(GetRacaById), new { id = raca?.Id ?? 0 }, raca);
+            }
+            catch (EspecieNaoEncontradaException ex)
+            {
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
@@ -195,35 +182,20 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 200, description: "Raça atualizada com sucesso", type: typeof(RacaEntity))]
         [SwaggerResponse(statusCode: 404, description: "Raça não encontrada ou inativa")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao atualizar a raça", type: typeof(string))]
-        public async Task<IActionResult> UpdateRaca(int id, RacaEntity model)
+        public async Task<IActionResult> UpdateRaca(int id, RacaRequestDto model)
         {
             try
             {
-                var raca = await _context.Raca
-                    .Include(x => x.Especie)
-                    .Where(x => x.StAtivo == "S")
-                    .FirstOrDefaultAsync(x => x.Id == id);
+                var raca = await _racaUseCase.EditarAsync(id, model);
 
                 if (raca is null)
                     return NotFound();
 
-                if (model.IdEspecie != raca.IdEspecie)
-                {
-                    var especie = await _context.Especie
-                        .FirstOrDefaultAsync(x => x.Id == model.IdEspecie && x.StAtivo == "S");
-
-                    if (especie is null)
-                        return NotFound($"Espécie com ID {model.IdEspecie} não encontrada.");
-                }
-
-                raca.Raca = model.Raca;
-                raca.IdEspecie = model.IdEspecie;
-                raca.Porte = model.Porte?.ToUpper();
-
-                _context.Raca.Update(raca);
-                await _context.SaveChangesAsync();
-
                 return Ok(raca);
+            }
+            catch (EspecieNaoEncontradaException ex)
+            {
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
@@ -243,18 +215,10 @@ namespace Arkive_API.Presentation.Controllers
         {
             try
             {
-                var raca = await _context.Raca
-                    .Include(x => x.Especie)
-                    .Where(x => x.StAtivo == "N")
-                    .FirstOrDefaultAsync(x => x.Id == id);
+                var raca = await _racaUseCase.ReativarAsync(id);
 
                 if (raca is null)
                     return NotFound();
-
-                raca.StAtivo = "S";
-
-                _context.Raca.Update(raca);
-                await _context.SaveChangesAsync();
 
                 return Ok(raca);
             }
@@ -276,18 +240,10 @@ namespace Arkive_API.Presentation.Controllers
         {
             try
             {
-                var raca = await _context.Raca
-                    .Include(x => x.Especie)
-                    .Where(x => x.StAtivo == "S")
-                    .FirstOrDefaultAsync(x => x.Id == id);
+                var raca = await _racaUseCase.InativarAsync(id);
 
                 if (raca is null)
                     return NotFound();
-
-                raca.StAtivo = "N";
-
-                _context.Raca.Update(raca);
-                await _context.SaveChangesAsync();
 
                 return Ok(raca);
             }
