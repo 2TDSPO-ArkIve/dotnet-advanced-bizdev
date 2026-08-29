@@ -16,6 +16,9 @@ builder.Services.AddScoped<ICategoriaDoencaRepository, CategoriaDoencaRepository
 builder.Services.AddScoped<ICategoriaDoencaUseCase, CategoriaDoencaUseCase>();
 builder.Services.AddScoped<IEspecieRepository, EspecieRepository>();
 builder.Services.AddScoped<IEspecieUseCase, EspecieUseCase>();
+builder.Services.AddScoped<IDoencaRepository, DoencaRepository>();
+builder.Services.AddScoped<IDoencaUseCase, DoencaUseCase>();
+
 
 
 builder.Services.AddControllers();
