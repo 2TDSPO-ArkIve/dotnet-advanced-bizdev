@@ -1,8 +1,11 @@
-﻿using Arkive_API.Domain.Entities;
-using Arkive_API.Infrastructure.Data;
+using Arkive_API.Application.Dtos;
+using Arkive_API.Application.Exceptions;
+using Arkive_API.Application.Interfaces;
+using Arkive_API.Doc.Samples;
+using Arkive_API.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace Arkive_API.Presentation.Controllers
 {
@@ -10,11 +13,11 @@ namespace Arkive_API.Presentation.Controllers
     [ApiController]
     public class FeedbackNPSController : ControllerBase
     {
-        private readonly ApplicationContext _context;
+        private readonly IFeedbackNPSUseCase _feedbackNPSUseCase;
 
-        public FeedbackNPSController(ApplicationContext context)
+        public FeedbackNPSController(IFeedbackNPSUseCase feedbackNPSUseCase)
         {
-            _context = context;
+            _feedbackNPSUseCase = feedbackNPSUseCase;
         }
 
         [HttpGet]
@@ -25,11 +28,12 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<FeedbackNPSEntity>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhum feedback encontrado")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
+        [SwaggerResponseExample(statusCode: 200, typeof(FeedbackNPSResponseListSample))]
         public async Task<IActionResult> GetAllFeedbacks()
         {
             try
             {
-                var resultado = await _context.FeedbackNPS.ToListAsync();
+                var resultado = await _feedbackNPSUseCase.ObterTodosAsync();
 
                 if (!resultado.Any())
                     return NoContent();
@@ -50,12 +54,12 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 200, description: "Feedback retornado com sucesso", type: typeof(FeedbackNPSEntity))]
         [SwaggerResponse(statusCode: 404, description: "Feedback não encontrado")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
+        [SwaggerResponseExample(statusCode: 200, typeof(FeedbackNPSResponseSample))]
         public async Task<IActionResult> GetFeedbackById(int id)
         {
             try
             {
-                var feedback = await _context.FeedbackNPS
-                    .FirstOrDefaultAsync(x => x.Id == id);
+                var feedback = await _feedbackNPSUseCase.ObterPorIdAsync(id);
 
                 if (feedback is null)
                     return NotFound();
@@ -80,13 +84,7 @@ namespace Arkive_API.Presentation.Controllers
         {
             try
             {
-                if (nota < 0 || nota > 10)
-                {
-                    return BadRequest("Nota inválida, deve estar entre 0 e 10");
-                }
-                var resultado = await _context.FeedbackNPS
-                    .Where(x => x.Nota == nota)
-                    .ToListAsync();
+                var resultado = await _feedbackNPSUseCase.ObterPorNotaAsync(nota);
 
                 if (!resultado.Any())
                     return NoContent();
@@ -111,9 +109,7 @@ namespace Arkive_API.Presentation.Controllers
         {
             try
             {
-                var resultado = await _context.FeedbackNPS
-                    .Where(x => x.IdResponsavel == idResponsavel)
-                    .ToListAsync();
+                var resultado = await _feedbackNPSUseCase.ObterPorResponsavelAsync(idResponsavel);
 
                 if (!resultado.Any())
                     return NoContent();
@@ -138,9 +134,7 @@ namespace Arkive_API.Presentation.Controllers
         {
             try
             {
-                var resultado = await _context.FeedbackNPS
-                    .Where(x => x.IdAnimal == idAnimal)
-                    .ToListAsync();
+                var resultado = await _feedbackNPSUseCase.ObterPorAnimalAsync(idAnimal);
 
                 if (!resultado.Any())
                     return NoContent();
@@ -165,9 +159,7 @@ namespace Arkive_API.Presentation.Controllers
         {
             try
             {
-                var resultado = await _context.FeedbackNPS
-                    .Where(x => x.IdClinica == idClinica)
-                    .ToListAsync();
+                var resultado = await _feedbackNPSUseCase.ObterPorClinicaAsync(idClinica);
 
                 if (!resultado.Any())
                     return NoContent();
@@ -192,9 +184,7 @@ namespace Arkive_API.Presentation.Controllers
         {
             try
             {
-                var resultado = await _context.FeedbackNPS
-                    .Where(x => x.IdVeterinario == idVeterinario)
-                    .ToListAsync();
+                var resultado = await _feedbackNPSUseCase.ObterPorVeterinarioAsync(idVeterinario);
 
                 if (!resultado.Any())
                     return NoContent();
@@ -219,12 +209,12 @@ namespace Arkive_API.Presentation.Controllers
         {
             try
             {
+                // Parsing de formato de entrada (rota é string) — não é regra de negócio,
+                // então permanece no Controller, igual ao original.
                 if (!DateTime.TryParse(data, out DateTime dataParsed))
                     return BadRequest("Formato de data inválido. Use o formato yyyy-MM-dd.");
 
-                var resultado = await _context.FeedbackNPS
-                    .Where(x => x.DataFeedback.Date == dataParsed.Date)
-                    .ToListAsync();
+                var resultado = await _feedbackNPSUseCase.ObterPorDataAsync(dataParsed);
 
                 if (!resultado.Any())
                     return NoContent();
@@ -242,54 +232,22 @@ namespace Arkive_API.Presentation.Controllers
             Summary = "Registra um novo feedback NPS",
             Description = "Registra um feedback de satisfação vinculado a ao menos um contexto: responsável, animal, clínica, consulta ou veterinário."
         )]
+        [SwaggerRequestExample(typeof(FeedbackNPSRequestDto), typeof(FeedbackNPSRequestSample))]
         [SwaggerResponse(statusCode: 201, description: "Feedback registrado com sucesso", type: typeof(FeedbackNPSEntity))]
         [SwaggerResponse(statusCode: 404, description: "Contexto informado não encontrado")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao registrar o feedback", type: typeof(string))]
-        public async Task<IActionResult> CreateFeedback(FeedbackNPSEntity model)
+        [SwaggerResponseExample(statusCode: 201, typeof(FeedbackNPSResponseSample))]
+        public async Task<IActionResult> CreateFeedback(FeedbackNPSRequestDto model)
         {
             try
             {
+                var feedback = await _feedbackNPSUseCase.AdicionarAsync(model);
 
-                if (model.IdResponsavel is null && model.IdAnimal is null &&
-                    model.IdClinica is null && model.IdConsulta is null &&
-                    model.IdVeterinario is null)
-                    return BadRequest("Informe ao menos um contexto: responsável, animal, clínica, consulta ou veterinário.");
-
-                // Valida existência dos IDs externos (tabelas gerenciadas pela API Java)
-                var responsavel = await _context.Responsavel
-                    .FirstOrDefaultAsync(x => x.Id == model.IdResponsavel);
-
-                var animal = await _context.Animal
-                    .FirstOrDefaultAsync(x => x.Id == model.IdAnimal);
-
-                var clinica = await _context.Clinica
-                    .FirstOrDefaultAsync(x => x.Id == model.IdClinica);
-
-                var consulta = await _context.Consulta
-                    .FirstOrDefaultAsync(x => x.Id == model.IdConsulta);
-
-                var veterinario = await _context.Veterinario
-                    .FirstOrDefaultAsync(x => x.Id == model.IdVeterinario);
-
-                if (model.IdResponsavel is not null && responsavel is null)
-                    return NotFound($"Responsável com ID {model.IdResponsavel} não encontrado.");
-
-                if (model.IdAnimal is not null && animal is null)
-                    return NotFound($"Animal com ID {model.IdAnimal} não encontrado.");
-
-                if (model.IdClinica is not null && clinica is null)
-                    return NotFound($"Clínica com ID {model.IdClinica} não encontrada.");
-
-                if (model.IdConsulta is not null && consulta is null)
-                    return NotFound($"Consulta com ID {model.IdConsulta} não encontrada.");
-
-                if (model.IdVeterinario is not null && veterinario is null)
-                    return NotFound($"Veterinário com ID {model.IdVeterinario} não encontrado.");
-
-                _context.FeedbackNPS.Add(model);
-                await _context.SaveChangesAsync();
-
-                return CreatedAtAction(nameof(GetFeedbackById), new { id = model.Id }, model);
+                return CreatedAtAction(nameof(GetFeedbackById), new { id = feedback?.Id ?? 0 }, feedback);
+            }
+            catch (ContextoNaoEncontradoException ex)
+            {
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
@@ -311,14 +269,10 @@ namespace Arkive_API.Presentation.Controllers
         {
             try
             {
-                var feedback = await _context.FeedbackNPS
-                    .FirstOrDefaultAsync(x => x.Id == id);
+                var feedback = await _feedbackNPSUseCase.DeletarAsync(id);
 
                 if (feedback is null)
                     return NotFound();
-
-                _context.FeedbackNPS.Remove(feedback);
-                await _context.SaveChangesAsync();
 
                 return Ok(feedback);
             }

@@ -22,8 +22,8 @@ builder.Services.AddScoped<IRacaRepository, RacaRepository>();
 builder.Services.AddScoped<IRacaUseCase, RacaUseCase>();
 builder.Services.AddScoped<IPredisposicaoRepository, PredisposicaoRepository>();
 builder.Services.AddScoped<IPredisposicaoUseCase, PredisposicaoUseCase>();
-
-
+builder.Services.AddScoped<IFeedbackNPSRepository, FeedbackNPSRepository>();
+builder.Services.AddScoped<IFeedbackNPSUseCase, FeedbackNPSUseCase>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
