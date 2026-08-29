@@ -20,6 +20,8 @@ builder.Services.AddScoped<IDoencaRepository, DoencaRepository>();
 builder.Services.AddScoped<IDoencaUseCase, DoencaUseCase>();
 builder.Services.AddScoped<IRacaRepository, RacaRepository>();
 builder.Services.AddScoped<IRacaUseCase, RacaUseCase>();
+builder.Services.AddScoped<IPredisposicaoRepository, PredisposicaoRepository>();
+builder.Services.AddScoped<IPredisposicaoUseCase, PredisposicaoUseCase>();
 
 
 

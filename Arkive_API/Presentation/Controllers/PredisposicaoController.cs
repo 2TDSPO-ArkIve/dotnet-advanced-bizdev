@@ -1,8 +1,11 @@
-﻿using Arkive_API.Domain.Entities;
-using Arkive_API.Infrastructure.Data;
+using Arkive_API.Application.Dtos;
+using Arkive_API.Application.Exceptions;
+using Arkive_API.Application.Interfaces;
+using Arkive_API.Doc.Samples;
+using Arkive_API.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace Arkive_API.Presentation.Controllers
 {
@@ -10,11 +13,11 @@ namespace Arkive_API.Presentation.Controllers
     [ApiController]
     public class PredisposicaoController : ControllerBase
     {
-        private readonly ApplicationContext _context;
+        private readonly IPredisposicaoUseCase _predisposicaoUseCase;
 
-        public PredisposicaoController(ApplicationContext context)
+        public PredisposicaoController(IPredisposicaoUseCase predisposicaoUseCase)
         {
-            _context = context;
+            _predisposicaoUseCase = predisposicaoUseCase;
         }
 
         [HttpGet]
@@ -25,16 +28,12 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<PredisposicaoEntity>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma predisposição encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
+        [SwaggerResponseExample(statusCode: 200, typeof(PredisposicaoResponseListSample))]
         public async Task<IActionResult> GetAllPredisposicoes()
         {
             try
             {
-                var resultado = await _context.Predisposicao
-                    .Include(x => x.Especie)
-                    .Include(x => x.Raca)
-                    .Include(x => x.Doenca)
-                        .ThenInclude(d => d.Categoria)
-                    .ToListAsync();
+                var resultado = await _predisposicaoUseCase.ObterTodasAsync();
 
                 if (!resultado.Any())
                     return NoContent();
@@ -55,16 +54,12 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 200, description: "Predisposição retornada com sucesso", type: typeof(PredisposicaoEntity))]
         [SwaggerResponse(statusCode: 404, description: "Predisposição não encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
+        [SwaggerResponseExample(statusCode: 200, typeof(PredisposicaoResponseSample))]
         public async Task<IActionResult> GetPredisposicaoById(int id)
         {
             try
             {
-                var predisposicao = await _context.Predisposicao
-                    .Include(x => x.Especie)
-                    .Include(x => x.Raca)
-                    .Include(x => x.Doenca)
-                        .ThenInclude(d => d.Categoria)
-                    .FirstOrDefaultAsync(x => x.Id == id);
+                var predisposicao = await _predisposicaoUseCase.ObterPorIdAsync(id);
 
                 if (predisposicao is null)
                     return NotFound();
@@ -89,13 +84,7 @@ namespace Arkive_API.Presentation.Controllers
         {
             try
             {
-                var resultado = await _context.Predisposicao
-                    .Include(x => x.Especie)
-                    .Include(x => x.Raca)
-                    .Include(x => x.Doenca)
-                        .ThenInclude(d => d.Categoria)
-                    .Where(x => x.IdEspecie == idEspecie)
-                    .ToListAsync();
+                var resultado = await _predisposicaoUseCase.ObterPorEspecieAsync(idEspecie);
 
                 if (!resultado.Any())
                     return NoContent();
@@ -120,13 +109,7 @@ namespace Arkive_API.Presentation.Controllers
         {
             try
             {
-                var resultado = await _context.Predisposicao
-                    .Include(x => x.Especie)
-                    .Include(x => x.Raca)
-                    .Include(x => x.Doenca)
-                        .ThenInclude(d => d.Categoria)
-                    .Where(x => x.IdRaca == idRaca)
-                    .ToListAsync();
+                var resultado = await _predisposicaoUseCase.ObterPorRacaAsync(idRaca);
 
                 if (!resultado.Any())
                     return NoContent();
@@ -151,13 +134,7 @@ namespace Arkive_API.Presentation.Controllers
         {
             try
             {
-                var resultado = await _context.Predisposicao
-                    .Include(x => x.Especie)
-                    .Include(x => x.Raca)
-                    .Include(x => x.Doenca)
-                        .ThenInclude(d => d.Categoria)
-                    .Where(x => x.IdDoenca == idDoenca)
-                    .ToListAsync();
+                var resultado = await _predisposicaoUseCase.ObterPorDoencaAsync(idDoenca);
 
                 if (!resultado.Any())
                     return NoContent();
@@ -175,45 +152,30 @@ namespace Arkive_API.Presentation.Controllers
             Summary = "Cria vínculo de predisposição",
             Description = "Cadastra um novo vínculo de predisposição entre espécie/raça e doença."
         )]
+        [SwaggerRequestExample(typeof(PredisposicaoRequestDto), typeof(PredisposicaoRequestSample))]
         [SwaggerResponse(statusCode: 201, description: "Predisposição criada com sucesso", type: typeof(PredisposicaoEntity))]
         [SwaggerResponse(statusCode: 404, description: "Espécie, raça ou doença informada não encontrada ou inativa")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao criar a predisposição", type: typeof(string))]
-        public async Task<IActionResult> CreatePredisposicao(PredisposicaoEntity model)
+        [SwaggerResponseExample(statusCode: 201, typeof(PredisposicaoResponseSample))]
+        public async Task<IActionResult> CreatePredisposicao(PredisposicaoRequestDto model)
         {
             try
             {
-                var especie = await _context.Especie
-                    .FirstOrDefaultAsync(x => x.Id == model.IdEspecie && x.StAtivo == "S");
+                var predisposicao = await _predisposicaoUseCase.AdicionarAsync(model);
 
-                if (especie is null)
-                    return NotFound($"Espécie com ID {model.IdEspecie} não encontrada.");
-
-                if (model.IdRaca is not null)
-                {
-                    var raca = await _context.Raca
-                        .FirstOrDefaultAsync(x => x.Id == model.IdRaca && x.StAtivo == "S");
-
-                    if (raca is null)
-                        return NotFound($"Raça com ID {model.IdRaca} não encontrada.");
-                }
-
-                var doenca = await _context.Doenca
-                    .FirstOrDefaultAsync(x => x.Id == model.IdDoenca && x.StAtivo == "S");
-
-                if (doenca is null)
-                    return NotFound($"Doença com ID {model.IdDoenca} não encontrada.");
-
-                _context.Predisposicao.Add(model);
-                await _context.SaveChangesAsync();
-
-                var resultado = await _context.Predisposicao
-                    .Include(x => x.Especie)
-                    .Include(x => x.Raca)
-                    .Include(x => x.Doenca)
-                        .ThenInclude(d => d.Categoria)
-                    .FirstOrDefaultAsync(x => x.Id == model.Id);
-
-                return CreatedAtAction(nameof(GetPredisposicaoById), new { id = model.Id }, resultado);
+                return CreatedAtAction(nameof(GetPredisposicaoById), new { id = predisposicao?.Id ?? 0 }, predisposicao);
+            }
+            catch (EspecieNaoEncontradaException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (RacaNaoEncontradaException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (DoencaNaoEncontradaException ex)
+            {
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
@@ -236,18 +198,10 @@ namespace Arkive_API.Presentation.Controllers
         {
             try
             {
-                var predisposicao = await _context.Predisposicao
-                    .Include(x => x.Especie)
-                    .Include(x => x.Raca)
-                    .Include(x => x.Doenca)
-                        .ThenInclude(d => d.Categoria)
-                    .FirstOrDefaultAsync(x => x.Id == id);
+                var predisposicao = await _predisposicaoUseCase.DeletarAsync(id);
 
                 if (predisposicao is null)
                     return NotFound();
-
-                _context.Predisposicao.Remove(predisposicao);
-                await _context.SaveChangesAsync();
 
                 return Ok(predisposicao);
             }
