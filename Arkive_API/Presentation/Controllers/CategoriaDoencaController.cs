@@ -22,7 +22,15 @@ namespace Arkive_API.Presentation.Controllers
         [HttpGet]
         [SwaggerOperation(
             Summary = "Lista todas as categorias de doença",
-            Description = "Retorna todas as categorias clínicas cadastradas no sistema."
+            Description = """
+            ## Informações do Retorno:
+            * **Status 200 (OK):** Retorna uma lista contendo todas as categorias de doença cadastradas, ativas e inativas.
+            * **Status 204 (No Content):** Executado com sucesso, porém a base não possui categorias cadastradas.
+            * **Status 400 (Bad Request):** Ocorreu uma falha durante a consulta (ex: erro de conexão com o banco).
+
+            ## Observações:
+            * Este endpoint não filtra por status; use `/ativos` ou `/inativos` para isso.
+            """
         )]
         [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<CategoriaDoencaEntity>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma categoria encontrada")]
@@ -48,7 +56,15 @@ namespace Arkive_API.Presentation.Controllers
         [HttpGet("ativos")]
         [SwaggerOperation(
             Summary = "Lista categorias de doença ativas",
-            Description = "Retorna todas as categorias clínicas com status ativo."
+            Description = """
+            ## Informações do Retorno:
+            * **Status 200 (OK):** Retorna uma lista contendo apenas as categorias com status ativo.
+            * **Status 204 (No Content):** Executado com sucesso, porém não há categorias ativas cadastradas.
+            * **Status 400 (Bad Request):** Ocorreu uma falha durante a consulta (ex: erro de conexão com o banco).
+
+            ## Observações:
+            * Categorias inativas (excluídas logicamente) não aparecem neste retorno.
+            """
         )]
         [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<CategoriaDoencaEntity>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma categoria ativa encontrada")]
@@ -73,7 +89,15 @@ namespace Arkive_API.Presentation.Controllers
         [HttpGet("inativos")]
         [SwaggerOperation(
             Summary = "Lista categorias de doença inativas",
-            Description = "Retorna todas as categorias clínicas com status inativo (excluídas logicamente)."
+            Description = """
+            ## Informações do Retorno:
+            * **Status 200 (OK):** Retorna uma lista contendo apenas as categorias com status inativo.
+            * **Status 204 (No Content):** Executado com sucesso, porém não há categorias inativas cadastradas.
+            * **Status 400 (Bad Request):** Ocorreu uma falha durante a consulta (ex: erro de conexão com o banco).
+
+            ## Observações:
+            * Categorias inativas são registros excluídos logicamente (soft delete), não removidos fisicamente.
+            """
         )]
         [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<CategoriaDoencaEntity>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma categoria inativa encontrada")]
@@ -98,7 +122,15 @@ namespace Arkive_API.Presentation.Controllers
         [HttpGet("{id}")]
         [SwaggerOperation(
             Summary = "Busca categoria de doença por ID",
-            Description = "Retorna uma categoria clínica específica pelo seu ID, independente do status."
+            Description = """
+            ## Informações do Retorno:
+            * **Status 200 (OK):** Retorna a categoria correspondente ao ID informado.
+            * **Status 404 (Not Found):** Nenhuma categoria foi encontrada com o ID informado.
+            * **Status 400 (Bad Request):** Ocorreu uma falha durante a consulta (ex: erro de conexão com o banco).
+
+            ## Observações:
+            * A busca por ID retorna a categoria independente do status (ativa ou inativa).
+            """
         )]
         [SwaggerResponse(statusCode: 200, description: "Categoria retornada com sucesso", type: typeof(CategoriaDoencaEntity))]
         [SwaggerResponse(statusCode: 404, description: "Categoria não encontrada")]
@@ -124,7 +156,15 @@ namespace Arkive_API.Presentation.Controllers
         [HttpPost]
         [SwaggerOperation(
             Summary = "Cria uma nova categoria de doença",
-            Description = "Cadastra uma nova categoria clínica no sistema."
+            Description = """
+            ## Informações do Retorno:
+            * **Status 201 (Created):** A categoria foi cadastrada com sucesso.
+            * **Status 400 (Bad Request):** Ocorreu uma falha de validação ou ao gravar os dados (ex: nome já cadastrado).
+
+            ## Observações:
+            * O nome da categoria deve ser único no sistema.
+            * A categoria é criada sempre com status ativo.
+            """
         )]
         [SwaggerRequestExample(typeof(CategoriaDoencaRequestDto), typeof(CategoriaDoencaRequestSample))]
         [SwaggerResponse(statusCode: 201, description: "Categoria criada com sucesso", type: typeof(CategoriaDoencaEntity))]
@@ -146,7 +186,16 @@ namespace Arkive_API.Presentation.Controllers
         [HttpPut("{id}")]
         [SwaggerOperation(
             Summary = "Atualiza uma categoria de doença",
-            Description = "Atualiza os dados de uma categoria clínica ativa existente."
+            Description = """
+            ## Informações do Retorno:
+            * **Status 200 (OK):** A categoria foi atualizada com sucesso.
+            * **Status 404 (Not Found):** Nenhuma categoria ativa foi encontrada com o ID informado.
+            * **Status 400 (Bad Request):** Ocorreu uma falha de validação ou ao gravar os dados.
+
+            ## Observações:
+            * Somente categorias ativas podem ser atualizadas.
+            * Categorias inativas devem ser reativadas antes de serem editadas.
+            """
         )]
         [SwaggerResponse(statusCode: 200, description: "Categoria atualizada com sucesso", type: typeof(CategoriaDoencaEntity))]
         [SwaggerResponse(statusCode: 404, description: "Categoria não encontrada ou inativa")]
@@ -171,7 +220,15 @@ namespace Arkive_API.Presentation.Controllers
         [HttpPut("reativar/{id}")]
         [SwaggerOperation(
             Summary = "Reativa uma categoria de doença",
-            Description = "Restaura uma categoria clínica previamente inativada."
+            Description = """
+            ## Informações do Retorno:
+            * **Status 200 (OK):** A categoria foi reativada com sucesso.
+            * **Status 404 (Not Found):** Nenhuma categoria inativa foi encontrada com o ID informado.
+            * **Status 400 (Bad Request):** Ocorreu uma falha ao reativar a categoria.
+
+            ## Observações:
+            * Somente categorias com status inativo podem ser reativadas.
+            """
         )]
         [SwaggerResponse(statusCode: 200, description: "Categoria reativada com sucesso", type: typeof(CategoriaDoencaEntity))]
         [SwaggerResponse(statusCode: 404, description: "Categoria não encontrada ou já está ativa")]
@@ -196,7 +253,16 @@ namespace Arkive_API.Presentation.Controllers
         [HttpDelete("{id}")]
         [SwaggerOperation(
             Summary = "Inativa uma categoria de doença",
-            Description = "Realiza a exclusão lógica de uma categoria clínica (soft delete)."
+            Description = """
+            ## Informações do Retorno:
+            * **Status 200 (OK):** A categoria foi inativada com sucesso.
+            * **Status 404 (Not Found):** Nenhuma categoria ativa foi encontrada com o ID informado.
+            * **Status 400 (Bad Request):** Ocorreu uma falha ao inativar a categoria.
+
+            ## Observações:
+            * Esta operação realiza uma exclusão lógica (soft delete); o registro não é removido fisicamente do banco.
+            * Uma categoria já inativa não pode ser inativada novamente.
+            """
         )]
         [SwaggerResponse(statusCode: 200, description: "Categoria inativada com sucesso", type: typeof(CategoriaDoencaEntity))]
         [SwaggerResponse(statusCode: 404, description: "Categoria não encontrada ou já está inativa")]

@@ -23,7 +23,16 @@ namespace Arkive_API.Presentation.Controllers
         [HttpGet]
         [SwaggerOperation(
             Summary = "Lista todas as predisposições",
-            Description = "Retorna todos os vínculos de predisposição entre espécie, raça e doença."
+            Description = """
+            ## Informações do Retorno:
+            * **Status 200 (OK):** Retorna uma lista contendo todos os vínculos de predisposição cadastrados.
+            * **Status 204 (No Content):** Executado com sucesso, porém a base não possui predisposições cadastradas.
+            * **Status 400 (Bad Request):** Ocorreu uma falha durante a consulta (ex: erro de conexão com o banco).
+
+            ## Observações:
+            * Os dados incluem as entidades relacionadas (**Espécie**, **Raça** e **Doença**, esta última com sua **Categoria**).
+            * Esta entidade não possui soft delete; um vínculo removido é apagado fisicamente.
+            """
         )]
         [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<PredisposicaoEntity>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma predisposição encontrada")]
@@ -49,7 +58,15 @@ namespace Arkive_API.Presentation.Controllers
         [HttpGet("{id}")]
         [SwaggerOperation(
             Summary = "Busca predisposição por ID",
-            Description = "Retorna um vínculo de predisposição específico pelo seu ID."
+            Description = """
+            ## Informações do Retorno:
+            * **Status 200 (OK):** Retorna o vínculo de predisposição correspondente ao ID informado.
+            * **Status 404 (Not Found):** Nenhum vínculo foi encontrado com o ID informado.
+            * **Status 400 (Bad Request):** Ocorreu uma falha durante a consulta (ex: erro de conexão com o banco).
+
+            ## Observações:
+            * Os dados incluem as entidades relacionadas (**Espécie**, **Raça** e **Doença**, esta última com sua **Categoria**).
+            """
         )]
         [SwaggerResponse(statusCode: 200, description: "Predisposição retornada com sucesso", type: typeof(PredisposicaoEntity))]
         [SwaggerResponse(statusCode: 404, description: "Predisposição não encontrada")]
@@ -75,7 +92,15 @@ namespace Arkive_API.Presentation.Controllers
         [HttpGet("especie/{idEspecie}")]
         [SwaggerOperation(
             Summary = "Lista predisposições por espécie",
-            Description = "Retorna todas as predisposições vinculadas a uma espécie específica."
+            Description = """
+            ## Informações do Retorno:
+            * **Status 200 (OK):** Retorna uma lista contendo os vínculos de predisposição associados à espécie informada.
+            * **Status 204 (No Content):** Executado com sucesso, porém não há predisposições associadas a esta espécie.
+            * **Status 400 (Bad Request):** Ocorreu uma falha durante a consulta (ex: erro de conexão com o banco).
+
+            ## Observações:
+            * Este filtro não valida se o ID de espécie informado existe; caso não exista, o retorno será uma lista vazia (204).
+            """
         )]
         [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<PredisposicaoEntity>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma predisposição encontrada para esta espécie")]
@@ -100,7 +125,15 @@ namespace Arkive_API.Presentation.Controllers
         [HttpGet("raca/{idRaca}")]
         [SwaggerOperation(
             Summary = "Lista predisposições por raça",
-            Description = "Retorna todas as predisposições vinculadas a uma raça específica."
+            Description = """
+            ## Informações do Retorno:
+            * **Status 200 (OK):** Retorna uma lista contendo os vínculos de predisposição associados à raça informada.
+            * **Status 204 (No Content):** Executado com sucesso, porém não há predisposições associadas a esta raça.
+            * **Status 400 (Bad Request):** Ocorreu uma falha durante a consulta (ex: erro de conexão com o banco).
+
+            ## Observações:
+            * Este filtro não valida se o ID de raça informado existe; caso não exista, o retorno será uma lista vazia (204).
+            """
         )]
         [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<PredisposicaoEntity>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma predisposição encontrada para esta raça")]
@@ -125,7 +158,15 @@ namespace Arkive_API.Presentation.Controllers
         [HttpGet("doenca/{idDoenca}")]
         [SwaggerOperation(
             Summary = "Lista predisposições por doença",
-            Description = "Retorna todas as predisposições vinculadas a uma doença específica."
+            Description = """
+            ## Informações do Retorno:
+            * **Status 200 (OK):** Retorna uma lista contendo os vínculos de predisposição associados à doença informada.
+            * **Status 204 (No Content):** Executado com sucesso, porém não há predisposições associadas a esta doença.
+            * **Status 400 (Bad Request):** Ocorreu uma falha durante a consulta (ex: erro de conexão com o banco).
+
+            ## Observações:
+            * Este filtro não valida se o ID de doença informado existe; caso não exista, o retorno será uma lista vazia (204).
+            """
         )]
         [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<PredisposicaoEntity>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma predisposição encontrada para esta doença")]
@@ -150,7 +191,17 @@ namespace Arkive_API.Presentation.Controllers
         [HttpPost]
         [SwaggerOperation(
             Summary = "Cria vínculo de predisposição",
-            Description = "Cadastra um novo vínculo de predisposição entre espécie/raça e doença."
+            Description = """
+            ## Informações do Retorno:
+            * **Status 201 (Created):** O vínculo de predisposição foi cadastrado com sucesso.
+            * **Status 404 (Not Found):** A espécie, a raça ou a doença informada não existe ou está inativa.
+            * **Status 400 (Bad Request):** Ocorreu uma falha de validação ou ao gravar os dados (ex: vínculo duplicado).
+
+            ## Observações:
+            * Espécie e Doença são obrigatórias e precisam existir e estar ativas.
+            * Raça é opcional; quando informada, também precisa existir e estar ativa.
+            * Não existe endpoint de atualização (PUT); para alterar um vínculo, remova o antigo e crie um novo.
+            """
         )]
         [SwaggerRequestExample(typeof(PredisposicaoRequestDto), typeof(PredisposicaoRequestSample))]
         [SwaggerResponse(statusCode: 201, description: "Predisposição criada com sucesso", type: typeof(PredisposicaoEntity))]
@@ -189,7 +240,15 @@ namespace Arkive_API.Presentation.Controllers
         [HttpDelete("{id}")]
         [SwaggerOperation(
             Summary = "Remove vínculo de predisposição",
-            Description = "Remove fisicamente o vínculo de predisposição entre espécie/raça e doença."
+            Description = """
+            ## Informações do Retorno:
+            * **Status 200 (OK):** O vínculo de predisposição foi removido com sucesso.
+            * **Status 404 (Not Found):** Nenhum vínculo foi encontrado com o ID informado.
+            * **Status 400 (Bad Request):** Ocorreu uma falha ao remover o vínculo.
+
+            ## Observações:
+            * Esta operação realiza uma exclusão física (hard delete); o registro é removido definitivamente do banco.
+            """
         )]
         [SwaggerResponse(statusCode: 200, description: "Predisposição removida com sucesso", type: typeof(PredisposicaoEntity))]
         [SwaggerResponse(statusCode: 404, description: "Predisposição não encontrada")]

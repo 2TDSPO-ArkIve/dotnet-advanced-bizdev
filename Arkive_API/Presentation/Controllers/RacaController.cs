@@ -23,7 +23,16 @@ namespace Arkive_API.Presentation.Controllers
         [HttpGet]
         [SwaggerOperation(
             Summary = "Lista todas as raças",
-            Description = "Retorna todas as raças cadastradas, incluindo a espécie vinculada."
+            Description = """
+            ## Informações do Retorno:
+            * **Status 200 (OK):** Retorna uma lista contendo todas as raças cadastradas, ativas e inativas.
+            * **Status 204 (No Content):** Executado com sucesso, porém a base não possui raças cadastradas.
+            * **Status 400 (Bad Request):** Ocorreu uma falha durante a consulta (ex: erro de conexão com o banco).
+
+            ## Observações:
+            * Os dados incluem a entidade relacionada (**Espécie**).
+            * Este endpoint não filtra por status; use `/ativos` ou `/inativos` para isso.
+            """
         )]
         [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<RacaEntity>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma raça encontrada")]
@@ -49,7 +58,16 @@ namespace Arkive_API.Presentation.Controllers
         [HttpGet("ativos")]
         [SwaggerOperation(
             Summary = "Lista raças ativas",
-            Description = "Retorna todas as raças com status ativo, incluindo a espécie vinculada."
+            Description = """
+            ## Informações do Retorno:
+            * **Status 200 (OK):** Retorna uma lista contendo apenas as raças com status ativo.
+            * **Status 204 (No Content):** Executado com sucesso, porém não há raças ativas cadastradas.
+            * **Status 400 (Bad Request):** Ocorreu uma falha durante a consulta (ex: erro de conexão com o banco).
+
+            ## Observações:
+            * Os dados incluem a entidade relacionada (**Espécie**).
+            * Raças inativas (excluídas logicamente) não aparecem neste retorno.
+            """
         )]
         [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<RacaEntity>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma raça ativa encontrada")]
@@ -74,7 +92,16 @@ namespace Arkive_API.Presentation.Controllers
         [HttpGet("inativos")]
         [SwaggerOperation(
             Summary = "Lista raças inativas",
-            Description = "Retorna todas as raças com status inativo (excluídas logicamente), incluindo a espécie vinculada."
+            Description = """
+            ## Informações do Retorno:
+            * **Status 200 (OK):** Retorna uma lista contendo apenas as raças com status inativo.
+            * **Status 204 (No Content):** Executado com sucesso, porém não há raças inativas cadastradas.
+            * **Status 400 (Bad Request):** Ocorreu uma falha durante a consulta (ex: erro de conexão com o banco).
+
+            ## Observações:
+            * Os dados incluem a entidade relacionada (**Espécie**).
+            * Raças inativas são registros excluídos logicamente (soft delete), não removidos fisicamente.
+            """
         )]
         [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<RacaEntity>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma raça inativa encontrada")]
@@ -99,7 +126,16 @@ namespace Arkive_API.Presentation.Controllers
         [HttpGet("{id}")]
         [SwaggerOperation(
             Summary = "Busca raça por ID",
-            Description = "Retorna uma raça específica pelo seu ID, independente do status, incluindo a espécie vinculada."
+            Description = """
+            ## Informações do Retorno:
+            * **Status 200 (OK):** Retorna a raça correspondente ao ID informado.
+            * **Status 404 (Not Found):** Nenhuma raça foi encontrada com o ID informado.
+            * **Status 400 (Bad Request):** Ocorreu uma falha durante a consulta (ex: erro de conexão com o banco).
+
+            ## Observações:
+            * Os dados incluem a entidade relacionada (**Espécie**).
+            * A busca por ID retorna a raça independente do status (ativa ou inativa).
+            """
         )]
         [SwaggerResponse(statusCode: 200, description: "Raça retornada com sucesso", type: typeof(RacaEntity))]
         [SwaggerResponse(statusCode: 404, description: "Raça não encontrada")]
@@ -125,7 +161,15 @@ namespace Arkive_API.Presentation.Controllers
         [HttpGet("especie/{idEspecie}")]
         [SwaggerOperation(
             Summary = "Lista raças por espécie",
-            Description = "Retorna todas as raças ativas vinculadas a uma espécie específica."
+            Description = """
+            ## Informações do Retorno:
+            * **Status 200 (OK):** Retorna uma lista contendo as raças ativas vinculadas à espécie informada.
+            * **Status 204 (No Content):** Executado com sucesso, porém não há raças ativas vinculadas a esta espécie.
+            * **Status 400 (Bad Request):** Ocorreu uma falha durante a consulta (ex: erro de conexão com o banco).
+
+            ## Observações:
+            * Somente raças ativas são retornadas por este endpoint.
+            """
         )]
         [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<RacaEntity>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma raça encontrada para esta espécie")]
@@ -150,7 +194,17 @@ namespace Arkive_API.Presentation.Controllers
         [HttpPost]
         [SwaggerOperation(
             Summary = "Cria uma nova raça",
-            Description = "Cadastra uma nova raça vinculada a uma espécie ativa existente."
+            Description = """
+            ## Informações do Retorno:
+            * **Status 201 (Created):** A raça foi cadastrada com sucesso.
+            * **Status 404 (Not Found):** A espécie informada não existe ou está inativa.
+            * **Status 400 (Bad Request):** Ocorreu uma falha de validação ou ao gravar os dados (ex: raça já cadastrada para esta espécie, porte inválido).
+
+            ## Observações:
+            * A espécie é obrigatória e precisa existir e estar ativa.
+            * O campo Porte, quando informado, aceita apenas PEQUENO, MEDIO ou GRANDE.
+            * A raça é criada sempre com status ativo.
+            """
         )]
         [SwaggerRequestExample(typeof(RacaRequestDto), typeof(RacaRequestSample))]
         [SwaggerResponse(statusCode: 201, description: "Raça criada com sucesso", type: typeof(RacaEntity))]
@@ -177,7 +231,16 @@ namespace Arkive_API.Presentation.Controllers
         [HttpPut("{id}")]
         [SwaggerOperation(
             Summary = "Atualiza uma raça",
-            Description = "Atualiza os dados de uma raça ativa existente."
+            Description = """
+            ## Informações do Retorno:
+            * **Status 200 (OK):** A raça foi atualizada com sucesso.
+            * **Status 404 (Not Found):** Nenhuma raça ativa foi encontrada com o ID informado, ou a espécie informada não existe ou está inativa.
+            * **Status 400 (Bad Request):** Ocorreu uma falha de validação ou ao gravar os dados.
+
+            ## Observações:
+            * Somente raças ativas podem ser atualizadas.
+            * A espécie informada é sempre revalidada nesta operação, mesmo que não tenha sido alterada.
+            """
         )]
         [SwaggerResponse(statusCode: 200, description: "Raça atualizada com sucesso", type: typeof(RacaEntity))]
         [SwaggerResponse(statusCode: 404, description: "Raça não encontrada ou inativa")]
@@ -206,7 +269,15 @@ namespace Arkive_API.Presentation.Controllers
         [HttpPut("reativar/{id}")]
         [SwaggerOperation(
             Summary = "Reativa uma raça",
-            Description = "Restaura uma raça previamente inativada."
+            Description = """
+            ## Informações do Retorno:
+            * **Status 200 (OK):** A raça foi reativada com sucesso.
+            * **Status 404 (Not Found):** Nenhuma raça inativa foi encontrada com o ID informado.
+            * **Status 400 (Bad Request):** Ocorreu uma falha ao reativar a raça.
+
+            ## Observações:
+            * Somente raças com status inativo podem ser reativadas.
+            """
         )]
         [SwaggerResponse(statusCode: 200, description: "Raça reativada com sucesso", type: typeof(RacaEntity))]
         [SwaggerResponse(statusCode: 404, description: "Raça não encontrada ou já está ativa")]
@@ -231,7 +302,16 @@ namespace Arkive_API.Presentation.Controllers
         [HttpDelete("{id}")]
         [SwaggerOperation(
             Summary = "Inativa uma raça",
-            Description = "Realiza a exclusão lógica de uma raça (soft delete)."
+            Description = """
+            ## Informações do Retorno:
+            * **Status 200 (OK):** A raça foi inativada com sucesso.
+            * **Status 404 (Not Found):** Nenhuma raça ativa foi encontrada com o ID informado.
+            * **Status 400 (Bad Request):** Ocorreu uma falha ao inativar a raça.
+
+            ## Observações:
+            * Esta operação realiza uma exclusão lógica (soft delete); o registro não é removido fisicamente do banco.
+            * Uma raça já inativa não pode ser inativada novamente.
+            """
         )]
         [SwaggerResponse(statusCode: 200, description: "Raça inativada com sucesso", type: typeof(RacaEntity))]
         [SwaggerResponse(statusCode: 404, description: "Raça não encontrada ou já está inativa")]

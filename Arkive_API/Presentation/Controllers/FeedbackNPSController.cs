@@ -23,7 +23,15 @@ namespace Arkive_API.Presentation.Controllers
         [HttpGet]
         [SwaggerOperation(
             Summary = "Lista todos os feedbacks NPS",
-            Description = "Retorna todos os feedbacks de satisfação registrados."
+            Description = """
+            ## Informações do Retorno:
+            * **Status 200 (OK):** Retorna uma lista contendo todos os feedbacks de satisfação registrados.
+            * **Status 204 (No Content):** Executado com sucesso, porém a base não possui feedbacks cadastrados.
+            * **Status 400 (Bad Request):** Ocorreu uma falha durante a consulta (ex: erro de conexão com o banco).
+
+            ## Observações:
+            * Esta entidade não possui soft delete; um feedback removido é apagado fisicamente.
+            """
         )]
         [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<FeedbackNPSEntity>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhum feedback encontrado")]
@@ -49,7 +57,12 @@ namespace Arkive_API.Presentation.Controllers
         [HttpGet("{id}")]
         [SwaggerOperation(
             Summary = "Busca feedback NPS por ID",
-            Description = "Retorna um feedback de satisfação específico pelo seu ID."
+            Description = """
+            ## Informações do Retorno:
+            * **Status 200 (OK):** Retorna o feedback correspondente ao ID informado.
+            * **Status 404 (Not Found):** Nenhum feedback foi encontrado com o ID informado.
+            * **Status 400 (Bad Request):** Ocorreu uma falha durante a consulta (ex: erro de conexão com o banco).
+            """
         )]
         [SwaggerResponse(statusCode: 200, description: "Feedback retornado com sucesso", type: typeof(FeedbackNPSEntity))]
         [SwaggerResponse(statusCode: 404, description: "Feedback não encontrado")]
@@ -75,7 +88,15 @@ namespace Arkive_API.Presentation.Controllers
         [HttpGet("nota/{nota}")]
         [SwaggerOperation(
             Summary = "Lista feedbacks por nota",
-            Description = "Retorna todos os feedbacks com a nota NPS informada (0 a 10)."
+            Description = """
+            ## Informações do Retorno:
+            * **Status 200 (OK):** Retorna uma lista contendo os feedbacks com a nota NPS informada.
+            * **Status 204 (No Content):** Executado com sucesso, porém não há feedbacks com esta nota.
+            * **Status 400 (Bad Request):** A nota informada está fora do intervalo permitido (0 a 10), ou ocorreu uma falha durante a consulta.
+
+            ## Observações:
+            * A nota deve estar entre 0 e 10; valores fora deste intervalo resultam em 400 (Bad Request).
+            """
         )]
         [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<FeedbackNPSEntity>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhum feedback encontrado para esta nota")]
@@ -100,7 +121,15 @@ namespace Arkive_API.Presentation.Controllers
         [HttpGet("responsavel/{idResponsavel}")]
         [SwaggerOperation(
             Summary = "Lista feedbacks por responsável",
-            Description = "Retorna todos os feedbacks vinculados a um responsável específico."
+            Description = """
+            ## Informações do Retorno:
+            * **Status 200 (OK):** Retorna uma lista contendo os feedbacks vinculados ao responsável informado.
+            * **Status 204 (No Content):** Executado com sucesso, porém não há feedbacks vinculados a este responsável.
+            * **Status 400 (Bad Request):** Ocorreu uma falha durante a consulta (ex: erro de conexão com o banco).
+
+            ## Observações:
+            * O ID de responsável faz referência a uma tabela sincronizada pela API Java; este endpoint não valida sua existência.
+            """
         )]
         [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<FeedbackNPSEntity>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhum feedback encontrado para este responsável")]
@@ -125,7 +154,15 @@ namespace Arkive_API.Presentation.Controllers
         [HttpGet("animal/{idAnimal}")]
         [SwaggerOperation(
             Summary = "Lista feedbacks por animal",
-            Description = "Retorna todos os feedbacks vinculados a um animal específico."
+            Description = """
+            ## Informações do Retorno:
+            * **Status 200 (OK):** Retorna uma lista contendo os feedbacks vinculados ao animal informado.
+            * **Status 204 (No Content):** Executado com sucesso, porém não há feedbacks vinculados a este animal.
+            * **Status 400 (Bad Request):** Ocorreu uma falha durante a consulta (ex: erro de conexão com o banco).
+
+            ## Observações:
+            * O ID de animal faz referência a uma tabela sincronizada pela API Java; este endpoint não valida sua existência.
+            """
         )]
         [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<FeedbackNPSEntity>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhum feedback encontrado para este animal")]
@@ -150,7 +187,15 @@ namespace Arkive_API.Presentation.Controllers
         [HttpGet("clinica/{idClinica}")]
         [SwaggerOperation(
             Summary = "Lista feedbacks por clínica",
-            Description = "Retorna todos os feedbacks vinculados a uma clínica específica."
+            Description = """
+            ## Informações do Retorno:
+            * **Status 200 (OK):** Retorna uma lista contendo os feedbacks vinculados à clínica informada.
+            * **Status 204 (No Content):** Executado com sucesso, porém não há feedbacks vinculados a esta clínica.
+            * **Status 400 (Bad Request):** Ocorreu uma falha durante a consulta (ex: erro de conexão com o banco).
+
+            ## Observações:
+            * O ID de clínica faz referência a uma tabela sincronizada pela API Java; este endpoint não valida sua existência.
+            """
         )]
         [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<FeedbackNPSEntity>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhum feedback encontrado para esta clínica")]
@@ -175,7 +220,15 @@ namespace Arkive_API.Presentation.Controllers
         [HttpGet("veterinario/{idVeterinario}")]
         [SwaggerOperation(
             Summary = "Lista feedbacks por veterinário",
-            Description = "Retorna todos os feedbacks vinculados a um veterinário específico."
+            Description = """
+            ## Informações do Retorno:
+            * **Status 200 (OK):** Retorna uma lista contendo os feedbacks vinculados ao veterinário informado.
+            * **Status 204 (No Content):** Executado com sucesso, porém não há feedbacks vinculados a este veterinário.
+            * **Status 400 (Bad Request):** Ocorreu uma falha durante a consulta (ex: erro de conexão com o banco).
+
+            ## Observações:
+            * O ID de veterinário faz referência a uma tabela sincronizada pela API Java; este endpoint não valida sua existência.
+            """
         )]
         [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<FeedbackNPSEntity>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhum feedback encontrado para este veterinário")]
@@ -200,7 +253,16 @@ namespace Arkive_API.Presentation.Controllers
         [HttpGet("data/{data}")]
         [SwaggerOperation(
             Summary = "Lista feedbacks por data",
-            Description = "Retorna todos os feedbacks registrados em uma data específica. Formato esperado: yyyy-MM-dd."
+            Description = """
+            ## Informações do Retorno:
+            * **Status 200 (OK):** Retorna uma lista contendo os feedbacks registrados na data informada.
+            * **Status 204 (No Content):** Executado com sucesso, porém não há feedbacks registrados nesta data.
+            * **Status 400 (Bad Request):** O formato de data informado é inválido, ou ocorreu uma falha durante a consulta.
+
+            ## Observações:
+            * O formato esperado para a data é yyyy-MM-dd.
+            * A comparação considera apenas a data, ignorando a hora do registro.
+            """
         )]
         [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<FeedbackNPSEntity>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhum feedback encontrado para esta data")]
@@ -230,7 +292,17 @@ namespace Arkive_API.Presentation.Controllers
         [HttpPost]
         [SwaggerOperation(
             Summary = "Registra um novo feedback NPS",
-            Description = "Registra um feedback de satisfação vinculado a ao menos um contexto: responsável, animal, clínica, consulta ou veterinário."
+            Description = """
+            ## Informações do Retorno:
+            * **Status 201 (Created):** O feedback foi registrado com sucesso.
+            * **Status 404 (Not Found):** Algum contexto informado (responsável, animal, clínica, consulta ou veterinário) não foi encontrado.
+            * **Status 400 (Bad Request):** Nenhum contexto foi informado, a nota está fora do intervalo permitido, ou ocorreu outra falha de validação.
+
+            ## Observações:
+            * É obrigatório informar ao menos um contexto: responsável, animal, clínica, consulta ou veterinário.
+            * Os IDs de contexto fazem referência a tabelas sincronizadas pela API Java; cada um informado é validado individualmente.
+            * A data do feedback é preenchida automaticamente com o momento do registro.
+            """
         )]
         [SwaggerRequestExample(typeof(FeedbackNPSRequestDto), typeof(FeedbackNPSRequestSample))]
         [SwaggerResponse(statusCode: 201, description: "Feedback registrado com sucesso", type: typeof(FeedbackNPSEntity))]
@@ -260,7 +332,15 @@ namespace Arkive_API.Presentation.Controllers
         [HttpDelete("{id}")]
         [SwaggerOperation(
             Summary = "Remove um feedback NPS",
-            Description = "Remove fisicamente um registro de feedback NPS do sistema."
+            Description = """
+            ## Informações do Retorno:
+            * **Status 200 (OK):** O feedback foi removido com sucesso.
+            * **Status 404 (Not Found):** Nenhum feedback foi encontrado com o ID informado.
+            * **Status 400 (Bad Request):** Ocorreu uma falha ao remover o feedback.
+
+            ## Observações:
+            * Esta operação realiza uma exclusão física (hard delete); o registro é removido definitivamente do banco.
+            """
         )]
         [SwaggerResponse(statusCode: 200, description: "Feedback removido com sucesso", type: typeof(FeedbackNPSEntity))]
         [SwaggerResponse(statusCode: 404, description: "Feedback não encontrado")]
