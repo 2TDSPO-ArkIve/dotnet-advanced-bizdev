@@ -164,6 +164,17 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "CategoriaDoencas")]
+        public async Task EditarAsync_DeveRetornarNull_QuandoIdNaoExiste()
+        {
+            // Act
+            var resultado = await _categoriaDoencaRepository.EditarAsync(999, new CategoriaDoencaEntity { Nome = "Outra" });
+
+            // Assert
+            Assert.Null(resultado);
+        }
+
+        [Fact]
+        [Trait("Repository", "CategoriaDoencas")]
         public async Task EditarAsync_DeveRetornarNull_QuandoCategoriaNaoExisteOuInativa()
         {
             // Arrange

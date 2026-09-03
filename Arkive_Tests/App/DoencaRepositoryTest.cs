@@ -175,6 +175,10 @@ namespace Arkive_Tests.App
             Assert.NotNull(resultado);
             Assert.Single(resultado);
             Assert.Equal("Cinomose", resultado.First().Nome);
+
+            // Garante que o relacionamento com Categoria foi carregado (Include)
+            Assert.NotNull(resultado.First().Categoria);
+            Assert.Equal("Viral", resultado.First().Categoria!.Nome);
         }
 
         [Fact]
@@ -215,6 +219,17 @@ namespace Arkive_Tests.App
             Assert.NotNull(resultado);
             Assert.Equal("Cinomose Canina", resultado!.Nome);
             Assert.Equal("A01", resultado.CID);
+        }
+
+        [Fact]
+        [Trait("Repository", "Doencas")]
+        public async Task EditarAsync_DeveRetornarNull_QuandoIdNaoExiste()
+        {
+            // Act
+            var resultado = await _doencaRepository.EditarAsync(999, new DoencaEntity { Nome = "Outra" });
+
+            // Assert
+            Assert.Null(resultado);
         }
 
         [Fact]

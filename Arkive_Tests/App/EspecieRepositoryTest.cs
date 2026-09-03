@@ -164,6 +164,17 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "Especies")]
+        public async Task EditarAsync_DeveRetornarNull_QuandoIdNaoExiste()
+        {
+            // Act
+            var resultado = await _especieRepository.EditarAsync(999, new EspecieEntity { Especie = "Outra" });
+
+            // Assert
+            Assert.Null(resultado);
+        }
+
+        [Fact]
+        [Trait("Repository", "Especies")]
         public async Task EditarAsync_DeveRetornarNull_QuandoEspecieNaoExisteOuInativa()
         {
             // Arrange

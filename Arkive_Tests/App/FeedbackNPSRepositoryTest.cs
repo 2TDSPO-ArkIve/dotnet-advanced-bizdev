@@ -308,6 +308,17 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "FeedbackNPS")]
+        public async Task AnimalExisteAsync_DeveRetornarFalse_QuandoNaoExiste()
+        {
+            // Act
+            var resultado = await _feedbackNPSRepository.AnimalExisteAsync(999);
+
+            // Assert
+            Assert.False(resultado);
+        }
+
+        [Fact]
+        [Trait("Repository", "FeedbackNPS")]
         public async Task ClinicaExisteAsync_DeveRetornarTrue_QuandoExiste()
         {
             // Arrange
@@ -319,6 +330,17 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.True(resultado);
+        }
+
+        [Fact]
+        [Trait("Repository", "FeedbackNPS")]
+        public async Task ClinicaExisteAsync_DeveRetornarFalse_QuandoNaoExiste()
+        {
+            // Act
+            var resultado = await _feedbackNPSRepository.ClinicaExisteAsync(999);
+
+            // Assert
+            Assert.False(resultado);
         }
 
         [Fact]
@@ -338,6 +360,17 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "FeedbackNPS")]
+        public async Task ConsultaExisteAsync_DeveRetornarFalse_QuandoNaoExiste()
+        {
+            // Act
+            var resultado = await _feedbackNPSRepository.ConsultaExisteAsync(999);
+
+            // Assert
+            Assert.False(resultado);
+        }
+
+        [Fact]
+        [Trait("Repository", "FeedbackNPS")]
         public async Task VeterinarioExisteAsync_DeveRetornarTrue_QuandoExiste()
         {
             // Arrange
@@ -349,6 +382,17 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.True(resultado);
+        }
+
+        [Fact]
+        [Trait("Repository", "FeedbackNPS")]
+        public async Task VeterinarioExisteAsync_DeveRetornarFalse_QuandoNaoExiste()
+        {
+            // Act
+            var resultado = await _feedbackNPSRepository.VeterinarioExisteAsync(999);
+
+            // Assert
+            Assert.False(resultado);
         }
     }
 }

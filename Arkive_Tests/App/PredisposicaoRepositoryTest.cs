@@ -89,6 +89,12 @@ namespace Arkive_Tests.App
             // Assert
             Assert.NotNull(resultado);
             Assert.Equal(predisposicao.Id, resultado!.Id);
+
+            // Garante que os relacionamentos obrigatórios foram carregados (Include)
+            Assert.NotNull(resultado.Especie);
+            Assert.Equal("Canina", resultado.Especie!.Especie);
+            Assert.NotNull(resultado.Doenca);
+            Assert.Equal("Displasia Coxofemoral", resultado.Doenca!.Nome);
         }
 
         [Fact]
@@ -180,6 +186,11 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
+
+            // Garante que os relacionamentos foram carregados na entidade retornada
+            Assert.NotNull(resultado!.Especie);
+            Assert.NotNull(resultado.Raca);
+            Assert.NotNull(resultado.Doenca);
 
             var predisposicaoNoDb = _applicationContext.Predisposicao.FirstOrDefault(x => x.Id == resultado!.Id);
 

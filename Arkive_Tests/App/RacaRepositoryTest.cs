@@ -126,6 +126,10 @@ namespace Arkive_Tests.App
             Assert.NotNull(resultado);
             Assert.Equal(raca.Id, resultado!.Id);
             Assert.Equal(raca.Raca, resultado.Raca);
+
+            // Garante que o relacionamento com Especie foi carregado (Include)
+            Assert.NotNull(resultado.Especie);
+            Assert.Equal("Canina", resultado.Especie!.Especie);
         }
 
         [Fact]
@@ -180,6 +184,8 @@ namespace Arkive_Tests.App
 
             Assert.NotNull(racaNoDb);
             Assert.Equal("Labrador", racaNoDb!.Raca);
+            Assert.Equal(1, racaNoDb.IdEspecie);
+            Assert.Equal("GRANDE", racaNoDb.Porte);
             Assert.Equal("S", racaNoDb.StAtivo);
         }
 
@@ -198,7 +204,19 @@ namespace Arkive_Tests.App
             // Assert
             Assert.NotNull(resultado);
             Assert.Equal("Labrador Retriever", resultado!.Raca);
+            Assert.Equal(1, resultado.IdEspecie);
             Assert.Equal("GRANDE", resultado.Porte);
+        }
+
+        [Fact]
+        [Trait("Repository", "Racas")]
+        public async Task EditarAsync_DeveRetornarNull_QuandoIdNaoExiste()
+        {
+            // Act
+            var resultado = await _racaRepository.EditarAsync(999, new RacaEntity { Raca = "Outra", IdEspecie = 1 });
+
+            // Assert
+            Assert.Null(resultado);
         }
 
         [Fact]
