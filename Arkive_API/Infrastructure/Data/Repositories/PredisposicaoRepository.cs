@@ -1,9 +1,8 @@
 using Arkive_API.Domain.Entities;
 using Arkive_API.Domain.Interfaces;
-using Arkive_API.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace Arkive_API.Infrastructure.Repositories
+namespace Arkive_API.Infrastructure.Data.Repositories
 {
     public class PredisposicaoRepository : IPredisposicaoRepository
     {

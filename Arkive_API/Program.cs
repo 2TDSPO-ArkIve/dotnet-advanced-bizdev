@@ -2,7 +2,7 @@ using Arkive_API.Application.Interfaces;
 using Arkive_API.Application.UseCases;
 using Arkive_API.Domain.Interfaces;
 using Arkive_API.Infrastructure.Data;
-using Arkive_API.Infrastructure.Repositories;
+using Arkive_API.Infrastructure.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Filters;
 
