@@ -38,7 +38,9 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Equal(2, resultado.Count());
+            Assert.Collection(resultado,
+                item => { Assert.Equal(1, item.Id); Assert.Equal("Viral", item.Nome); Assert.Equal("S", item.StAtivo); },
+                item => { Assert.Equal(2, item.Id); Assert.Equal("Bacteriana", item.Nome); Assert.Equal("N", item.StAtivo); });
         }
 
         [Fact]
@@ -55,7 +57,8 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Single(resultado);
+            Assert.Collection(resultado,
+                item => { Assert.Equal(1, item.Id); Assert.Equal("Viral", item.Nome); Assert.Equal("S", item.StAtivo); });
         }
 
         [Fact]
@@ -72,7 +75,8 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Single(resultado);
+            Assert.Collection(resultado,
+                item => { Assert.Equal(2, item.Id); Assert.Equal("Bacteriana", item.Nome); Assert.Equal("N", item.StAtivo); });
         }
 
         [Fact]
@@ -92,6 +96,7 @@ namespace Arkive_Tests.App
             Assert.NotNull(resultado);
             Assert.Equal(idCategoria, resultado!.Id);
             Assert.Equal(categoria.Nome, resultado.Nome);
+            Assert.Equal(categoria.StAtivo, resultado.StAtivo);
         }
 
         [Fact]
@@ -124,6 +129,7 @@ namespace Arkive_Tests.App
             // Assert
             Assert.NotNull(resultado);
             Assert.Equal(dto.Nome, resultado!.Nome);
+            Assert.Equal(entity.StAtivo, resultado.StAtivo);
         }
 
         [Fact]
@@ -143,7 +149,8 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Equal(dto.Nome, resultado!.Nome);
+            Assert.Equal(idCategoria, resultado!.Id);
+            Assert.Equal(dto.Nome, resultado.Nome);
         }
 
         [Fact]
@@ -177,7 +184,9 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Equal("S", resultado!.StAtivo);
+            Assert.Equal(idCategoria, resultado!.Id);
+            Assert.Equal(categoria.Nome, resultado.Nome);
+            Assert.Equal("S", resultado.StAtivo);
         }
 
         [Fact]
@@ -195,7 +204,9 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Equal("N", resultado!.StAtivo);
+            Assert.Equal(idCategoria, resultado!.Id);
+            Assert.Equal(categoria.Nome, resultado.Nome);
+            Assert.Equal("N", resultado.StAtivo);
         }
     }
 }

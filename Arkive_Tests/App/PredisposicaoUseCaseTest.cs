@@ -49,7 +49,21 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Equal(2, resultado.Count());
+            Assert.Collection(resultado,
+                item =>
+                {
+                    Assert.Equal(1, item.Id);
+                    Assert.Equal(1, item.IdEspecie);
+                    Assert.Null(item.IdRaca);
+                    Assert.Equal(1, item.IdDoenca);
+                },
+                item =>
+                {
+                    Assert.Equal(2, item.Id);
+                    Assert.Equal(2, item.IdEspecie);
+                    Assert.Null(item.IdRaca);
+                    Assert.Equal(2, item.IdDoenca);
+                });
         }
 
         [Fact]
@@ -68,6 +82,8 @@ namespace Arkive_Tests.App
             // Assert
             Assert.NotNull(resultado);
             Assert.Equal(idPredisposicao, resultado!.Id);
+            Assert.Equal(1, resultado.IdEspecie);
+            Assert.Equal(1, resultado.IdDoenca);
         }
 
         [Fact]
@@ -85,7 +101,12 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Single(resultado);
+            Assert.Collection(resultado, item =>
+            {
+                Assert.Equal(1, item.Id);
+                Assert.Equal(idEspecie, item.IdEspecie);
+                Assert.Equal(1, item.IdDoenca);
+            });
         }
 
         [Fact]
@@ -103,7 +124,13 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Single(resultado);
+            Assert.Collection(resultado, item =>
+            {
+                Assert.Equal(1, item.Id);
+                Assert.Equal(1, item.IdEspecie);
+                Assert.Equal(idRaca, item.IdRaca);
+                Assert.Equal(1, item.IdDoenca);
+            });
         }
 
         [Fact]
@@ -121,7 +148,12 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Single(resultado);
+            Assert.Collection(resultado, item =>
+            {
+                Assert.Equal(1, item.Id);
+                Assert.Equal(1, item.IdEspecie);
+                Assert.Equal(idDoenca, item.IdDoenca);
+            });
         }
 
         [Fact]
@@ -143,6 +175,7 @@ namespace Arkive_Tests.App
             Assert.NotNull(resultado);
             Assert.Equal(dto.IdEspecie, resultado!.IdEspecie);
             Assert.Equal(dto.IdDoenca, resultado.IdDoenca);
+            Assert.Null(resultado.IdRaca);
 
             _racaRepository.Verify(obj => obj.ObterPorIdAsync(It.IsAny<int>()), Times.Never);
         }
@@ -166,6 +199,8 @@ namespace Arkive_Tests.App
             // Assert
             Assert.NotNull(resultado);
             Assert.Equal(dto.IdRaca, resultado!.IdRaca);
+            Assert.Equal(dto.IdEspecie, resultado.IdEspecie);
+            Assert.Equal(dto.IdDoenca, resultado.IdDoenca);
         }
 
         [Fact]
@@ -231,6 +266,8 @@ namespace Arkive_Tests.App
             // Assert
             Assert.NotNull(resultado);
             Assert.Equal(idPredisposicao, resultado!.Id);
+            Assert.Equal(1, resultado.IdEspecie);
+            Assert.Equal(1, resultado.IdDoenca);
         }
 
         [Fact]

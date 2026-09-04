@@ -70,7 +70,30 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Equal(2, resultado.Count());
+            Assert.Collection(resultado,
+                item =>
+                {
+                    Assert.Equal(1, item.IdEspecie);
+                    Assert.Equal(1, item.IdRaca);
+                    Assert.Equal(2, item.IdDoenca);
+                    Assert.NotNull(item.Especie);
+                    Assert.Equal("Canina", item.Especie!.Especie);
+                    Assert.NotNull(item.Raca);
+                    Assert.Equal("Labrador", item.Raca!.Raca);
+                    Assert.NotNull(item.Doenca);
+                    Assert.Equal("Otite", item.Doenca!.Nome);
+                },
+                item =>
+                {
+                    Assert.Equal(1, item.IdEspecie);
+                    Assert.Null(item.IdRaca);
+                    Assert.Equal(1, item.IdDoenca);
+                    Assert.Null(item.Raca);
+                    Assert.NotNull(item.Especie);
+                    Assert.Equal("Canina", item.Especie!.Especie);
+                    Assert.NotNull(item.Doenca);
+                    Assert.Equal("Displasia Coxofemoral", item.Doenca!.Nome);
+                });
         }
 
         [Fact]
@@ -89,12 +112,18 @@ namespace Arkive_Tests.App
             // Assert
             Assert.NotNull(resultado);
             Assert.Equal(predisposicao.Id, resultado!.Id);
+            Assert.Equal(1, resultado.IdEspecie);
+            Assert.Null(resultado.IdRaca);
+            Assert.Equal(1, resultado.IdDoenca);
+            Assert.Null(resultado.Raca);
 
             // Garante que os relacionamentos obrigatórios foram carregados (Include)
             Assert.NotNull(resultado.Especie);
-            Assert.Equal("Canina", resultado.Especie!.Especie);
+            Assert.Equal(1, resultado.Especie!.Id);
+            Assert.Equal("Canina", resultado.Especie.Especie);
             Assert.NotNull(resultado.Doenca);
-            Assert.Equal("Displasia Coxofemoral", resultado.Doenca!.Nome);
+            Assert.Equal(1, resultado.Doenca!.Id);
+            Assert.Equal("Displasia Coxofemoral", resultado.Doenca.Nome);
         }
 
         [Fact]
@@ -127,7 +156,16 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Single(resultado);
+            Assert.Collection(resultado, item =>
+            {
+                Assert.Equal(1, item.IdEspecie);
+                Assert.Null(item.IdRaca);
+                Assert.Equal(1, item.IdDoenca);
+                Assert.NotNull(item.Especie);
+                Assert.Equal("Canina", item.Especie!.Especie);
+                Assert.NotNull(item.Doenca);
+                Assert.Equal("Displasia Coxofemoral", item.Doenca!.Nome);
+            });
         }
 
         [Fact]
@@ -149,7 +187,18 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Single(resultado);
+            Assert.Collection(resultado, item =>
+            {
+                Assert.Equal(1, item.IdEspecie);
+                Assert.Equal(1, item.IdRaca);
+                Assert.Equal(1, item.IdDoenca);
+                Assert.NotNull(item.Especie);
+                Assert.Equal("Canina", item.Especie!.Especie);
+                Assert.NotNull(item.Raca);
+                Assert.Equal("Labrador", item.Raca!.Raca);
+                Assert.NotNull(item.Doenca);
+                Assert.Equal("Displasia Coxofemoral", item.Doenca!.Nome);
+            });
         }
 
         [Fact]
@@ -171,7 +220,16 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Single(resultado);
+            Assert.Collection(resultado, item =>
+            {
+                Assert.Equal(1, item.IdEspecie);
+                Assert.Null(item.IdRaca);
+                Assert.Equal(1, item.IdDoenca);
+                Assert.NotNull(item.Especie);
+                Assert.Equal("Canina", item.Especie!.Especie);
+                Assert.NotNull(item.Doenca);
+                Assert.Equal("Displasia Coxofemoral", item.Doenca!.Nome);
+            });
         }
 
         [Fact]
@@ -189,8 +247,11 @@ namespace Arkive_Tests.App
 
             // Garante que os relacionamentos foram carregados na entidade retornada
             Assert.NotNull(resultado!.Especie);
+            Assert.Equal("Canina", resultado.Especie!.Especie);
             Assert.NotNull(resultado.Raca);
+            Assert.Equal("Labrador", resultado.Raca!.Raca);
             Assert.NotNull(resultado.Doenca);
+            Assert.Equal("Displasia Coxofemoral", resultado.Doenca!.Nome);
 
             var predisposicaoNoDb = _applicationContext.Predisposicao.FirstOrDefault(x => x.Id == resultado!.Id);
 
@@ -214,6 +275,9 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
+            Assert.Equal(predisposicao.Id, resultado!.Id);
+            Assert.Equal(1, resultado.IdEspecie);
+            Assert.Equal(1, resultado.IdDoenca);
 
             var predisposicaoNoDb = _applicationContext.Predisposicao.FirstOrDefault(x => x.Id == predisposicao.Id);
             Assert.Null(predisposicaoNoDb);

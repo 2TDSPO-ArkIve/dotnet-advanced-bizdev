@@ -46,7 +46,10 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Equal(3, resultado.Count());
+            Assert.Collection(resultado,
+                item => { Assert.Equal("Cinomose", item.Nome); Assert.Equal("S", item.StAtivo); },
+                item => { Assert.Equal("Raiva", item.Nome); Assert.Equal("N", item.StAtivo); },
+                item => { Assert.Equal("Parvovirose", item.Nome); Assert.Equal("S", item.StAtivo); });
         }
 
         [Fact]
@@ -68,8 +71,8 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Single(resultado);
-            Assert.Equal("Cinomose", resultado.First().Nome);
+            Assert.Collection(resultado,
+                item => { Assert.Equal("Cinomose", item.Nome); Assert.Equal("S", item.StAtivo); });
         }
 
         [Fact]
@@ -91,8 +94,8 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Single(resultado);
-            Assert.Equal("Raiva", resultado.First().Nome);
+            Assert.Collection(resultado,
+                item => { Assert.Equal("Raiva", item.Nome); Assert.Equal("N", item.StAtivo); });
         }
 
         [Fact]
@@ -112,6 +115,7 @@ namespace Arkive_Tests.App
             Assert.NotNull(resultado);
             Assert.Equal(doenca.Id, resultado!.Id);
             Assert.Equal(doenca.Nome, resultado.Nome);
+            Assert.Equal(doenca.StAtivo, resultado.StAtivo);
         }
 
         [Fact]
@@ -145,8 +149,8 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Single(resultado);
-            Assert.Equal("Cinomose Canina", resultado.First().Nome);
+            Assert.Collection(resultado,
+                item => { Assert.Equal("Cinomose Canina", item.Nome); Assert.Equal("S", item.StAtivo); });
         }
 
         [Fact]
@@ -173,12 +177,19 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Single(resultado);
-            Assert.Equal("Cinomose", resultado.First().Nome);
+            Assert.Collection(resultado,
+                item =>
+                {
+                    Assert.Equal("Cinomose", item.Nome);
+                    Assert.Equal("S", item.StAtivo);
+                    Assert.Equal(categoria.Id, item.IdCategoria);
 
-            // Garante que o relacionamento com Categoria foi carregado (Include)
-            Assert.NotNull(resultado.First().Categoria);
-            Assert.Equal("Viral", resultado.First().Categoria!.Nome);
+                    // Garante que o relacionamento com Categoria foi carregado (Include)
+                    Assert.NotNull(item.Categoria);
+                    Assert.Equal(categoria.Id, item.Categoria!.Id);
+                    Assert.Equal("Viral", item.Categoria.Nome);
+                    Assert.Equal("S", item.Categoria.StAtivo);
+                });
         }
 
         [Fact]
@@ -217,8 +228,13 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Equal("Cinomose Canina", resultado!.Nome);
+            Assert.Equal(doenca.Id, resultado!.Id);
+            Assert.Equal("Cinomose Canina", resultado.Nome);
             Assert.Equal("A01", resultado.CID);
+            Assert.Null(resultado.IdCategoria);
+            Assert.Null(resultado.Descricao);
+            Assert.Null(resultado.Sintomas);
+            Assert.Equal("S", resultado.StAtivo);
         }
 
         [Fact]
@@ -262,7 +278,9 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Equal("S", resultado!.StAtivo);
+            Assert.Equal(doenca.Id, resultado!.Id);
+            Assert.Equal(doenca.Nome, resultado.Nome);
+            Assert.Equal("S", resultado.StAtivo);
         }
 
         [Fact]
@@ -295,7 +313,9 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Equal("N", resultado!.StAtivo);
+            Assert.Equal(doenca.Id, resultado!.Id);
+            Assert.Equal(doenca.Nome, resultado.Nome);
+            Assert.Equal("N", resultado.StAtivo);
         }
 
         [Fact]

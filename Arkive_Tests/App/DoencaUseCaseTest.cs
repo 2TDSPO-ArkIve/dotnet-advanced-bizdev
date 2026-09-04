@@ -41,7 +41,9 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Equal(2, resultado.Count());
+            Assert.Collection(resultado,
+                item => { Assert.Equal(1, item.Id); Assert.Equal("Cinomose", item.Nome); Assert.Equal("S", item.StAtivo); },
+                item => { Assert.Equal(2, item.Id); Assert.Equal("Raiva", item.Nome); Assert.Equal("N", item.StAtivo); });
         }
 
         [Fact]
@@ -58,7 +60,8 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Single(resultado);
+            Assert.Collection(resultado,
+                item => { Assert.Equal(1, item.Id); Assert.Equal("Cinomose", item.Nome); Assert.Equal("S", item.StAtivo); });
         }
 
         [Fact]
@@ -75,7 +78,8 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Single(resultado);
+            Assert.Collection(resultado,
+                item => { Assert.Equal(2, item.Id); Assert.Equal("Raiva", item.Nome); Assert.Equal("N", item.StAtivo); });
         }
 
         [Fact]
@@ -95,6 +99,7 @@ namespace Arkive_Tests.App
             Assert.NotNull(resultado);
             Assert.Equal(idDoenca, resultado!.Id);
             Assert.Equal(doenca.Nome, resultado.Nome);
+            Assert.Equal(doenca.StAtivo, resultado.StAtivo);
         }
 
         [Fact]
@@ -111,7 +116,8 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Single(resultado);
+            Assert.Collection(resultado,
+                item => { Assert.Equal(1, item.Id); Assert.Equal("Cinomose", item.Nome); Assert.Equal("S", item.StAtivo); });
         }
 
         [Fact]
@@ -129,7 +135,14 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Single(resultado);
+            Assert.Collection(resultado,
+                item =>
+                {
+                    Assert.Equal(1, item.Id);
+                    Assert.Equal("Cinomose", item.Nome);
+                    Assert.Equal(idCategoria, item.IdCategoria);
+                    Assert.Equal("S", item.StAtivo);
+                });
         }
 
         [Fact]
@@ -148,6 +161,7 @@ namespace Arkive_Tests.App
             // Assert
             Assert.NotNull(resultado);
             Assert.Equal(dto.Nome, resultado!.Nome);
+            Assert.Null(resultado.IdCategoria);
 
             _categoriaDoencaRepository.Verify(obj => obj.ObterPorIdAsync(It.IsAny<int>()), Times.Never);
         }
@@ -171,6 +185,7 @@ namespace Arkive_Tests.App
             // Assert
             Assert.NotNull(resultado);
             Assert.Equal(dto.Nome, resultado!.Nome);
+            Assert.Equal(idCategoria, resultado.IdCategoria);
         }
 
         [Fact]
@@ -223,7 +238,9 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Equal(dto.Nome, resultado!.Nome);
+            Assert.Equal(idDoenca, resultado!.Id);
+            Assert.Equal(dto.Nome, resultado.Nome);
+            Assert.Null(resultado.IdCategoria);
         }
 
         [Fact]
@@ -258,7 +275,9 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Equal("S", resultado!.StAtivo);
+            Assert.Equal(idDoenca, resultado!.Id);
+            Assert.Equal(doenca.Nome, resultado.Nome);
+            Assert.Equal("S", resultado.StAtivo);
         }
 
         [Fact]
@@ -276,7 +295,9 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Equal("N", resultado!.StAtivo);
+            Assert.Equal(idDoenca, resultado!.Id);
+            Assert.Equal(doenca.Nome, resultado.Nome);
+            Assert.Equal("N", resultado.StAtivo);
         }
     }
 }

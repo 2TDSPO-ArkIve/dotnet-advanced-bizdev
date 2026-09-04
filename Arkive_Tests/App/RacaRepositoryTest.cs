@@ -60,7 +60,19 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Equal(2, resultado.Count());
+            Assert.Collection(resultado,
+                item =>
+                {
+                    Assert.Equal("Siamês", item.Raca);
+                    Assert.Equal(2, item.IdEspecie);
+                    Assert.Equal("N", item.StAtivo);
+                },
+                item =>
+                {
+                    Assert.Equal("Labrador", item.Raca);
+                    Assert.Equal(1, item.IdEspecie);
+                    Assert.Equal("S", item.StAtivo);
+                });
         }
 
         [Fact]
@@ -82,8 +94,13 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Single(resultado);
-            Assert.Equal("Labrador", resultado.First().Raca);
+            Assert.Collection(resultado,
+                item =>
+                {
+                    Assert.Equal("Labrador", item.Raca);
+                    Assert.Equal(1, item.IdEspecie);
+                    Assert.Equal("S", item.StAtivo);
+                });
         }
 
         [Fact]
@@ -105,8 +122,13 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Single(resultado);
-            Assert.Equal("Siamês", resultado.First().Raca);
+            Assert.Collection(resultado,
+                item =>
+                {
+                    Assert.Equal("Siamês", item.Raca);
+                    Assert.Equal(2, item.IdEspecie);
+                    Assert.Equal("N", item.StAtivo);
+                });
         }
 
         [Fact]
@@ -126,6 +148,8 @@ namespace Arkive_Tests.App
             Assert.NotNull(resultado);
             Assert.Equal(raca.Id, resultado!.Id);
             Assert.Equal(raca.Raca, resultado.Raca);
+            Assert.Equal(raca.IdEspecie, resultado.IdEspecie);
+            Assert.Equal(raca.StAtivo, resultado.StAtivo);
 
             // Garante que o relacionamento com Especie foi carregado (Include)
             Assert.NotNull(resultado.Especie);
@@ -163,8 +187,13 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Single(resultado);
-            Assert.Equal("Labrador", resultado.First().Raca);
+            Assert.Collection(resultado,
+                item =>
+                {
+                    Assert.Equal("Labrador", item.Raca);
+                    Assert.Equal(1, item.IdEspecie);
+                    Assert.Equal("S", item.StAtivo);
+                });
         }
 
         [Fact]
@@ -203,9 +232,11 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Equal("Labrador Retriever", resultado!.Raca);
+            Assert.Equal(raca.Id, resultado!.Id);
+            Assert.Equal("Labrador Retriever", resultado.Raca);
             Assert.Equal(1, resultado.IdEspecie);
             Assert.Equal("GRANDE", resultado.Porte);
+            Assert.Equal("S", resultado.StAtivo);
         }
 
         [Fact]
@@ -249,7 +280,12 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Equal("S", resultado!.StAtivo);
+            Assert.Equal(raca.Id, resultado!.Id);
+            Assert.Equal(raca.Raca, resultado.Raca);
+            Assert.Equal(raca.IdEspecie, resultado.IdEspecie);
+            Assert.Equal("S", resultado.StAtivo);
+            Assert.NotNull(resultado.Especie);
+            Assert.Equal("Canina", resultado.Especie!.Especie);
         }
 
         [Fact]
@@ -282,7 +318,12 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Equal("N", resultado!.StAtivo);
+            Assert.Equal(raca.Id, resultado!.Id);
+            Assert.Equal(raca.Raca, resultado.Raca);
+            Assert.Equal(raca.IdEspecie, resultado.IdEspecie);
+            Assert.Equal("N", resultado.StAtivo);
+            Assert.NotNull(resultado.Especie);
+            Assert.Equal("Canina", resultado.Especie!.Especie);
         }
 
         [Fact]

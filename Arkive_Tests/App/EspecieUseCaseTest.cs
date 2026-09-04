@@ -38,7 +38,9 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Equal(2, resultado.Count());
+            Assert.Collection(resultado,
+                item => { Assert.Equal(1, item.Id); Assert.Equal("Canina", item.Especie); Assert.Equal("S", item.StAtivo); },
+                item => { Assert.Equal(2, item.Id); Assert.Equal("Felina", item.Especie); Assert.Equal("N", item.StAtivo); });
         }
 
         [Fact]
@@ -55,7 +57,8 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Single(resultado);
+            Assert.Collection(resultado,
+                item => { Assert.Equal(1, item.Id); Assert.Equal("Canina", item.Especie); Assert.Equal("S", item.StAtivo); });
         }
 
         [Fact]
@@ -72,7 +75,8 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Single(resultado);
+            Assert.Collection(resultado,
+                item => { Assert.Equal(2, item.Id); Assert.Equal("Felina", item.Especie); Assert.Equal("N", item.StAtivo); });
         }
 
         [Fact]
@@ -92,6 +96,7 @@ namespace Arkive_Tests.App
             Assert.NotNull(resultado);
             Assert.Equal(idEspecie, resultado!.Id);
             Assert.Equal(especie.Especie, resultado.Especie);
+            Assert.Equal(especie.StAtivo, resultado.StAtivo);
         }
 
         [Fact]
@@ -124,6 +129,7 @@ namespace Arkive_Tests.App
             // Assert
             Assert.NotNull(resultado);
             Assert.Equal(dto.Especie, resultado!.Especie);
+            Assert.Equal(entity.StAtivo, resultado.StAtivo);
         }
 
         [Fact]
@@ -143,7 +149,8 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Equal(dto.Especie, resultado!.Especie);
+            Assert.Equal(idEspecie, resultado!.Id);
+            Assert.Equal(dto.Especie, resultado.Especie);
         }
 
         [Fact]
@@ -177,7 +184,9 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Equal("S", resultado!.StAtivo);
+            Assert.Equal(idEspecie, resultado!.Id);
+            Assert.Equal(especie.Especie, resultado.Especie);
+            Assert.Equal("S", resultado.StAtivo);
         }
 
         [Fact]
@@ -195,7 +204,9 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Equal("N", resultado!.StAtivo);
+            Assert.Equal(idEspecie, resultado!.Id);
+            Assert.Equal(especie.Especie, resultado.Especie);
+            Assert.Equal("N", resultado.StAtivo);
         }
     }
 }
