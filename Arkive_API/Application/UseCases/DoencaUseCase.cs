@@ -18,19 +18,22 @@ namespace Arkive_API.Application.UseCases
             _categoriaDoencaRepository = categoriaDoencaRepository;
         }
 
-        public async Task<IEnumerable<DoencaEntity>> ObterTodasAsync()
+        public async Task<IEnumerable<DoencaEntity>> ObterTodasAsync(int skip = 0, int take = 50)
         {
-            return await _doencaRepository.ObterTodosAsync();
+            var (s, t) = Pagination.Normalizar(skip, take);
+            return await _doencaRepository.ObterTodosAsync(s, t);
         }
 
-        public async Task<IEnumerable<DoencaEntity>> ObterAtivasAsync()
+        public async Task<IEnumerable<DoencaEntity>> ObterAtivasAsync(int skip = 0, int take = 50)
         {
-            return await _doencaRepository.ObterAtivosAsync();
+            var (s, t) = Pagination.Normalizar(skip, take);
+            return await _doencaRepository.ObterAtivosAsync(s, t);
         }
 
-        public async Task<IEnumerable<DoencaEntity>> ObterInativasAsync()
+        public async Task<IEnumerable<DoencaEntity>> ObterInativasAsync(int skip = 0, int take = 50)
         {
-            return await _doencaRepository.ObterInativosAsync();
+            var (s, t) = Pagination.Normalizar(skip, take);
+            return await _doencaRepository.ObterInativosAsync(s, t);
         }
 
         public async Task<DoencaEntity?> ObterPorIdAsync(int id)

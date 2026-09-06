@@ -16,9 +16,10 @@ namespace Arkive_API.Application.UseCases
             _feedbackNPSRepository = feedbackNPSRepository;
         }
 
-        public async Task<IEnumerable<FeedbackNPSEntity>> ObterTodosAsync()
+        public async Task<IEnumerable<FeedbackNPSEntity>> ObterTodosAsync(int skip = 0, int take = 50)
         {
-            return await _feedbackNPSRepository.ObterTodosAsync();
+            var (s, t) = Pagination.Normalizar(skip, take);
+            return await _feedbackNPSRepository.ObterTodosAsync(s, t);
         }
 
         public async Task<FeedbackNPSEntity?> ObterPorIdAsync(int id)
@@ -26,37 +27,43 @@ namespace Arkive_API.Application.UseCases
             return await _feedbackNPSRepository.ObterPorIdAsync(id);
         }
 
-        public async Task<IEnumerable<FeedbackNPSEntity>> ObterPorNotaAsync(int nota)
+        public async Task<IEnumerable<FeedbackNPSEntity>> ObterPorNotaAsync(int nota, int skip = 0, int take = 50)
         {
             if (nota < 0 || nota > 10)
                 throw new ArgumentOutOfRangeException(nameof(nota), "Nota inválida, deve estar entre 0 e 10");
 
-            return await _feedbackNPSRepository.ObterPorNotaAsync(nota);
+            var (s, t) = Pagination.Normalizar(skip, take);
+            return await _feedbackNPSRepository.ObterPorNotaAsync(nota, s, t);
         }
 
-        public async Task<IEnumerable<FeedbackNPSEntity>> ObterPorResponsavelAsync(int idResponsavel)
+        public async Task<IEnumerable<FeedbackNPSEntity>> ObterPorResponsavelAsync(int idResponsavel, int skip = 0, int take = 50)
         {
-            return await _feedbackNPSRepository.ObterPorResponsavelAsync(idResponsavel);
+            var (s, t) = Pagination.Normalizar(skip, take);
+            return await _feedbackNPSRepository.ObterPorResponsavelAsync(idResponsavel, s, t);
         }
 
-        public async Task<IEnumerable<FeedbackNPSEntity>> ObterPorAnimalAsync(int idAnimal)
+        public async Task<IEnumerable<FeedbackNPSEntity>> ObterPorAnimalAsync(int idAnimal, int skip = 0, int take = 50)
         {
-            return await _feedbackNPSRepository.ObterPorAnimalAsync(idAnimal);
+            var (s, t) = Pagination.Normalizar(skip, take);
+            return await _feedbackNPSRepository.ObterPorAnimalAsync(idAnimal, s, t);
         }
 
-        public async Task<IEnumerable<FeedbackNPSEntity>> ObterPorClinicaAsync(int idClinica)
+        public async Task<IEnumerable<FeedbackNPSEntity>> ObterPorClinicaAsync(int idClinica, int skip = 0, int take = 50)
         {
-            return await _feedbackNPSRepository.ObterPorClinicaAsync(idClinica);
+            var (s, t) = Pagination.Normalizar(skip, take);
+            return await _feedbackNPSRepository.ObterPorClinicaAsync(idClinica, s, t);
         }
 
-        public async Task<IEnumerable<FeedbackNPSEntity>> ObterPorVeterinarioAsync(int idVeterinario)
+        public async Task<IEnumerable<FeedbackNPSEntity>> ObterPorVeterinarioAsync(int idVeterinario, int skip = 0, int take = 50)
         {
-            return await _feedbackNPSRepository.ObterPorVeterinarioAsync(idVeterinario);
+            var (s, t) = Pagination.Normalizar(skip, take);
+            return await _feedbackNPSRepository.ObterPorVeterinarioAsync(idVeterinario, s, t);
         }
 
-        public async Task<IEnumerable<FeedbackNPSEntity>> ObterPorDataAsync(DateTime data)
+        public async Task<IEnumerable<FeedbackNPSEntity>> ObterPorDataAsync(DateTime data, int skip = 0, int take = 50)
         {
-            return await _feedbackNPSRepository.ObterPorDataAsync(data);
+            var (s, t) = Pagination.Normalizar(skip, take);
+            return await _feedbackNPSRepository.ObterPorDataAsync(data, s, t);
         }
 
         public async Task<FeedbackNPSEntity?> AdicionarAsync(FeedbackNPSRequestDto dto)

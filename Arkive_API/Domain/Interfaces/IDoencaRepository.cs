@@ -4,9 +4,9 @@ namespace Arkive_API.Domain.Interfaces
 {
     public interface IDoencaRepository
     {
-        Task<IEnumerable<DoencaEntity>> ObterTodosAsync();
-        Task<IEnumerable<DoencaEntity>> ObterAtivosAsync();
-        Task<IEnumerable<DoencaEntity>> ObterInativosAsync();
+        Task<IEnumerable<DoencaEntity>> ObterTodosAsync(int skip = 0, int take = 50);
+        Task<IEnumerable<DoencaEntity>> ObterAtivosAsync(int skip = 0, int take = 50);
+        Task<IEnumerable<DoencaEntity>> ObterInativosAsync(int skip = 0, int take = 50);
         Task<DoencaEntity?> ObterPorIdAsync(int id);
         Task<IEnumerable<DoencaEntity>> ObterPorNomeAsync(string nome);
         Task<IEnumerable<DoencaEntity>> ObterPorCategoriaAsync(int idCategoria);

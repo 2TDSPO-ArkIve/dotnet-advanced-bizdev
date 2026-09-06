@@ -42,7 +42,7 @@ namespace Arkive_Tests.App
                 new PredisposicaoEntity { Id = 2, IdEspecie = 2, IdDoenca = 2 }
             };
 
-            _predisposicaoRepository.Setup(obj => obj.ObterTodosAsync()).ReturnsAsync(predisposicoes);
+            _predisposicaoRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(predisposicoes);
 
             // Act
             var resultado = await _predisposicaoUseCase.ObterTodasAsync();
@@ -94,7 +94,7 @@ namespace Arkive_Tests.App
             int idEspecie = 1;
             var predisposicoes = new List<PredisposicaoEntity> { new PredisposicaoEntity { Id = 1, IdEspecie = idEspecie, IdDoenca = 1 } };
 
-            _predisposicaoRepository.Setup(obj => obj.ObterPorEspecieAsync(idEspecie)).ReturnsAsync(predisposicoes);
+            _predisposicaoRepository.Setup(obj => obj.ObterPorEspecieAsync(idEspecie, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(predisposicoes);
 
             // Act
             var resultado = await _predisposicaoUseCase.ObterPorEspecieAsync(idEspecie);
@@ -117,7 +117,7 @@ namespace Arkive_Tests.App
             int idRaca = 1;
             var predisposicoes = new List<PredisposicaoEntity> { new PredisposicaoEntity { Id = 1, IdEspecie = 1, IdRaca = idRaca, IdDoenca = 1 } };
 
-            _predisposicaoRepository.Setup(obj => obj.ObterPorRacaAsync(idRaca)).ReturnsAsync(predisposicoes);
+            _predisposicaoRepository.Setup(obj => obj.ObterPorRacaAsync(idRaca, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(predisposicoes);
 
             // Act
             var resultado = await _predisposicaoUseCase.ObterPorRacaAsync(idRaca);
@@ -141,7 +141,7 @@ namespace Arkive_Tests.App
             int idDoenca = 1;
             var predisposicoes = new List<PredisposicaoEntity> { new PredisposicaoEntity { Id = 1, IdEspecie = 1, IdDoenca = idDoenca } };
 
-            _predisposicaoRepository.Setup(obj => obj.ObterPorDoencaAsync(idDoenca)).ReturnsAsync(predisposicoes);
+            _predisposicaoRepository.Setup(obj => obj.ObterPorDoencaAsync(idDoenca, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(predisposicoes);
 
             // Act
             var resultado = await _predisposicaoUseCase.ObterPorDoencaAsync(idDoenca);

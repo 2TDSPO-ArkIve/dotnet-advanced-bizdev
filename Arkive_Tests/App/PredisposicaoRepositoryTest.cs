@@ -68,9 +68,20 @@ namespace Arkive_Tests.App
             // Act
             var resultado = await _predisposicaoRepository.ObterTodosAsync();
 
-            // Assert
+            // Assert — repositório ordena por Id ascendente (Skip/Take determinístico)
             Assert.NotNull(resultado);
             Assert.Collection(resultado,
+                item =>
+                {
+                    Assert.Equal(1, item.IdEspecie);
+                    Assert.Null(item.IdRaca);
+                    Assert.Equal(1, item.IdDoenca);
+                    Assert.Null(item.Raca);
+                    Assert.NotNull(item.Especie);
+                    Assert.Equal("Canina", item.Especie!.Especie);
+                    Assert.NotNull(item.Doenca);
+                    Assert.Equal("Displasia Coxofemoral", item.Doenca!.Nome);
+                },
                 item =>
                 {
                     Assert.Equal(1, item.IdEspecie);
@@ -82,17 +93,6 @@ namespace Arkive_Tests.App
                     Assert.Equal("Labrador", item.Raca!.Raca);
                     Assert.NotNull(item.Doenca);
                     Assert.Equal("Otite", item.Doenca!.Nome);
-                },
-                item =>
-                {
-                    Assert.Equal(1, item.IdEspecie);
-                    Assert.Null(item.IdRaca);
-                    Assert.Equal(1, item.IdDoenca);
-                    Assert.Null(item.Raca);
-                    Assert.NotNull(item.Especie);
-                    Assert.Equal("Canina", item.Especie!.Especie);
-                    Assert.NotNull(item.Doenca);
-                    Assert.Equal("Displasia Coxofemoral", item.Doenca!.Nome);
                 });
         }
 

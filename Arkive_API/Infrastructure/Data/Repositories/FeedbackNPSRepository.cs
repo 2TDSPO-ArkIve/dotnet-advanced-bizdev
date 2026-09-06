@@ -13,11 +13,15 @@ namespace Arkive_API.Infrastructure.Data.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<FeedbackNPSEntity>> ObterTodosAsync()
+        public async Task<IEnumerable<FeedbackNPSEntity>> ObterTodosAsync(int skip = 0, int take = 50)
         {
             try
             {
-                return await _context.FeedbackNPS.ToListAsync();
+                return await _context.FeedbackNPS
+                    .OrderBy(x => x.Id)
+                    .Skip(skip)
+                    .Take(take)
+                    .ToListAsync();
             }
             catch (Exception ex)
             {
@@ -38,12 +42,15 @@ namespace Arkive_API.Infrastructure.Data.Repositories
             }
         }
 
-        public async Task<IEnumerable<FeedbackNPSEntity>> ObterPorNotaAsync(int nota)
+        public async Task<IEnumerable<FeedbackNPSEntity>> ObterPorNotaAsync(int nota, int skip = 0, int take = 50)
         {
             try
             {
                 return await _context.FeedbackNPS
                     .Where(x => x.Nota == nota)
+                    .OrderBy(x => x.Id)
+                    .Skip(skip)
+                    .Take(take)
                     .ToListAsync();
             }
             catch (Exception ex)
@@ -52,12 +59,15 @@ namespace Arkive_API.Infrastructure.Data.Repositories
             }
         }
 
-        public async Task<IEnumerable<FeedbackNPSEntity>> ObterPorResponsavelAsync(int idResponsavel)
+        public async Task<IEnumerable<FeedbackNPSEntity>> ObterPorResponsavelAsync(int idResponsavel, int skip = 0, int take = 50)
         {
             try
             {
                 return await _context.FeedbackNPS
                     .Where(x => x.IdResponsavel == idResponsavel)
+                    .OrderBy(x => x.Id)
+                    .Skip(skip)
+                    .Take(take)
                     .ToListAsync();
             }
             catch (Exception ex)
@@ -66,12 +76,15 @@ namespace Arkive_API.Infrastructure.Data.Repositories
             }
         }
 
-        public async Task<IEnumerable<FeedbackNPSEntity>> ObterPorAnimalAsync(int idAnimal)
+        public async Task<IEnumerable<FeedbackNPSEntity>> ObterPorAnimalAsync(int idAnimal, int skip = 0, int take = 50)
         {
             try
             {
                 return await _context.FeedbackNPS
                     .Where(x => x.IdAnimal == idAnimal)
+                    .OrderBy(x => x.Id)
+                    .Skip(skip)
+                    .Take(take)
                     .ToListAsync();
             }
             catch (Exception ex)
@@ -80,12 +93,15 @@ namespace Arkive_API.Infrastructure.Data.Repositories
             }
         }
 
-        public async Task<IEnumerable<FeedbackNPSEntity>> ObterPorClinicaAsync(int idClinica)
+        public async Task<IEnumerable<FeedbackNPSEntity>> ObterPorClinicaAsync(int idClinica, int skip = 0, int take = 50)
         {
             try
             {
                 return await _context.FeedbackNPS
                     .Where(x => x.IdClinica == idClinica)
+                    .OrderBy(x => x.Id)
+                    .Skip(skip)
+                    .Take(take)
                     .ToListAsync();
             }
             catch (Exception ex)
@@ -94,12 +110,15 @@ namespace Arkive_API.Infrastructure.Data.Repositories
             }
         }
 
-        public async Task<IEnumerable<FeedbackNPSEntity>> ObterPorVeterinarioAsync(int idVeterinario)
+        public async Task<IEnumerable<FeedbackNPSEntity>> ObterPorVeterinarioAsync(int idVeterinario, int skip = 0, int take = 50)
         {
             try
             {
                 return await _context.FeedbackNPS
                     .Where(x => x.IdVeterinario == idVeterinario)
+                    .OrderBy(x => x.Id)
+                    .Skip(skip)
+                    .Take(take)
                     .ToListAsync();
             }
             catch (Exception ex)
@@ -108,12 +127,15 @@ namespace Arkive_API.Infrastructure.Data.Repositories
             }
         }
 
-        public async Task<IEnumerable<FeedbackNPSEntity>> ObterPorDataAsync(DateTime data)
+        public async Task<IEnumerable<FeedbackNPSEntity>> ObterPorDataAsync(DateTime data, int skip = 0, int take = 50)
         {
             try
             {
                 return await _context.FeedbackNPS
                     .Where(x => x.DataFeedback.Date == data.Date)
+                    .OrderBy(x => x.Id)
+                    .Skip(skip)
+                    .Take(take)
                     .ToListAsync();
             }
             catch (Exception ex)

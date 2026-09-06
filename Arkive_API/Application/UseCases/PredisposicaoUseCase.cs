@@ -26,9 +26,10 @@ namespace Arkive_API.Application.UseCases
             _doencaRepository = doencaRepository;
         }
 
-        public async Task<IEnumerable<PredisposicaoEntity>> ObterTodasAsync()
+        public async Task<IEnumerable<PredisposicaoEntity>> ObterTodasAsync(int skip = 0, int take = 50)
         {
-            return await _predisposicaoRepository.ObterTodosAsync();
+            var (s, t) = Pagination.Normalizar(skip, take);
+            return await _predisposicaoRepository.ObterTodosAsync(s, t);
         }
 
         public async Task<PredisposicaoEntity?> ObterPorIdAsync(int id)
@@ -36,19 +37,22 @@ namespace Arkive_API.Application.UseCases
             return await _predisposicaoRepository.ObterPorIdAsync(id);
         }
 
-        public async Task<IEnumerable<PredisposicaoEntity>> ObterPorEspecieAsync(int idEspecie)
+        public async Task<IEnumerable<PredisposicaoEntity>> ObterPorEspecieAsync(int idEspecie, int skip = 0, int take = 50)
         {
-            return await _predisposicaoRepository.ObterPorEspecieAsync(idEspecie);
+            var (s, t) = Pagination.Normalizar(skip, take);
+            return await _predisposicaoRepository.ObterPorEspecieAsync(idEspecie, s, t);
         }
 
-        public async Task<IEnumerable<PredisposicaoEntity>> ObterPorRacaAsync(int idRaca)
+        public async Task<IEnumerable<PredisposicaoEntity>> ObterPorRacaAsync(int idRaca, int skip = 0, int take = 50)
         {
-            return await _predisposicaoRepository.ObterPorRacaAsync(idRaca);
+            var (s, t) = Pagination.Normalizar(skip, take);
+            return await _predisposicaoRepository.ObterPorRacaAsync(idRaca, s, t);
         }
 
-        public async Task<IEnumerable<PredisposicaoEntity>> ObterPorDoencaAsync(int idDoenca)
+        public async Task<IEnumerable<PredisposicaoEntity>> ObterPorDoencaAsync(int idDoenca, int skip = 0, int take = 50)
         {
-            return await _predisposicaoRepository.ObterPorDoencaAsync(idDoenca);
+            var (s, t) = Pagination.Normalizar(skip, take);
+            return await _predisposicaoRepository.ObterPorDoencaAsync(idDoenca, s, t);
         }
 
         public async Task<PredisposicaoEntity?> AdicionarAsync(PredisposicaoRequestDto dto)

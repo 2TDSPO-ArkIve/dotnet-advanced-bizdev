@@ -34,7 +34,7 @@ namespace Arkive_Tests.App
                 new DoencaEntity { Id = 2, Nome = "Raiva", StAtivo = "N" }
             };
 
-            _doencaRepository.Setup(obj => obj.ObterTodosAsync()).ReturnsAsync(doencas);
+            _doencaRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(doencas);
 
             // Act
             var resultado = await _doencaUseCase.ObterTodasAsync();
@@ -53,7 +53,7 @@ namespace Arkive_Tests.App
             // Arrange
             var doencas = new List<DoencaEntity> { new DoencaEntity { Id = 1, Nome = "Cinomose", StAtivo = "S" } };
 
-            _doencaRepository.Setup(obj => obj.ObterAtivosAsync()).ReturnsAsync(doencas);
+            _doencaRepository.Setup(obj => obj.ObterAtivosAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(doencas);
 
             // Act
             var resultado = await _doencaUseCase.ObterAtivasAsync();
@@ -71,7 +71,7 @@ namespace Arkive_Tests.App
             // Arrange
             var doencas = new List<DoencaEntity> { new DoencaEntity { Id = 2, Nome = "Raiva", StAtivo = "N" } };
 
-            _doencaRepository.Setup(obj => obj.ObterInativosAsync()).ReturnsAsync(doencas);
+            _doencaRepository.Setup(obj => obj.ObterInativosAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(doencas);
 
             // Act
             var resultado = await _doencaUseCase.ObterInativasAsync();

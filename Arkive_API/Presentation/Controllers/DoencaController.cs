@@ -40,11 +40,11 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 204, description: "Nenhuma doença encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
         [SwaggerResponseExample(statusCode: 200, typeof(DoencaResponseListSample))]
-        public async Task<IActionResult> GetAllDoencas()
+        public async Task<IActionResult> GetAllDoencas(int skip = 0, int take = 50)
         {
             try
             {
-                var resultado = await _doencaUseCase.ObterTodasAsync();
+                var resultado = await _doencaUseCase.ObterTodasAsync(skip, take);
 
                 if (!resultado.Any())
                     return NoContent();
@@ -74,11 +74,11 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<DoencaEntity>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma doença ativa encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
-        public async Task<IActionResult> GetDoencasAtivas()
+        public async Task<IActionResult> GetDoencasAtivas(int skip = 0, int take = 50)
         {
             try
             {
-                var resultado = await _doencaUseCase.ObterAtivasAsync();
+                var resultado = await _doencaUseCase.ObterAtivasAsync(skip, take);
 
                 if (!resultado.Any())
                     return NoContent();
@@ -108,11 +108,11 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<DoencaEntity>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma doença inativa encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
-        public async Task<IActionResult> GetDoencasInativas()
+        public async Task<IActionResult> GetDoencasInativas(int skip = 0, int take = 50)
         {
             try
             {
-                var resultado = await _doencaUseCase.ObterInativasAsync();
+                var resultado = await _doencaUseCase.ObterInativasAsync(skip, take);
 
                 if (!resultado.Any())
                     return NoContent();

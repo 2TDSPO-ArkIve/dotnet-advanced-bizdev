@@ -22,11 +22,15 @@ namespace Arkive_API.Infrastructure.Data.Repositories
                     .ThenInclude(d => d.Categoria);
         }
 
-        public async Task<IEnumerable<PredisposicaoEntity>> ObterTodosAsync()
+        public async Task<IEnumerable<PredisposicaoEntity>> ObterTodosAsync(int skip = 0, int take = 50)
         {
             try
             {
-                return await ComRelacionamentos().ToListAsync();
+                return await ComRelacionamentos()
+                    .OrderBy(x => x.Id)
+                    .Skip(skip)
+                    .Take(take)
+                    .ToListAsync();
             }
             catch (Exception ex)
             {
@@ -46,12 +50,15 @@ namespace Arkive_API.Infrastructure.Data.Repositories
             }
         }
 
-        public async Task<IEnumerable<PredisposicaoEntity>> ObterPorEspecieAsync(int idEspecie)
+        public async Task<IEnumerable<PredisposicaoEntity>> ObterPorEspecieAsync(int idEspecie, int skip = 0, int take = 50)
         {
             try
             {
                 return await ComRelacionamentos()
                     .Where(x => x.IdEspecie == idEspecie)
+                    .OrderBy(x => x.Id)
+                    .Skip(skip)
+                    .Take(take)
                     .ToListAsync();
             }
             catch (Exception ex)
@@ -60,12 +67,15 @@ namespace Arkive_API.Infrastructure.Data.Repositories
             }
         }
 
-        public async Task<IEnumerable<PredisposicaoEntity>> ObterPorRacaAsync(int idRaca)
+        public async Task<IEnumerable<PredisposicaoEntity>> ObterPorRacaAsync(int idRaca, int skip = 0, int take = 50)
         {
             try
             {
                 return await ComRelacionamentos()
                     .Where(x => x.IdRaca == idRaca)
+                    .OrderBy(x => x.Id)
+                    .Skip(skip)
+                    .Take(take)
                     .ToListAsync();
             }
             catch (Exception ex)
@@ -74,12 +84,15 @@ namespace Arkive_API.Infrastructure.Data.Repositories
             }
         }
 
-        public async Task<IEnumerable<PredisposicaoEntity>> ObterPorDoencaAsync(int idDoenca)
+        public async Task<IEnumerable<PredisposicaoEntity>> ObterPorDoencaAsync(int idDoenca, int skip = 0, int take = 50)
         {
             try
             {
                 return await ComRelacionamentos()
                     .Where(x => x.IdDoenca == idDoenca)
+                    .OrderBy(x => x.Id)
+                    .Skip(skip)
+                    .Take(take)
                     .ToListAsync();
             }
             catch (Exception ex)

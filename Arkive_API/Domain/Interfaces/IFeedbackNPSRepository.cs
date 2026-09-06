@@ -4,14 +4,14 @@ namespace Arkive_API.Domain.Interfaces
 {
     public interface IFeedbackNPSRepository
     {
-        Task<IEnumerable<FeedbackNPSEntity>> ObterTodosAsync();
+        Task<IEnumerable<FeedbackNPSEntity>> ObterTodosAsync(int skip = 0, int take = 50);
         Task<FeedbackNPSEntity?> ObterPorIdAsync(int id);
-        Task<IEnumerable<FeedbackNPSEntity>> ObterPorNotaAsync(int nota);
-        Task<IEnumerable<FeedbackNPSEntity>> ObterPorResponsavelAsync(int idResponsavel);
-        Task<IEnumerable<FeedbackNPSEntity>> ObterPorAnimalAsync(int idAnimal);
-        Task<IEnumerable<FeedbackNPSEntity>> ObterPorClinicaAsync(int idClinica);
-        Task<IEnumerable<FeedbackNPSEntity>> ObterPorVeterinarioAsync(int idVeterinario);
-        Task<IEnumerable<FeedbackNPSEntity>> ObterPorDataAsync(DateTime data);
+        Task<IEnumerable<FeedbackNPSEntity>> ObterPorNotaAsync(int nota, int skip = 0, int take = 50);
+        Task<IEnumerable<FeedbackNPSEntity>> ObterPorResponsavelAsync(int idResponsavel, int skip = 0, int take = 50);
+        Task<IEnumerable<FeedbackNPSEntity>> ObterPorAnimalAsync(int idAnimal, int skip = 0, int take = 50);
+        Task<IEnumerable<FeedbackNPSEntity>> ObterPorClinicaAsync(int idClinica, int skip = 0, int take = 50);
+        Task<IEnumerable<FeedbackNPSEntity>> ObterPorVeterinarioAsync(int idVeterinario, int skip = 0, int take = 50);
+        Task<IEnumerable<FeedbackNPSEntity>> ObterPorDataAsync(DateTime data, int skip = 0, int take = 50);
         Task<FeedbackNPSEntity?> AdicionarAsync(FeedbackNPSEntity entity);
         Task<FeedbackNPSEntity?> DeletarAsync(int id);
 

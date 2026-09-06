@@ -39,7 +39,7 @@ namespace Arkive_Tests.App
                 new FeedbackNPSEntity { Id = 2, Nota = 5 }
             };
 
-            _feedbackNPSRepository.Setup(obj => obj.ObterTodosAsync()).ReturnsAsync(feedbacks);
+            _feedbackNPSRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(feedbacks);
 
             // Act
             var resultado = await _feedbackNPSUseCase.ObterTodosAsync();
@@ -79,7 +79,7 @@ namespace Arkive_Tests.App
             // Arrange
             var feedbacks = new List<FeedbackNPSEntity> { new FeedbackNPSEntity { Id = 1, Nota = nota } };
 
-            _feedbackNPSRepository.Setup(obj => obj.ObterPorNotaAsync(nota)).ReturnsAsync(feedbacks);
+            _feedbackNPSRepository.Setup(obj => obj.ObterPorNotaAsync(nota, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(feedbacks);
 
             // Act
             var resultado = await _feedbackNPSUseCase.ObterPorNotaAsync(nota);
@@ -99,7 +99,7 @@ namespace Arkive_Tests.App
             // Act & Assert
             await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => _feedbackNPSUseCase.ObterPorNotaAsync(nota));
 
-            _feedbackNPSRepository.Verify(obj => obj.ObterPorNotaAsync(It.IsAny<int>()), Times.Never);
+            _feedbackNPSRepository.Verify(obj => obj.ObterPorNotaAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()), Times.Never);
         }
 
         [Fact]
@@ -109,7 +109,7 @@ namespace Arkive_Tests.App
             // Arrange
             var feedbacks = new List<FeedbackNPSEntity> { new FeedbackNPSEntity { Id = 1, IdResponsavel = 1, Nota = 10 } };
 
-            _feedbackNPSRepository.Setup(obj => obj.ObterPorResponsavelAsync(1)).ReturnsAsync(feedbacks);
+            _feedbackNPSRepository.Setup(obj => obj.ObterPorResponsavelAsync(1, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(feedbacks);
 
             // Act
             var resultado = await _feedbackNPSUseCase.ObterPorResponsavelAsync(1);
@@ -127,7 +127,7 @@ namespace Arkive_Tests.App
             // Arrange
             var feedbacks = new List<FeedbackNPSEntity> { new FeedbackNPSEntity { Id = 1, IdAnimal = 1, Nota = 10 } };
 
-            _feedbackNPSRepository.Setup(obj => obj.ObterPorAnimalAsync(1)).ReturnsAsync(feedbacks);
+            _feedbackNPSRepository.Setup(obj => obj.ObterPorAnimalAsync(1, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(feedbacks);
 
             // Act
             var resultado = await _feedbackNPSUseCase.ObterPorAnimalAsync(1);
@@ -145,7 +145,7 @@ namespace Arkive_Tests.App
             // Arrange
             var feedbacks = new List<FeedbackNPSEntity> { new FeedbackNPSEntity { Id = 1, IdClinica = 1, Nota = 10 } };
 
-            _feedbackNPSRepository.Setup(obj => obj.ObterPorClinicaAsync(1)).ReturnsAsync(feedbacks);
+            _feedbackNPSRepository.Setup(obj => obj.ObterPorClinicaAsync(1, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(feedbacks);
 
             // Act
             var resultado = await _feedbackNPSUseCase.ObterPorClinicaAsync(1);
@@ -163,7 +163,7 @@ namespace Arkive_Tests.App
             // Arrange
             var feedbacks = new List<FeedbackNPSEntity> { new FeedbackNPSEntity { Id = 1, IdVeterinario = 1, Nota = 10 } };
 
-            _feedbackNPSRepository.Setup(obj => obj.ObterPorVeterinarioAsync(1)).ReturnsAsync(feedbacks);
+            _feedbackNPSRepository.Setup(obj => obj.ObterPorVeterinarioAsync(1, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(feedbacks);
 
             // Act
             var resultado = await _feedbackNPSUseCase.ObterPorVeterinarioAsync(1);
@@ -182,7 +182,7 @@ namespace Arkive_Tests.App
             var data = DateTime.Today;
             var feedbacks = new List<FeedbackNPSEntity> { new FeedbackNPSEntity { Id = 1, Nota = 10, DataFeedback = data } };
 
-            _feedbackNPSRepository.Setup(obj => obj.ObterPorDataAsync(data)).ReturnsAsync(feedbacks);
+            _feedbackNPSRepository.Setup(obj => obj.ObterPorDataAsync(data, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(feedbacks);
 
             // Act
             var resultado = await _feedbackNPSUseCase.ObterPorDataAsync(data);

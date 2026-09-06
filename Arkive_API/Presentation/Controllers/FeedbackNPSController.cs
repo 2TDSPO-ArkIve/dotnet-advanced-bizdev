@@ -39,11 +39,11 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 204, description: "Nenhum feedback encontrado")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
         [SwaggerResponseExample(statusCode: 200, typeof(FeedbackNPSResponseListSample))]
-        public async Task<IActionResult> GetAllFeedbacks()
+        public async Task<IActionResult> GetAllFeedbacks(int skip = 0, int take = 50)
         {
             try
             {
-                var resultado = await _feedbackNPSUseCase.ObterTodosAsync();
+                var resultado = await _feedbackNPSUseCase.ObterTodosAsync(skip, take);
 
                 if (!resultado.Any())
                     return NoContent();
@@ -103,11 +103,11 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<FeedbackNPSEntity>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhum feedback encontrado para esta nota")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
-        public async Task<IActionResult> GetFeedbackByNota(int nota)
+        public async Task<IActionResult> GetFeedbackByNota(int nota, int skip = 0, int take = 50)
         {
             try
             {
-                var resultado = await _feedbackNPSUseCase.ObterPorNotaAsync(nota);
+                var resultado = await _feedbackNPSUseCase.ObterPorNotaAsync(nota, skip, take);
 
                 if (!resultado.Any())
                     return NoContent();
@@ -136,11 +136,11 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<FeedbackNPSEntity>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhum feedback encontrado para este responsável")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
-        public async Task<IActionResult> GetFeedbackByResponsavel(int idResponsavel)
+        public async Task<IActionResult> GetFeedbackByResponsavel(int idResponsavel, int skip = 0, int take = 50)
         {
             try
             {
-                var resultado = await _feedbackNPSUseCase.ObterPorResponsavelAsync(idResponsavel);
+                var resultado = await _feedbackNPSUseCase.ObterPorResponsavelAsync(idResponsavel, skip, take);
 
                 if (!resultado.Any())
                     return NoContent();
@@ -169,11 +169,11 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<FeedbackNPSEntity>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhum feedback encontrado para este animal")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
-        public async Task<IActionResult> GetFeedbackByAnimal(int idAnimal)
+        public async Task<IActionResult> GetFeedbackByAnimal(int idAnimal, int skip = 0, int take = 50)
         {
             try
             {
-                var resultado = await _feedbackNPSUseCase.ObterPorAnimalAsync(idAnimal);
+                var resultado = await _feedbackNPSUseCase.ObterPorAnimalAsync(idAnimal, skip, take);
 
                 if (!resultado.Any())
                     return NoContent();
@@ -202,11 +202,11 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<FeedbackNPSEntity>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhum feedback encontrado para esta clínica")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
-        public async Task<IActionResult> GetFeedbackByClinica(int idClinica)
+        public async Task<IActionResult> GetFeedbackByClinica(int idClinica, int skip = 0, int take = 50)
         {
             try
             {
-                var resultado = await _feedbackNPSUseCase.ObterPorClinicaAsync(idClinica);
+                var resultado = await _feedbackNPSUseCase.ObterPorClinicaAsync(idClinica, skip, take);
 
                 if (!resultado.Any())
                     return NoContent();
@@ -235,11 +235,11 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<FeedbackNPSEntity>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhum feedback encontrado para este veterinário")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
-        public async Task<IActionResult> GetFeedbackByVeterinario(int idVeterinario)
+        public async Task<IActionResult> GetFeedbackByVeterinario(int idVeterinario, int skip = 0, int take = 50)
         {
             try
             {
-                var resultado = await _feedbackNPSUseCase.ObterPorVeterinarioAsync(idVeterinario);
+                var resultado = await _feedbackNPSUseCase.ObterPorVeterinarioAsync(idVeterinario, skip, take);
 
                 if (!resultado.Any())
                     return NoContent();
@@ -269,7 +269,7 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<FeedbackNPSEntity>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhum feedback encontrado para esta data")]
         [SwaggerResponse(statusCode: 400, description: "Formato de data inválido ou erro ao retornar os dados", type: typeof(string))]
-        public async Task<IActionResult> GetFeedbackByData(string data)
+        public async Task<IActionResult> GetFeedbackByData(string data, int skip = 0, int take = 50)
         {
             try
             {
@@ -278,7 +278,7 @@ namespace Arkive_API.Presentation.Controllers
                 if (!DateTime.TryParse(data, out DateTime dataParsed))
                     return BadRequest("Formato de data inválido. Use o formato yyyy-MM-dd.");
 
-                var resultado = await _feedbackNPSUseCase.ObterPorDataAsync(dataParsed);
+                var resultado = await _feedbackNPSUseCase.ObterPorDataAsync(dataParsed, skip, take);
 
                 if (!resultado.Any())
                     return NoContent();

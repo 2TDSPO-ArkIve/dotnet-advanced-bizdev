@@ -13,12 +13,15 @@ namespace Arkive_API.Infrastructure.Data.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<DoencaEntity>> ObterTodosAsync()
+        public async Task<IEnumerable<DoencaEntity>> ObterTodosAsync(int skip = 0, int take = 50)
         {
             try
             {
                 return await _context.Doenca
                     .Include(x => x.Categoria)
+                    .OrderBy(x => x.Id)
+                    .Skip(skip)
+                    .Take(take)
                     .ToListAsync();
             }
             catch (Exception ex)
@@ -27,13 +30,16 @@ namespace Arkive_API.Infrastructure.Data.Repositories
             }
         }
 
-        public async Task<IEnumerable<DoencaEntity>> ObterAtivosAsync()
+        public async Task<IEnumerable<DoencaEntity>> ObterAtivosAsync(int skip = 0, int take = 50)
         {
             try
             {
                 return await _context.Doenca
                     .Include(x => x.Categoria)
                     .Where(x => x.StAtivo == "S")
+                    .OrderBy(x => x.Id)
+                    .Skip(skip)
+                    .Take(take)
                     .ToListAsync();
             }
             catch (Exception ex)
@@ -42,13 +48,16 @@ namespace Arkive_API.Infrastructure.Data.Repositories
             }
         }
 
-        public async Task<IEnumerable<DoencaEntity>> ObterInativosAsync()
+        public async Task<IEnumerable<DoencaEntity>> ObterInativosAsync(int skip = 0, int take = 50)
         {
             try
             {
                 return await _context.Doenca
                     .Include(x => x.Categoria)
                     .Where(x => x.StAtivo == "N")
+                    .OrderBy(x => x.Id)
+                    .Skip(skip)
+                    .Take(take)
                     .ToListAsync();
             }
             catch (Exception ex)
