@@ -244,6 +244,7 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 201, description: "Doença criada com sucesso", type: typeof(DoencaEntity))]
         [SwaggerResponse(statusCode: 404, description: "Categoria informada não encontrada ou inativa")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao criar a doença", type: typeof(string))]
+        [SwaggerResponseExample(statusCode: 201, typeof(DoencaResponseSample))]
         public async Task<IActionResult> CreateDoenca(DoencaRequestDto model)
         {
             try

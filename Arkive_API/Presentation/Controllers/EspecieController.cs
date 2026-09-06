@@ -169,6 +169,7 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerRequestExample(typeof(EspecieRequestDto), typeof(EspecieRequestSample))]
         [SwaggerResponse(statusCode: 201, description: "Espécie criada com sucesso", type: typeof(EspecieEntity))]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao criar a espécie", type: typeof(string))]
+        [SwaggerResponseExample(statusCode: 201, typeof(EspecieResponseSample))]
         public async Task<IActionResult> CreateEspecie(EspecieRequestDto model)
         {
             try

@@ -210,6 +210,7 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 201, description: "Raça criada com sucesso", type: typeof(RacaEntity))]
         [SwaggerResponse(statusCode: 404, description: "Espécie informada não encontrada ou inativa")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao criar a raça", type: typeof(string))]
+        [SwaggerResponseExample(statusCode: 201, typeof(RacaResponseSample))]
         public async Task<IActionResult> CreateRaca(RacaRequestDto model)
         {
             try

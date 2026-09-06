@@ -18,7 +18,7 @@ namespace Arkive_API.Doc.Samples
                 IdRaca = 1,
                 Raca = new RacaEntity { Id = 1, Raca = "Labrador Retriever", IdEspecie = 1, Especie = especie, Porte = "GRANDE", StAtivo = "S" },
                 IdDoenca = 1,
-                Doenca = new DoencaEntity { Id = 1, Nome = "Displasia Coxofemoral", IdCategoria = 1, Categoria = categoria, CID = "M16", StAtivo = "S" }
+                Doenca = new DoencaEntity { Id = 1, Nome = "Displasia Coxofemoral", IdCategoria = 1, Categoria = categoria, Descricao = "Malformação da articulação do quadril, comum em raças de grande porte.", CID = "M16", Sintomas = "Dificuldade para subir escadas, claudicação, dor ao levantar.", StAtivo = "S" }
             };
         }
     }

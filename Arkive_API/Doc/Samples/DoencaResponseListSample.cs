@@ -17,7 +17,9 @@ namespace Arkive_API.Doc.Samples
                     Nome = "Displasia Coxofemoral",
                     IdCategoria = 1,
                     Categoria = categoria,
+                    Descricao = "Malformação da articulação do quadril, comum em raças de grande porte.",
                     CID = "M16",
+                    Sintomas = "Dificuldade para subir escadas, claudicação, dor ao levantar.",
                     StAtivo = "S"
                 },
                 new DoencaEntity
@@ -26,7 +28,9 @@ namespace Arkive_API.Doc.Samples
                     Nome = "Luxação de Patela",
                     IdCategoria = 1,
                     Categoria = categoria,
+                    Descricao = "Deslocamento da patela para fora da tróclea femoral, frequente em raças de pequeno porte.",
                     CID = "M22",
+                    Sintomas = "Claudicação intermitente, pata suspensa durante a corrida, dificuldade de estender o joelho.",
                     StAtivo = "S"
                 },
             };

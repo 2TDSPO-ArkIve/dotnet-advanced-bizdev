@@ -169,6 +169,7 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerRequestExample(typeof(CategoriaDoencaRequestDto), typeof(CategoriaDoencaRequestSample))]
         [SwaggerResponse(statusCode: 201, description: "Categoria criada com sucesso", type: typeof(CategoriaDoencaEntity))]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao criar a categoria", type: typeof(string))]
+        [SwaggerResponseExample(statusCode: 201, typeof(CategoriaDoencaResponseSample))]
         public async Task<IActionResult> CreateCategoria(CategoriaDoencaRequestDto model)
         {
             try
