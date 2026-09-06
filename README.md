@@ -4,6 +4,8 @@ API RESTful desenvolvida em **ASP.NET Core** para o gerenciamento do catálogo c
 
 A API é responsável pelo cadastro e manutenção de **espécies, raças, categorias de doenças, doenças, predisposições genéticas e feedbacks NPS**, servindo como base de dados compartilhada entre as APIs do ecossistema ArkIve.
 
+O projeto é organizado em **Clean Architecture** (Domain / Application / Infrastructure / Presentation), com exclusão lógica (soft delete) nas entidades principais, **paginação** nas listagens de maior volume, **rate limiting** por tipo de operação, **compressão de resposta** (Brotli / Gzip) e uma suíte de **testes de unidade** (xUnit) cobrindo repositories e use cases.
+
 ---
 
 ## Integrantes
@@ -19,21 +21,47 @@ A API é responsável pelo cadastro e manutenção de **espécies, raças, categ
 
 ## Repositório
  
-[![GitHub](https://img.shields.io/badge/GitHub-Acessar%20Repositório-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/2TDSPO-1-2/dotnet-advanced-bizdev)
+[![GitHub](https://img.shields.io/badge/GitHub-Acessar%20Repositório-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/2TDSPO-ArkIve/dotnet-advanced-bizdev)
 
 ---
 
 ## Estrutura do Projeto
 
 ```
-Arkive_API/
-├── Controllers/         # Endpoints REST
-├── Data/                # ApplicationContext (EF Core)
-├── Migrations/          # Migrations do banco Oracle
-├── Models/              # Entities mapeadas
-│   └── External/        # Entities somente leitura (API Java)
-└── prints/              # Evidências dos testes por endpoint
+dotnet-advanced-bizdev/
+├── Arkive.slnx                        # solução (2 projetos)
+├── Arkive_API/                        # API ASP.NET Core
+│   ├── Program.cs                     
+│   ├── Domain/
+│   │   ├── Entities/                  # entidades de domínio
+│   │   │   └── External/              # entidades somente leitura (API Java)
+│   │   └── Interfaces/                # contratos de repositório
+│   ├── Application/
+│   │   ├── Pagination.cs              # helper de paginação (skip / take)
+│   │   ├── Dtos/                      # DTOs de request
+│   │   ├── Exceptions/                # exceções de domínio
+│   │   ├── Interfaces/                # contratos de use case
+│   │   ├── Mappers/                   # DTO <-> Entity
+│   │   └── UseCases/                  # regras de negócio
+│   ├── Infrastructure/
+│   │   └── Data/
+│   │       ├── ApplicationContext.cs  # DbContext (EF Core + Oracle)
+│   │       ├── Migrations/            # migrations do banco Oracle
+│   │       └── Repositories/          # acesso a dados
+│   ├── Presentation/
+│   │   └── Controllers/              # endpoints REST
+│   └── Doc/Samples/                  # exemplos de request/response do Swagger
+├── Arkive_Tests/                      # testes de unidade (xUnit)
+│   └── App/                           # testes de repositories e use cases
+└── prints/                            # evidências dos testes por endpoint
 ```
+
+Divisão em camadas:
+
+- **Domain** — entidades e contratos, sem dependência de frameworks.
+- **Application** — use cases (regras de negócio), DTOs, mappers e o helper de paginação.
+- **Infrastructure** — `ApplicationContext` (EF Core / Oracle), repositories e migrations.
+- **Presentation** — controllers que expõem o HTTP e traduzem exceções de domínio em status codes.
 
 ---
 
@@ -49,11 +77,15 @@ A modelagem relacional completa do banco está disponível para visualização:
 
 ## Tecnologias
 
-- .NET 8
-- ASP.NET Core Web API
-- Entity Framework Core + Oracle Provider
-- Swashbuckle (Swagger / OpenAPI)
+- .NET 8 / ASP.NET Core Web API
+- Entity Framework Core 8 + Oracle.EntityFrameworkCore
 - Oracle Database (compartilhado com API Java)
+- Microsoft.AspNetCore.RateLimiting — limite de requisições (fixed window)
+- Microsoft.AspNetCore.ResponseCompression — Brotli + Gzip
+- Swashbuckle.AspNetCore (Swagger / OpenAPI) + .Annotations e .Filters (exemplos de request/response)
+- **Testes:** xUnit, Moq, EF Core InMemory, Microsoft.AspNetCore.Mvc.Testing
+
+> Pacotes de observabilidade já estão incluídos no `.csproj` (`Serilog.AspNetCore`, `Azure.Monitor.OpenTelemetry.AspNetCore`, `Microsoft.ApplicationInsights`, `AspNetCore.HealthChecks.Oracle`), mas ainda **não estão ativados** no `Program.cs`.
 
 ---
 
@@ -67,37 +99,108 @@ A modelagem relacional completa do banco está disponível para visualização:
 ### 1. Clone o repositório
 
 ```bash
-git clone https://github.com/<seu-usuario>/dotnet-advanced-bizdev.git
+git clone https://github.com/2TDSPO-ArkIve/dotnet-advanced-bizdev
 cd dotnet-advanced-bizdev
 ```
 
 ### 2. Configure a string de conexão
 
-Devido à necessidade de acesso às tabelas criadas previamente pela equipe no banco Oracle compartilhado, as credenciais já estão configuradas no `Arkive_API/appsettings.json` do repositório. Basta clonar e executar — nenhuma alteração é necessária.
+A string de conexão (chave `Oracle`) já está configurada em `Arkive_API/appsettings.Development.json`, apontando para o banco Oracle compartilhado da FIAP. Basta clonar e executar — nenhuma alteração é necessária.
 
 ### 3. Migrations
 
-As migrations foram geradas com o comando abaixo e estão disponíveis na pasta `Migrations/`:
+As migrations estão em `Arkive_API/Infrastructure/Data/Migrations/`:
 
-```bash
-Add-Migration InicialMigration
-```
+- `InicialMigration` — schema inicial
+- `CleanArchitectureNamespaces` — ajuste de namespaces após a reorganização em camadas
 
-> O banco Oracle foi modelado e criado previamente pela equipe. As migrations existem para fins de versionamento e rastreabilidade do schema — não são necessárias para criação das tabelas.
+> O banco Oracle foi modelado e criado previamente pela equipe. As migrations existem para versionamento e rastreabilidade do schema — não são necessárias para criação das tabelas.
 
 ### 4. Execute a API
 
 ```bash
-dotnet run
+dotnet run --project Arkive_API
 ```
 
-A API estará disponível em `https://localhost:7251` (ou a porta configurada em `launchSettings.json`).
+A API estará disponível em `https://localhost:7251` / `http://localhost:5205` (portas em `Arkive_API/Properties/launchSettings.json`).
 
 ### 5. Acesse o Swagger
+
+O Swagger é habilitado apenas em ambiente **Development**:
 
 ```
 https://localhost:7251/swagger
 ```
+
+---
+
+## Testes
+
+Testes de unidade com **xUnit** no projeto `Arkive_Tests` — 167 testes em 13 classes, cobrindo:
+
+- **Repositories** — via EF Core InMemory (`Microsoft.EntityFrameworkCore.InMemory`).
+- **Use cases** — com os repositórios mockados via **Moq**.
+- O helper `Pagination.Normalizar`.
+
+### Executar todos os testes
+
+```bash
+dotnet test Arkive_Tests/Arkive_Tests.csproj
+```
+
+Ou, a partir da raiz do repositório:
+
+```bash
+dotnet test
+```
+
+### Filtrar por trait
+
+Os testes usam traits `Repository`, `UseCase` e `Helper`:
+
+```bash
+dotnet test --filter "Repository=Doencas"
+dotnet test --filter "UseCase=FeedbackNPS"
+dotnet test --filter "Helper=Pagination"
+```
+
+### Cobertura
+
+```bash
+dotnet test --collect:"XPlat Code Coverage"
+```
+
+---
+
+## Comportamentos Transversais
+
+### Paginação
+
+As listagens de **Doenças**, **Predisposições** e **Feedbacks NPS** aceitam os query params `skip` e `take`:
+
+| Param | Default | Regras |
+|-------|---------|--------|
+| `skip` | `0` | valores negativos são tratados como `0` |
+| `take` | `50` | limitado ao intervalo `1..100` |
+
+Exemplo: `GET /api/doencas?skip=100&take=25`
+
+A resposta continua sendo um array JSON (`200 OK`) ou `204 No Content` quando vazio — sem envelope de metadados. Ordenação por `Id` ascendente.
+
+> Espécies, Raças e Categorias de Doença não são paginadas.
+
+### Rate Limiting
+
+Fixed window, por processo. Ao exceder o limite: **429 Too Many Requests**.
+
+| Política | Aplicada a | Limite |
+|----------|-----------|--------|
+| `leitura` | requisições `GET` | 60 req / min |
+| `escrita` | `POST`, `PUT`, `DELETE` | 10 req / min |
+
+### Compressão de Resposta
+
+Brotli e Gzip habilitados (nível `Fastest`), negociados via header `Accept-Encoding`.
 
 ---
 
@@ -180,6 +283,8 @@ https://localhost:7251/swagger
 | PUT | `/api/doencas/reativar/{id}` | Reativa doença inativa | 200 / 404 |
 | DELETE | `/api/doencas/{id}` | Inativa doença (soft delete) | 200 / 404 |
 
+> As listagens (`/`, `/ativos`, `/inativos`) aceitam `?skip=&take=` — ver [Comportamentos Transversais](#comportamentos-transversais).
+
 **POST / PUT — Body:**
 ```json
 {
@@ -207,6 +312,7 @@ https://localhost:7251/swagger
 | DELETE | `/api/predisposicoes/{id}` | Remove vínculo (delete físico) | 200 / 404 |
 
 > Sem `PUT` — para alterar um vínculo, delete o antigo e crie um novo.
+> As listagens aceitam `?skip=&take=` — ver [Comportamentos Transversais](#comportamentos-transversais).
 
 **POST — Body (com raça):**
 ```json
@@ -237,6 +343,7 @@ https://localhost:7251/swagger
 
 > Sem `PUT` — feedback NPS é registro imutável.  
 > Ao menos um contexto é obrigatório: `idResponsavel`, `idAnimal`, `idClinica`, `idConsulta` ou `idVeterinario`.
+> As listagens aceitam `?skip=&take=` — ver [Comportamentos Transversais](#comportamentos-transversais).
 
 **POST — Body:**
 ```json
