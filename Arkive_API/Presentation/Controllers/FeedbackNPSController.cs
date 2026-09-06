@@ -4,6 +4,7 @@ using Arkive_API.Application.Interfaces;
 using Arkive_API.Doc.Samples;
 using Arkive_API.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Filters;
 
@@ -11,6 +12,7 @@ namespace Arkive_API.Presentation.Controllers
 {
     [Route("api/feedbacks-nps")]
     [ApiController]
+    [EnableRateLimiting("leitura")]
     public class FeedbackNPSController : ControllerBase
     {
         private readonly IFeedbackNPSUseCase _feedbackNPSUseCase;
@@ -290,6 +292,7 @@ namespace Arkive_API.Presentation.Controllers
         }
 
         [HttpPost]
+        [EnableRateLimiting("escrita")]
         [SwaggerOperation(
             Summary = "Registra um novo feedback NPS",
             Description = """
@@ -330,6 +333,7 @@ namespace Arkive_API.Presentation.Controllers
         // Sem PUT — feedback NPS é um registro imutável por natureza
 
         [HttpDelete("{id}")]
+        [EnableRateLimiting("escrita")]
         [SwaggerOperation(
             Summary = "Remove um feedback NPS",
             Description = """

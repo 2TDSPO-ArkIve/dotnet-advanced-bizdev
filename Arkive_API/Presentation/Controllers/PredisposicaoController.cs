@@ -4,6 +4,7 @@ using Arkive_API.Application.Interfaces;
 using Arkive_API.Doc.Samples;
 using Arkive_API.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Filters;
 
@@ -11,6 +12,7 @@ namespace Arkive_API.Presentation.Controllers
 {
     [Route("api/predisposicoes")]
     [ApiController]
+    [EnableRateLimiting("leitura")]
     public class PredisposicaoController : ControllerBase
     {
         private readonly IPredisposicaoUseCase _predisposicaoUseCase;
@@ -189,6 +191,7 @@ namespace Arkive_API.Presentation.Controllers
         }
 
         [HttpPost]
+        [EnableRateLimiting("escrita")]
         [SwaggerOperation(
             Summary = "Cria vínculo de predisposição",
             Description = """
@@ -238,6 +241,7 @@ namespace Arkive_API.Presentation.Controllers
         // "o PUT pode ser substituído por remover o vínculo antigo e criar um novo"
 
         [HttpDelete("{id}")]
+        [EnableRateLimiting("escrita")]
         [SwaggerOperation(
             Summary = "Remove vínculo de predisposição",
             Description = """

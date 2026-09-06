@@ -3,6 +3,7 @@ using Arkive_API.Application.Interfaces;
 using Arkive_API.Doc.Samples;
 using Arkive_API.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Filters;
 
@@ -10,6 +11,7 @@ namespace Arkive_API.Presentation.Controllers
 {
     [Route("api/categorias-doenca")]
     [ApiController]
+    [EnableRateLimiting("leitura")]
     public class CategoriaDoencaController : ControllerBase
     {
         private readonly ICategoriaDoencaUseCase _categoriaDoencaUseCase;
@@ -154,6 +156,7 @@ namespace Arkive_API.Presentation.Controllers
         }
 
         [HttpPost]
+        [EnableRateLimiting("escrita")]
         [SwaggerOperation(
             Summary = "Cria uma nova categoria de doença",
             Description = """
@@ -185,6 +188,7 @@ namespace Arkive_API.Presentation.Controllers
         }
 
         [HttpPut("{id}")]
+        [EnableRateLimiting("escrita")]
         [SwaggerOperation(
             Summary = "Atualiza uma categoria de doença",
             Description = """
@@ -219,6 +223,7 @@ namespace Arkive_API.Presentation.Controllers
         }
 
         [HttpPut("reativar/{id}")]
+        [EnableRateLimiting("escrita")]
         [SwaggerOperation(
             Summary = "Reativa uma categoria de doença",
             Description = """
@@ -252,6 +257,7 @@ namespace Arkive_API.Presentation.Controllers
         }
 
         [HttpDelete("{id}")]
+        [EnableRateLimiting("escrita")]
         [SwaggerOperation(
             Summary = "Inativa uma categoria de doença",
             Description = """
