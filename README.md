@@ -4,7 +4,7 @@ API RESTful desenvolvida em **ASP.NET Core** para o gerenciamento do catálogo c
 
 A API é responsável pelo cadastro e manutenção de **espécies, raças, categorias de doenças, doenças, predisposições genéticas e feedbacks NPS**, servindo como base de dados compartilhada entre as APIs do ecossistema ArkIve.
 
-O projeto é organizado em **Clean Architecture** (Domain / Application / Infrastructure / Presentation), com exclusão lógica (soft delete) nas entidades principais, **paginação** nas listagens de maior volume, **rate limiting** por tipo de operação, **compressão de resposta** (Brotli / Gzip) e uma suíte de **testes de unidade** (xUnit) cobrindo repositories e use cases.
+O projeto é organizado em **Clean Architecture** (Domain / Application / Infrastructure / Presentation), com exclusão lógica (soft delete) nas entidades principais, **paginação** nas listagens de maior volume, **rate limiting** por tipo de operação, **compressão de resposta** (Brotli / Gzip), **observabilidade** (logging estruturado com Serilog, health checks e Application Insights) e uma suíte de **testes** (xUnit) cobrindo repositories, use cases, domínio e controllers.
 
 ---
 
@@ -83,9 +83,11 @@ A modelagem relacional completa do banco está disponível para visualização:
 - Microsoft.AspNetCore.RateLimiting — limite de requisições (fixed window)
 - Microsoft.AspNetCore.ResponseCompression — Brotli + Gzip
 - Swashbuckle.AspNetCore (Swagger / OpenAPI) + .Annotations e .Filters (exemplos de request/response)
+- **Observabilidade:**
+  - Serilog (`Serilog.AspNetCore`) — logging estruturado para console e arquivo rotativo em disco
+  - `AspNetCore.HealthChecks.Oracle` — health checks de liveness e readiness
+  - Application Insights via OpenTelemetry (`Azure.Monitor.OpenTelemetry.AspNetCore`) — requests, dependências e exceções
 - **Testes:** xUnit, Moq, EF Core InMemory, Microsoft.AspNetCore.Mvc.Testing
-
-> Pacotes de observabilidade já estão incluídos no `.csproj` (`Serilog.AspNetCore`, `Azure.Monitor.OpenTelemetry.AspNetCore`, `Microsoft.ApplicationInsights`, `AspNetCore.HealthChecks.Oracle`), mas ainda **não estão ativados** no `Program.cs`.
 
 ---
 
@@ -136,13 +138,14 @@ https://localhost:7251/swagger
 
 ## Testes
 
-Testes automatizados com **xUnit** no projeto `Arkive_Tests` — 232 testes, cobrindo:
+Testes automatizados com **xUnit** no projeto `Arkive_Tests` — 234 testes, cobrindo:
 
 - **Repositories** — testes de unidade via EF Core InMemory (`Microsoft.EntityFrameworkCore.InMemory`).
 - **Use cases** — testes de unidade com os repositórios mockados via **Moq**.
 - **Domínio** — mappers (`DTO -> Entity`) e validações de DataAnnotations das entities.
 - **Controllers** — testes funcionais (integração) que sobem a API em memória via
   `WebApplicationFactory` (`Microsoft.AspNetCore.Mvc.Testing`), com os use cases mockados.
+  Inclui os endpoints de health check (`/health/live`, `/api/health2/live`).
 - O helper `Pagination.Normalizar`.
 
 ### Executar todos os testes
@@ -206,6 +209,57 @@ Fixed window, por processo. Ao exceder o limite: **429 Too Many Requests**.
 ### Compressão de Resposta
 
 Brotli e Gzip habilitados (nível `Fastest`), negociados via header `Accept-Encoding`.
+
+---
+
+## Observabilidade
+
+### Logging (Serilog)
+
+O logging usa **Serilog** com saída para console e para arquivo em disco. A configuração
+fica no topo do `Program.cs`:
+
+- Nível mínimo global: `Information`. Logs de `Microsoft.AspNetCore` só a partir de `Warning`.
+- **Console** — formato padrão do Serilog.
+- **Arquivo** — `logs/api-<data>.log` (relativo ao diretório de execução, ex.
+  `Arkive_API/bin/Debug/net8.0/logs/`), com rotação diária e retenção dos últimos 7 arquivos.
+- `UseSerilogRequestLogging()` registra uma linha estruturada por requisição HTTP
+  (método, rota, status, tempo de resposta).
+
+Cada controller e cada use case recebe um `ILogger<T>` por injeção de dependência e registra:
+
+| Nível | Uso |
+|-------|-----|
+| `LogInformation` | entrada nos métodos, eventos de negócio (ex. "Criando espécie {Nome}") |
+| `LogWarning` | recurso não encontrado (404), falhas de validação de regra de negócio |
+| `LogError` | exceções inesperadas (com stack trace), antes de propagar / retornar 400 |
+
+> A pasta `logs/` já está no `.gitignore`.
+
+### Health Check
+
+Dois checks são registrados: `self` (liveness — o processo respondendo, sem I/O externo) e
+`oracle` (readiness — ping leve no banco).
+
+| Endpoint | Tipo | 200 | 503 |
+|----------|------|-----|-----|
+| `GET /health/live` | liveness | processo saudável | processo travado |
+| `GET /health/db` | readiness | banco acessível | banco indisponível |
+| `GET /api/health2/live` | liveness (JSON detalhado) | idem, com `{ status, checks[] }` | idem |
+| `GET /api/health2/db` | readiness (JSON detalhado) | idem | idem |
+
+`/health/*` são endpoints minimalistas para orquestradores (Kubernetes, load balancers).
+`/api/health2/*` (controller `HealthController`) retornam o relatório em JSON para inspeção manual.
+
+### Application Insights
+
+Telemetria via **OpenTelemetry + Azure Monitor**. A connection string é lida de
+`ApplicationInsights:ConnectionString` (configurada em `appsettings.Development.json`;
+vazia em `appsettings.json`). Quando a string está vazia, a telemetria simplesmente não é
+ativada — útil para ambiente de testes e execução local sem Azure.
+
+Coleta automática: requests HTTP, dependências (Oracle / HTTP), exceções e métricas de
+desempenho.
 
 ---
 

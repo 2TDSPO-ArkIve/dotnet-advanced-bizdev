@@ -4,6 +4,7 @@ using Arkive_API.Application.Mappers;
 using Arkive_API.Application.UseCases;
 using Arkive_API.Domain.Entities;
 using Arkive_API.Domain.Interfaces;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 
 namespace Arkive_Tests.App
@@ -28,7 +29,8 @@ namespace Arkive_Tests.App
                 _predisposicaoRepository.Object,
                 _especieRepository.Object,
                 _racaRepository.Object,
-                _doencaRepository.Object);
+                _doencaRepository.Object,
+                NullLogger<PredisposicaoUseCase>.Instance);
         }
 
         [Fact]

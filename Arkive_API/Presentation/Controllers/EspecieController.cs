@@ -15,10 +15,12 @@ namespace Arkive_API.Presentation.Controllers
     public class EspecieController : ControllerBase
     {
         private readonly IEspecieUseCase _especieUseCase;
+        private readonly ILogger<EspecieController> _logger;
 
-        public EspecieController(IEspecieUseCase especieUseCase)
+        public EspecieController(IEspecieUseCase especieUseCase, ILogger<EspecieController> logger)
         {
             _especieUseCase = especieUseCase;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -40,6 +42,8 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponseExample(statusCode: 200, typeof(EspecieResponseListSample))]
         public async Task<IActionResult> GetAllEspecies()
         {
+            _logger.LogInformation("Listando todas as espécies");
+
             try
             {
                 var resultado = await _especieUseCase.ObterTodasAsync();
@@ -51,6 +55,7 @@ namespace Arkive_API.Presentation.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
                 return BadRequest(ex.Message);
             }
         }
@@ -73,6 +78,8 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
         public async Task<IActionResult> GetEspeciesAtivas()
         {
+            _logger.LogInformation("Listando espécies ativas");
+
             try
             {
                 var resultado = await _especieUseCase.ObterAtivasAsync();
@@ -84,6 +91,7 @@ namespace Arkive_API.Presentation.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
                 return BadRequest(ex.Message);
             }
         }
@@ -106,6 +114,8 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
         public async Task<IActionResult> GetEspeciesInativas()
         {
+            _logger.LogInformation("Listando espécies inativas");
+
             try
             {
                 var resultado = await _especieUseCase.ObterInativasAsync();
@@ -117,6 +127,7 @@ namespace Arkive_API.Presentation.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
                 return BadRequest(ex.Message);
             }
         }
@@ -140,17 +151,23 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponseExample(statusCode: 200, typeof(EspecieResponseSample))]
         public async Task<IActionResult> GetEspecieById(int id)
         {
+            _logger.LogInformation("Buscando espécie {Id}", id);
+
             try
             {
                 var especie = await _especieUseCase.ObterPorIdAsync(id);
 
                 if (especie is null)
+                {
+                    _logger.LogWarning("Espécie {Id} não encontrada", id);
                     return NotFound();
+                }
 
                 return Ok(especie);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
                 return BadRequest(ex.Message);
             }
         }
@@ -175,14 +192,18 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponseExample(statusCode: 201, typeof(EspecieResponseSample))]
         public async Task<IActionResult> CreateEspecie(EspecieRequestDto model)
         {
+            _logger.LogInformation("Criando espécie {Nome}", model.Especie);
+
             try
             {
                 var especie = await _especieUseCase.AdicionarAsync(model);
 
+                _logger.LogInformation("Espécie criada com sucesso: {Id}", especie?.Id ?? 0);
                 return CreatedAtAction(nameof(GetEspecieById), new { id = especie?.Id ?? 0 }, especie);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
                 return BadRequest(ex.Message);
             }
         }
@@ -207,17 +228,23 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao atualizar a espécie", type: typeof(string))]
         public async Task<IActionResult> UpdateEspecie(int id, EspecieRequestDto model)
         {
+            _logger.LogInformation("Atualizando espécie {Id}", id);
+
             try
             {
                 var especie = await _especieUseCase.EditarAsync(id, model);
 
                 if (especie is null)
+                {
+                    _logger.LogWarning("Espécie {Id} não encontrada", id);
                     return NotFound();
+                }
 
                 return Ok(especie);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
                 return BadRequest(ex.Message);
             }
         }
@@ -241,17 +268,23 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao reativar a espécie", type: typeof(string))]
         public async Task<IActionResult> ReactivateEspecie(int id)
         {
+            _logger.LogInformation("Reativando espécie {Id}", id);
+
             try
             {
                 var especie = await _especieUseCase.ReativarAsync(id);
 
                 if (especie is null)
+                {
+                    _logger.LogWarning("Espécie {Id} não encontrada", id);
                     return NotFound();
+                }
 
                 return Ok(especie);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
                 return BadRequest(ex.Message);
             }
         }
@@ -276,17 +309,23 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao inativar a espécie", type: typeof(string))]
         public async Task<IActionResult> DeleteEspecie(int id)
         {
+            _logger.LogInformation("Inativando espécie {Id}", id);
+
             try
             {
                 var especie = await _especieUseCase.InativarAsync(id);
 
                 if (especie is null)
+                {
+                    _logger.LogWarning("Espécie {Id} não encontrada", id);
                     return NotFound();
+                }
 
                 return Ok(especie);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
                 return BadRequest(ex.Message);
             }
         }

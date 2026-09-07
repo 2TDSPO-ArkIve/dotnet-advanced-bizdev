@@ -16,10 +16,12 @@ namespace Arkive_API.Presentation.Controllers
     public class DoencaController : ControllerBase
     {
         private readonly IDoencaUseCase _doencaUseCase;
+        private readonly ILogger<DoencaController> _logger;
 
-        public DoencaController(IDoencaUseCase doencaUseCase)
+        public DoencaController(IDoencaUseCase doencaUseCase, ILogger<DoencaController> logger)
         {
             _doencaUseCase = doencaUseCase;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -42,6 +44,8 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponseExample(statusCode: 200, typeof(DoencaResponseListSample))]
         public async Task<IActionResult> GetAllDoencas(int skip = 0, int take = 50)
         {
+            _logger.LogInformation("Listando doenças (skip {Skip}, take {Take})", skip, take);
+
             try
             {
                 var resultado = await _doencaUseCase.ObterTodasAsync(skip, take);
@@ -53,6 +57,7 @@ namespace Arkive_API.Presentation.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
                 return BadRequest(ex.Message);
             }
         }
@@ -76,6 +81,8 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
         public async Task<IActionResult> GetDoencasAtivas(int skip = 0, int take = 50)
         {
+            _logger.LogInformation("Listando doenças ativas (skip {Skip}, take {Take})", skip, take);
+
             try
             {
                 var resultado = await _doencaUseCase.ObterAtivasAsync(skip, take);
@@ -87,6 +94,7 @@ namespace Arkive_API.Presentation.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
                 return BadRequest(ex.Message);
             }
         }
@@ -110,6 +118,8 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
         public async Task<IActionResult> GetDoencasInativas(int skip = 0, int take = 50)
         {
+            _logger.LogInformation("Listando doenças inativas (skip {Skip}, take {Take})", skip, take);
+
             try
             {
                 var resultado = await _doencaUseCase.ObterInativasAsync(skip, take);
@@ -121,6 +131,7 @@ namespace Arkive_API.Presentation.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
                 return BadRequest(ex.Message);
             }
         }
@@ -145,17 +156,23 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponseExample(statusCode: 200, typeof(DoencaResponseSample))]
         public async Task<IActionResult> GetDoencaById(int id)
         {
+            _logger.LogInformation("Buscando doença {Id}", id);
+
             try
             {
                 var doenca = await _doencaUseCase.ObterPorIdAsync(id);
 
                 if (doenca is null)
+                {
+                    _logger.LogWarning("Doença {Id} não encontrada", id);
                     return NotFound();
+                }
 
                 return Ok(doenca);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
                 return BadRequest(ex.Message);
             }
         }
@@ -179,6 +196,8 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
         public async Task<IActionResult> GetDoencaByNome(string nome)
         {
+            _logger.LogInformation("Buscando doenças por nome {Nome}", nome);
+
             try
             {
                 var resultado = await _doencaUseCase.ObterPorNomeAsync(nome);
@@ -190,6 +209,7 @@ namespace Arkive_API.Presentation.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
                 return BadRequest(ex.Message);
             }
         }
@@ -212,6 +232,8 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
         public async Task<IActionResult> GetDoencaByCategoria(int idCategoria)
         {
+            _logger.LogInformation("Listando doenças da categoria {IdCategoria}", idCategoria);
+
             try
             {
                 var resultado = await _doencaUseCase.ObterPorCategoriaAsync(idCategoria);
@@ -223,6 +245,7 @@ namespace Arkive_API.Presentation.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
                 return BadRequest(ex.Message);
             }
         }
@@ -250,18 +273,23 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponseExample(statusCode: 201, typeof(DoencaResponseSample))]
         public async Task<IActionResult> CreateDoenca(DoencaRequestDto model)
         {
+            _logger.LogInformation("Criando doença {Nome}", model.Nome);
+
             try
             {
                 var doenca = await _doencaUseCase.AdicionarAsync(model);
 
+                _logger.LogInformation("Doença criada com sucesso: {Id}", doenca?.Id ?? 0);
                 return CreatedAtAction(nameof(GetDoencaById), new { id = doenca?.Id ?? 0 }, doenca);
             }
             catch (CategoriaNaoEncontradaException ex)
             {
+                _logger.LogWarning(ex, "Validação falhou ao criar doença: {Mensagem}", ex.Message);
                 return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
                 return BadRequest(ex.Message);
             }
         }
@@ -286,21 +314,28 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao atualizar a doença", type: typeof(string))]
         public async Task<IActionResult> UpdateDoenca(int id, DoencaRequestDto model)
         {
+            _logger.LogInformation("Atualizando doença {Id}", id);
+
             try
             {
                 var doenca = await _doencaUseCase.EditarAsync(id, model);
 
                 if (doenca is null)
+                {
+                    _logger.LogWarning("Doença {Id} não encontrada", id);
                     return NotFound();
+                }
 
                 return Ok(doenca);
             }
             catch (CategoriaNaoEncontradaException ex)
             {
+                _logger.LogWarning(ex, "Validação falhou ao atualizar doença: {Mensagem}", ex.Message);
                 return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
                 return BadRequest(ex.Message);
             }
         }
@@ -324,17 +359,23 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao reativar a doença", type: typeof(string))]
         public async Task<IActionResult> ReactivateDoenca(int id)
         {
+            _logger.LogInformation("Reativando doença {Id}", id);
+
             try
             {
                 var doenca = await _doencaUseCase.ReativarAsync(id);
 
                 if (doenca is null)
+                {
+                    _logger.LogWarning("Doença {Id} não encontrada", id);
                     return NotFound();
+                }
 
                 return Ok(doenca);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
                 return BadRequest(ex.Message);
             }
         }
@@ -359,17 +400,23 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao inativar a doença", type: typeof(string))]
         public async Task<IActionResult> DeleteDoenca(int id)
         {
+            _logger.LogInformation("Inativando doença {Id}", id);
+
             try
             {
                 var doenca = await _doencaUseCase.InativarAsync(id);
 
                 if (doenca is null)
+                {
+                    _logger.LogWarning("Doença {Id} não encontrada", id);
                     return NotFound();
+                }
 
                 return Ok(doenca);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
                 return BadRequest(ex.Message);
             }
         }

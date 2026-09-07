@@ -4,6 +4,7 @@ using Arkive_API.Application.Mappers;
 using Arkive_API.Application.UseCases;
 using Arkive_API.Domain.Entities;
 using Arkive_API.Domain.Interfaces;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 
 namespace Arkive_Tests.App
@@ -20,7 +21,7 @@ namespace Arkive_Tests.App
             _categoriaDoencaRepository = new Mock<ICategoriaDoencaRepository>();
 
             // Isso é o que vamos testar
-            _doencaUseCase = new DoencaUseCase(_doencaRepository.Object, _categoriaDoencaRepository.Object);
+            _doencaUseCase = new DoencaUseCase(_doencaRepository.Object, _categoriaDoencaRepository.Object, NullLogger<DoencaUseCase>.Instance);
         }
 
         [Fact]

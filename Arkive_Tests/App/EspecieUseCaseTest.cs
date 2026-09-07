@@ -3,6 +3,7 @@ using Arkive_API.Application.Mappers;
 using Arkive_API.Application.UseCases;
 using Arkive_API.Domain.Entities;
 using Arkive_API.Domain.Interfaces;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 
 namespace Arkive_Tests.App
@@ -17,7 +18,7 @@ namespace Arkive_Tests.App
             _especieRepository = new Mock<IEspecieRepository>();
 
             // Isso é o que vamos testar
-            _especieUseCase = new EspecieUseCase(_especieRepository.Object);
+            _especieUseCase = new EspecieUseCase(_especieRepository.Object, NullLogger<EspecieUseCase>.Instance);
         }
 
         [Fact]

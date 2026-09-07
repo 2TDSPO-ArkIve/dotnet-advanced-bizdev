@@ -4,6 +4,7 @@ using Arkive_API.Application.Mappers;
 using Arkive_API.Application.UseCases;
 using Arkive_API.Domain.Entities;
 using Arkive_API.Domain.Interfaces;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 
 namespace Arkive_Tests.App
@@ -18,7 +19,7 @@ namespace Arkive_Tests.App
             _feedbackNPSRepository = new Mock<IFeedbackNPSRepository>();
 
             // Isso é o que vamos testar
-            _feedbackNPSUseCase = new FeedbackNPSUseCase(_feedbackNPSRepository.Object);
+            _feedbackNPSUseCase = new FeedbackNPSUseCase(_feedbackNPSRepository.Object, NullLogger<FeedbackNPSUseCase>.Instance);
 
             // Por padrão, todos os contextos existem — os testes de exceção sobrescrevem isso
             _feedbackNPSRepository.Setup(obj => obj.ResponsavelExisteAsync(It.IsAny<int>())).ReturnsAsync(true);

@@ -9,50 +9,132 @@ namespace Arkive_API.Application.UseCases
     public class EspecieUseCase : IEspecieUseCase
     {
         private readonly IEspecieRepository _especieRepository;
+        private readonly ILogger<EspecieUseCase> _logger;
 
-        public EspecieUseCase(IEspecieRepository especieRepository)
+        public EspecieUseCase(IEspecieRepository especieRepository, ILogger<EspecieUseCase> logger)
         {
             _especieRepository = especieRepository;
+            _logger = logger;
         }
 
         public async Task<IEnumerable<EspecieEntity>> ObterTodasAsync()
         {
-            return await _especieRepository.ObterTodosAsync();
+            _logger.LogInformation("Obtendo todas as espécies");
+
+            try
+            {
+                return await _especieRepository.ObterTodosAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao obter todas as espécies");
+                throw;
+            }
         }
 
         public async Task<IEnumerable<EspecieEntity>> ObterAtivasAsync()
         {
-            return await _especieRepository.ObterAtivosAsync();
+            _logger.LogInformation("Obtendo espécies ativas");
+
+            try
+            {
+                return await _especieRepository.ObterAtivosAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao obter espécies ativas");
+                throw;
+            }
         }
 
         public async Task<IEnumerable<EspecieEntity>> ObterInativasAsync()
         {
-            return await _especieRepository.ObterInativosAsync();
+            _logger.LogInformation("Obtendo espécies inativas");
+
+            try
+            {
+                return await _especieRepository.ObterInativosAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao obter espécies inativas");
+                throw;
+            }
         }
 
         public async Task<EspecieEntity?> ObterPorIdAsync(int id)
         {
-            return await _especieRepository.ObterPorIdAsync(id);
+            _logger.LogInformation("Obtendo espécie {Id}", id);
+
+            try
+            {
+                return await _especieRepository.ObterPorIdAsync(id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao obter espécie {Id}", id);
+                throw;
+            }
         }
 
         public async Task<EspecieEntity?> AdicionarAsync(EspecieRequestDto dto)
         {
-            return await _especieRepository.AdicionarAsync(dto.ToEspecieEntity());
+            _logger.LogInformation("Adicionando espécie {Nome}", dto.Especie);
+
+            try
+            {
+                return await _especieRepository.AdicionarAsync(dto.ToEspecieEntity());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao adicionar espécie {Nome}", dto.Especie);
+                throw;
+            }
         }
 
         public async Task<EspecieEntity?> EditarAsync(int id, EspecieRequestDto dto)
         {
-            return await _especieRepository.EditarAsync(id, dto.ToEspecieEntity());
+            _logger.LogInformation("Editando espécie {Id}", id);
+
+            try
+            {
+                return await _especieRepository.EditarAsync(id, dto.ToEspecieEntity());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao editar espécie {Id}", id);
+                throw;
+            }
         }
 
         public async Task<EspecieEntity?> ReativarAsync(int id)
         {
-            return await _especieRepository.ReativarAsync(id);
+            _logger.LogInformation("Reativando espécie {Id}", id);
+
+            try
+            {
+                return await _especieRepository.ReativarAsync(id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao reativar espécie {Id}", id);
+                throw;
+            }
         }
 
         public async Task<EspecieEntity?> InativarAsync(int id)
         {
-            return await _especieRepository.InativarAsync(id);
+            _logger.LogInformation("Inativando espécie {Id}", id);
+
+            try
+            {
+                return await _especieRepository.InativarAsync(id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao inativar espécie {Id}", id);
+                throw;
+            }
         }
     }
 }

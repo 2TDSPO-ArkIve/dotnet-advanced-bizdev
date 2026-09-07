@@ -15,10 +15,12 @@ namespace Arkive_API.Presentation.Controllers
     public class CategoriaDoencaController : ControllerBase
     {
         private readonly ICategoriaDoencaUseCase _categoriaDoencaUseCase;
+        private readonly ILogger<CategoriaDoencaController> _logger;
 
-        public CategoriaDoencaController(ICategoriaDoencaUseCase categoriaDoencaUseCase)
+        public CategoriaDoencaController(ICategoriaDoencaUseCase categoriaDoencaUseCase, ILogger<CategoriaDoencaController> logger)
         {
             _categoriaDoencaUseCase = categoriaDoencaUseCase;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -40,6 +42,8 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponseExample(statusCode: 200, typeof(CategoriaDoencaResponseListSample))]
         public async Task<IActionResult> GetAllCategorias()
         {
+            _logger.LogInformation("Listando todas as categorias de doença");
+
             try
             {
                 var resultado = await _categoriaDoencaUseCase.ObterTodasAsync();
@@ -51,6 +55,7 @@ namespace Arkive_API.Presentation.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
                 return BadRequest(ex.Message);
             }
         }
@@ -73,6 +78,8 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
         public async Task<IActionResult> GetCategoriasAtivas()
         {
+            _logger.LogInformation("Listando categorias de doença ativas");
+
             try
             {
                 var resultado = await _categoriaDoencaUseCase.ObterAtivasAsync();
@@ -84,6 +91,7 @@ namespace Arkive_API.Presentation.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
                 return BadRequest(ex.Message);
             }
         }
@@ -106,6 +114,8 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
         public async Task<IActionResult> GetCategoriasInativas()
         {
+            _logger.LogInformation("Listando categorias de doença inativas");
+
             try
             {
                 var resultado = await _categoriaDoencaUseCase.ObterInativasAsync();
@@ -117,6 +127,7 @@ namespace Arkive_API.Presentation.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
                 return BadRequest(ex.Message);
             }
         }
@@ -140,17 +151,23 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponseExample(statusCode: 200, typeof(CategoriaDoencaResponseSample))]
         public async Task<IActionResult> GetCategoriaById(int id)
         {
+            _logger.LogInformation("Buscando categoria de doença {Id}", id);
+
             try
             {
                 var categoria = await _categoriaDoencaUseCase.ObterPorIdAsync(id);
 
                 if (categoria is null)
+                {
+                    _logger.LogWarning("Categoria de doença {Id} não encontrada", id);
                     return NotFound();
+                }
 
                 return Ok(categoria);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
                 return BadRequest(ex.Message);
             }
         }
@@ -175,14 +192,18 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponseExample(statusCode: 201, typeof(CategoriaDoencaResponseSample))]
         public async Task<IActionResult> CreateCategoria(CategoriaDoencaRequestDto model)
         {
+            _logger.LogInformation("Criando categoria de doença {Nome}", model.Nome);
+
             try
             {
                 var categoria = await _categoriaDoencaUseCase.AdicionarAsync(model);
 
+                _logger.LogInformation("Categoria de doença criada com sucesso: {Id}", categoria?.Id ?? 0);
                 return CreatedAtAction(nameof(GetCategoriaById), new { id = categoria?.Id ?? 0 }, categoria);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
                 return BadRequest(ex.Message);
             }
         }
@@ -207,17 +228,23 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao atualizar a categoria", type: typeof(string))]
         public async Task<IActionResult> UpdateCategoria(int id, CategoriaDoencaRequestDto model)
         {
+            _logger.LogInformation("Atualizando categoria de doença {Id}", id);
+
             try
             {
                 var categoria = await _categoriaDoencaUseCase.EditarAsync(id, model);
 
                 if (categoria is null)
+                {
+                    _logger.LogWarning("Categoria de doença {Id} não encontrada", id);
                     return NotFound();
+                }
 
                 return Ok(categoria);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
                 return BadRequest(ex.Message);
             }
         }
@@ -241,17 +268,23 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao reativar a categoria", type: typeof(string))]
         public async Task<IActionResult> ReactivateCategoria(int id)
         {
+            _logger.LogInformation("Reativando categoria de doença {Id}", id);
+
             try
             {
                 var categoria = await _categoriaDoencaUseCase.ReativarAsync(id);
 
                 if (categoria is null)
+                {
+                    _logger.LogWarning("Categoria de doença {Id} não encontrada", id);
                     return NotFound();
+                }
 
                 return Ok(categoria);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
                 return BadRequest(ex.Message);
             }
         }
@@ -276,17 +309,23 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao inativar a categoria", type: typeof(string))]
         public async Task<IActionResult> DeleteCategoria(int id)
         {
+            _logger.LogInformation("Inativando categoria de doença {Id}", id);
+
             try
             {
                 var categoria = await _categoriaDoencaUseCase.InativarAsync(id);
 
                 if (categoria is null)
+                {
+                    _logger.LogWarning("Categoria de doença {Id} não encontrada", id);
                     return NotFound();
+                }
 
                 return Ok(categoria);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
                 return BadRequest(ex.Message);
             }
         }

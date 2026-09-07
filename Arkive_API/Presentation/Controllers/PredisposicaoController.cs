@@ -16,10 +16,12 @@ namespace Arkive_API.Presentation.Controllers
     public class PredisposicaoController : ControllerBase
     {
         private readonly IPredisposicaoUseCase _predisposicaoUseCase;
+        private readonly ILogger<PredisposicaoController> _logger;
 
-        public PredisposicaoController(IPredisposicaoUseCase predisposicaoUseCase)
+        public PredisposicaoController(IPredisposicaoUseCase predisposicaoUseCase, ILogger<PredisposicaoController> logger)
         {
             _predisposicaoUseCase = predisposicaoUseCase;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -42,6 +44,8 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponseExample(statusCode: 200, typeof(PredisposicaoResponseListSample))]
         public async Task<IActionResult> GetAllPredisposicoes(int skip = 0, int take = 50)
         {
+            _logger.LogInformation("Listando predisposições (skip {Skip}, take {Take})", skip, take);
+
             try
             {
                 var resultado = await _predisposicaoUseCase.ObterTodasAsync(skip, take);
@@ -53,6 +57,7 @@ namespace Arkive_API.Presentation.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
                 return BadRequest(ex.Message);
             }
         }
@@ -76,17 +81,23 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponseExample(statusCode: 200, typeof(PredisposicaoResponseSample))]
         public async Task<IActionResult> GetPredisposicaoById(int id)
         {
+            _logger.LogInformation("Buscando predisposição {Id}", id);
+
             try
             {
                 var predisposicao = await _predisposicaoUseCase.ObterPorIdAsync(id);
 
                 if (predisposicao is null)
+                {
+                    _logger.LogWarning("Predisposição {Id} não encontrada", id);
                     return NotFound();
+                }
 
                 return Ok(predisposicao);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
                 return BadRequest(ex.Message);
             }
         }
@@ -109,6 +120,8 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
         public async Task<IActionResult> GetPredisposicaoByEspecie(int idEspecie, int skip = 0, int take = 50)
         {
+            _logger.LogInformation("Listando predisposições da espécie {IdEspecie} (skip {Skip}, take {Take})", idEspecie, skip, take);
+
             try
             {
                 var resultado = await _predisposicaoUseCase.ObterPorEspecieAsync(idEspecie, skip, take);
@@ -120,6 +133,7 @@ namespace Arkive_API.Presentation.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
                 return BadRequest(ex.Message);
             }
         }
@@ -142,6 +156,8 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
         public async Task<IActionResult> GetPredisposicaoByRaca(int idRaca, int skip = 0, int take = 50)
         {
+            _logger.LogInformation("Listando predisposições da raça {IdRaca} (skip {Skip}, take {Take})", idRaca, skip, take);
+
             try
             {
                 var resultado = await _predisposicaoUseCase.ObterPorRacaAsync(idRaca, skip, take);
@@ -153,6 +169,7 @@ namespace Arkive_API.Presentation.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
                 return BadRequest(ex.Message);
             }
         }
@@ -175,6 +192,8 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
         public async Task<IActionResult> GetPredisposicaoByDoenca(int idDoenca, int skip = 0, int take = 50)
         {
+            _logger.LogInformation("Listando predisposições da doença {IdDoenca} (skip {Skip}, take {Take})", idDoenca, skip, take);
+
             try
             {
                 var resultado = await _predisposicaoUseCase.ObterPorDoencaAsync(idDoenca, skip, take);
@@ -186,6 +205,7 @@ namespace Arkive_API.Presentation.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
                 return BadRequest(ex.Message);
             }
         }
@@ -213,26 +233,33 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponseExample(statusCode: 201, typeof(PredisposicaoResponseSample))]
         public async Task<IActionResult> CreatePredisposicao(PredisposicaoRequestDto model)
         {
+            _logger.LogInformation("Criando predisposição (espécie {IdEspecie}, raça {IdRaca}, doença {IdDoenca})", model.IdEspecie, model.IdRaca, model.IdDoenca);
+
             try
             {
                 var predisposicao = await _predisposicaoUseCase.AdicionarAsync(model);
 
+                _logger.LogInformation("Predisposição criada com sucesso: {Id}", predisposicao?.Id ?? 0);
                 return CreatedAtAction(nameof(GetPredisposicaoById), new { id = predisposicao?.Id ?? 0 }, predisposicao);
             }
             catch (EspecieNaoEncontradaException ex)
             {
+                _logger.LogWarning(ex, "Validação falhou ao criar predisposição: {Mensagem}", ex.Message);
                 return NotFound(ex.Message);
             }
             catch (RacaNaoEncontradaException ex)
             {
+                _logger.LogWarning(ex, "Validação falhou ao criar predisposição: {Mensagem}", ex.Message);
                 return NotFound(ex.Message);
             }
             catch (DoencaNaoEncontradaException ex)
             {
+                _logger.LogWarning(ex, "Validação falhou ao criar predisposição: {Mensagem}", ex.Message);
                 return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
                 return BadRequest(ex.Message);
             }
         }
@@ -259,17 +286,23 @@ namespace Arkive_API.Presentation.Controllers
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao remover a predisposição", type: typeof(string))]
         public async Task<IActionResult> DeletePredisposicao(int id)
         {
+            _logger.LogInformation("Removendo predisposição {Id}", id);
+
             try
             {
                 var predisposicao = await _predisposicaoUseCase.DeletarAsync(id);
 
                 if (predisposicao is null)
+                {
+                    _logger.LogWarning("Predisposição {Id} não encontrada", id);
                     return NotFound();
+                }
 
                 return Ok(predisposicao);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
                 return BadRequest(ex.Message);
             }
         }
