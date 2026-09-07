@@ -1,0 +1,112 @@
+using System.Net;
+using System.Net.Http.Json;
+using Arkive_API.Application.Dtos;
+using Arkive_API.Application.Interfaces;
+using Arkive_API.Domain.Entities;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Moq;
+
+namespace Arkive_Tests.App
+{
+    public class EspecieControllerTest : IClassFixture<CustomWebApplicationFactory>
+    {
+        private readonly Mock<IEspecieUseCase> _useCase;
+        private readonly HttpClient _client;
+
+        public EspecieControllerTest(CustomWebApplicationFactory factory)
+        {
+            _useCase = factory.EspecieUseCaseMock;
+            _useCase.Reset();
+            _client = factory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
+        }
+
+        [Fact]
+        [Trait("Controller", "Especies")]
+        public async Task GetAll_DeveRetornar200_ComListaDeEspecies()
+        {
+            _useCase.Setup(x => x.ObterTodasAsync()).ReturnsAsync(new List<EspecieEntity>
+            {
+                new EspecieEntity { Id = 1, Especie = "Canina", StAtivo = "S" },
+                new EspecieEntity { Id = 2, Especie = "Felina", StAtivo = "S" }
+            });
+
+            var response = await _client.GetAsync("/api/especies");
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var body = await response.Content.ReadFromJsonAsync<List<EspecieEntity>>();
+            Assert.Equal(2, body!.Count);
+        }
+
+        [Fact]
+        [Trait("Controller", "Especies")]
+        public async Task GetAll_DeveRetornar204_QuandoNaoHaEspecies()
+        {
+            _useCase.Setup(x => x.ObterTodasAsync()).ReturnsAsync(new List<EspecieEntity>());
+
+            var response = await _client.GetAsync("/api/especies");
+
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        }
+
+        [Fact]
+        [Trait("Controller", "Especies")]
+        public async Task GetById_DeveRetornar200_QuandoEspecieExiste()
+        {
+            _useCase.Setup(x => x.ObterPorIdAsync(4))
+                .ReturnsAsync(new EspecieEntity { Id = 4, Especie = "Equina", StAtivo = "S" });
+
+            var response = await _client.GetAsync("/api/especies/4");
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var body = await response.Content.ReadFromJsonAsync<EspecieEntity>();
+            Assert.Equal("Equina", body!.Especie);
+        }
+
+        [Fact]
+        [Trait("Controller", "Especies")]
+        public async Task GetById_DeveRetornar404_QuandoEspecieNaoExiste()
+        {
+            _useCase.Setup(x => x.ObterPorIdAsync(It.IsAny<int>())).ReturnsAsync((EspecieEntity?)null);
+
+            var response = await _client.GetAsync("/api/especies/999");
+
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        [Fact]
+        [Trait("Controller", "Especies")]
+        public async Task Create_DeveRetornar201_QuandoDadosValidos()
+        {
+            _useCase.Setup(x => x.AdicionarAsync(It.IsAny<EspecieRequestDto>()))
+                .ReturnsAsync(new EspecieEntity { Id = 9, Especie = "Suína", StAtivo = "S" });
+
+            var response = await _client.PostAsJsonAsync("/api/especies", new EspecieRequestDto { Especie = "Suína" });
+
+            Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        }
+
+        [Fact]
+        [Trait("Controller", "Especies")]
+        public async Task Update_DeveRetornar404_QuandoEspecieNaoExisteOuInativa()
+        {
+            _useCase.Setup(x => x.EditarAsync(It.IsAny<int>(), It.IsAny<EspecieRequestDto>()))
+                .ReturnsAsync((EspecieEntity?)null);
+
+            var response = await _client.PutAsJsonAsync("/api/especies/999", new EspecieRequestDto { Especie = "X" });
+
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        [Fact]
+        [Trait("Controller", "Especies")]
+        public async Task Delete_DeveRetornar200_QuandoInativadaComSucesso()
+        {
+            _useCase.Setup(x => x.InativarAsync(2))
+                .ReturnsAsync(new EspecieEntity { Id = 2, Especie = "Felina", StAtivo = "N" });
+
+            var response = await _client.DeleteAsync("/api/especies/2");
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+    }
+}

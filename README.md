@@ -51,8 +51,8 @@ dotnet-advanced-bizdev/
 │   ├── Presentation/
 │   │   └── Controllers/              # endpoints REST
 │   └── Doc/Samples/                  # exemplos de request/response do Swagger
-├── Arkive_Tests/                      # testes de unidade (xUnit)
-│   └── App/                           # testes de repositories e use cases
+├── Arkive_Tests/                      # testes automatizados (xUnit)
+│   └── App/                           # unidade (repositories, use cases, domínio) + funcionais (controllers)
 └── prints/                            # evidências dos testes por endpoint
 ```
 
@@ -136,10 +136,13 @@ https://localhost:7251/swagger
 
 ## Testes
 
-Testes de unidade com **xUnit** no projeto `Arkive_Tests` — 167 testes em 13 classes, cobrindo:
+Testes automatizados com **xUnit** no projeto `Arkive_Tests` — 232 testes, cobrindo:
 
-- **Repositories** — via EF Core InMemory (`Microsoft.EntityFrameworkCore.InMemory`).
-- **Use cases** — com os repositórios mockados via **Moq**.
+- **Repositories** — testes de unidade via EF Core InMemory (`Microsoft.EntityFrameworkCore.InMemory`).
+- **Use cases** — testes de unidade com os repositórios mockados via **Moq**.
+- **Domínio** — mappers (`DTO -> Entity`) e validações de DataAnnotations das entities.
+- **Controllers** — testes funcionais (integração) que sobem a API em memória via
+  `WebApplicationFactory` (`Microsoft.AspNetCore.Mvc.Testing`), com os use cases mockados.
 - O helper `Pagination.Normalizar`.
 
 ### Executar todos os testes
@@ -156,11 +159,13 @@ dotnet test
 
 ### Filtrar por trait
 
-Os testes usam traits `Repository`, `UseCase` e `Helper`:
+Os testes usam traits `Repository`, `UseCase`, `Controller`, `Domain` e `Helper`:
 
 ```bash
 dotnet test --filter "Repository=Doencas"
 dotnet test --filter "UseCase=FeedbackNPS"
+dotnet test --filter "Controller=Racas"
+dotnet test --filter "Domain=Mappers"
 dotnet test --filter "Helper=Pagination"
 ```
 
