@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using System.Net.Http.Json;
 using Arkive_API.Application.Dtos;
 using Arkive_API.Application.Exceptions;
@@ -25,7 +25,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "FeedbackNPS")]
-        public async Task GetAll_DeveRetornar200_ComListaDeFeedbacks()
+        public async Task GetAll_ComListaDeFeedbacks_DeveRetornar200()
         {
             // Arrange
             var feedbacks = new List<FeedbackNPSEntity>
@@ -47,7 +47,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "FeedbackNPS")]
-        public async Task GetAll_DeveRetornar204_QuandoNaoHaFeedbacks()
+        public async Task GetAll_QuandoNaoHaFeedbacks_DeveRetornar204()
         {
             // Arrange
             _useCase.Setup(x => x.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>()))
@@ -62,7 +62,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "FeedbackNPS")]
-        public async Task GetById_DeveRetornar200_QuandoFeedbackExiste()
+        public async Task GetById_QuandoFeedbackExiste_DeveRetornar200()
         {
             // Arrange
             _useCase.Setup(x => x.ObterPorIdAsync(8))
@@ -79,7 +79,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "FeedbackNPS")]
-        public async Task GetById_DeveRetornar404_QuandoFeedbackNaoExiste()
+        public async Task GetById_QuandoFeedbackNaoExiste_DeveRetornar404()
         {
             // Arrange
             _useCase.Setup(x => x.ObterPorIdAsync(It.IsAny<int>())).ReturnsAsync((FeedbackNPSEntity?)null);
@@ -93,7 +93,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "FeedbackNPS")]
-        public async Task Create_DeveRetornar201_QuandoContextoValido()
+        public async Task Create_QuandoContextoValido_DeveRetornar201()
         {
             // Arrange
             _useCase.Setup(x => x.AdicionarAsync(It.IsAny<FeedbackNPSRequestDto>()))
@@ -109,7 +109,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "FeedbackNPS")]
-        public async Task Create_DeveRetornar404_QuandoContextoNaoEncontrado()
+        public async Task Create_QuandoContextoNaoEncontrado_DeveRetornar404()
         {
             // Arrange
             _useCase.Setup(x => x.AdicionarAsync(It.IsAny<FeedbackNPSRequestDto>()))
@@ -125,7 +125,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "FeedbackNPS")]
-        public async Task Create_DeveRetornar400_QuandoNenhumContextoInformado()
+        public async Task Create_QuandoNenhumContextoInformado_DeveRetornar400()
         {
             // Arrange
             _useCase.Setup(x => x.AdicionarAsync(It.IsAny<FeedbackNPSRequestDto>()))
@@ -141,7 +141,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "FeedbackNPS")]
-        public async Task Delete_DeveRetornar200_QuandoRemovidoComSucesso()
+        public async Task Delete_QuandoRemovidoComSucesso_DeveRetornar200()
         {
             // Arrange
             _useCase.Setup(x => x.DeletarAsync(4))
@@ -156,7 +156,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "FeedbackNPS")]
-        public async Task Delete_DeveRetornar404_QuandoFeedbackNaoExiste()
+        public async Task Delete_QuandoFeedbackNaoExiste_DeveRetornar404()
         {
             // Arrange
             _useCase.Setup(x => x.DeletarAsync(It.IsAny<int>())).ReturnsAsync((FeedbackNPSEntity?)null);

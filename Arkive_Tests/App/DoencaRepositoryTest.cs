@@ -1,4 +1,4 @@
-using Arkive_API.Domain.Entities;
+﻿using Arkive_API.Domain.Entities;
 using Arkive_API.Infrastructure.Data;
 using Arkive_API.Infrastructure.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -103,7 +103,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "Doencas")]
-        public async Task ObterPorIdAsync_DeveRetornarDoenca_QuandoExiste()
+        public async Task ObterPorIdAsync_QuandoExiste_DeveRetornarDoenca()
         {
             // Arrange
             var doenca = new DoencaEntity { Nome = "Cinomose", StAtivo = "S" };
@@ -123,7 +123,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "Doencas")]
-        public async Task ObterPorIdAsync_DeveRetornarNull_QuandoNaoExiste()
+        public async Task ObterPorIdAsync_QuandoNaoExiste_DeveRetornarNull()
         {
             // Act
             var resultado = await _doencaRepository.ObterPorIdAsync(999);
@@ -242,7 +242,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "Doencas")]
-        public async Task EditarAsync_DeveRetornarNull_QuandoIdNaoExiste()
+        public async Task EditarAsync_QuandoIdNaoExiste_DeveRetornarNull()
         {
             // Act
             var resultado = await _doencaRepository.EditarAsync(999, new DoencaEntity { Nome = "Outra" });
@@ -253,7 +253,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "Doencas")]
-        public async Task EditarAsync_DeveRetornarNull_QuandoDoencaNaoExisteOuInativa()
+        public async Task EditarAsync_QuandoDoencaNaoExisteOuInativa_DeveRetornarNull()
         {
             // Arrange
             var doenca = new DoencaEntity { Nome = "Cinomose", StAtivo = "N" };
@@ -288,7 +288,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "Doencas")]
-        public async Task ReativarAsync_DeveRetornarNull_QuandoDoencaJaAtiva()
+        public async Task ReativarAsync_QuandoDoencaJaAtiva_DeveRetornarNull()
         {
             // Arrange
             var doenca = new DoencaEntity { Nome = "Cinomose", StAtivo = "S" };
@@ -323,7 +323,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "Doencas")]
-        public async Task InativarAsync_DeveRetornarNull_QuandoDoencaJaInativa()
+        public async Task InativarAsync_QuandoDoencaJaInativa_DeveRetornarNull()
         {
             // Arrange
             var doenca = new DoencaEntity { Nome = "Cinomose", StAtivo = "N" };

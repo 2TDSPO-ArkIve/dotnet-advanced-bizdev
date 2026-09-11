@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using Arkive_API.Domain.Entities;
 
 namespace Arkive_Tests.App
@@ -58,7 +58,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Domain", "Validacao")]
-        public void Raca_Nome_DeveSerInvalido_QuandoExcede50Caracteres()
+        public void Raca_Nome_QuandoExcede50Caracteres_DeveSerInvalido()
         {
             // Arrange
             var raca = new RacaEntity { Raca = new string('a', 51), IdEspecie = 1 };

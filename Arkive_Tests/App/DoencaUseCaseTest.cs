@@ -1,4 +1,4 @@
-using Arkive_API.Application.Dtos;
+﻿using Arkive_API.Application.Dtos;
 using Arkive_API.Application.Exceptions;
 using Arkive_API.Application.Mappers;
 using Arkive_API.Application.UseCases;
@@ -152,7 +152,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("UseCase", "Doencas")]
-        public async Task AdicionarAsync_DeveAdicionarDoenca_QuandoCategoriaNaoInformada()
+        public async Task AdicionarAsync_QuandoCategoriaNaoInformada_DeveAdicionarDoenca()
         {
             // Arrange
             var dto = new DoencaRequestDto { Nome = "Cinomose", IdCategoria = null };
@@ -173,7 +173,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("UseCase", "Doencas")]
-        public async Task AdicionarAsync_DeveAdicionarDoenca_QuandoCategoriaExisteEAtiva()
+        public async Task AdicionarAsync_QuandoCategoriaExisteEAtiva_DeveAdicionarDoenca()
         {
             // Arrange
             int idCategoria = 1;
@@ -195,7 +195,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("UseCase", "Doencas")]
-        public async Task AdicionarAsync_DeveLancarExcecao_QuandoCategoriaNaoExiste()
+        public async Task AdicionarAsync_QuandoCategoriaNaoExiste_DeveLancarExcecao()
         {
             // Arrange
             int idCategoria = 999;
@@ -211,7 +211,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("UseCase", "Doencas")]
-        public async Task AdicionarAsync_DeveLancarExcecao_QuandoCategoriaEstaInativa()
+        public async Task AdicionarAsync_QuandoCategoriaEstaInativa_DeveLancarExcecao()
         {
             // Arrange
             int idCategoria = 1;
@@ -228,7 +228,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("UseCase", "Doencas")]
-        public async Task EditarAsync_DeveEditarDoenca_QuandoCategoriaValidaOuNula()
+        public async Task EditarAsync_QuandoCategoriaValidaOuNula_DeveEditarDoenca()
         {
             // Arrange
             int idDoenca = 1;
@@ -250,7 +250,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("UseCase", "Doencas")]
-        public async Task EditarAsync_DeveLancarExcecao_QuandoCategoriaInvalida()
+        public async Task EditarAsync_QuandoCategoriaInvalida_DeveLancarExcecao()
         {
             // Arrange
             int idDoenca = 1;

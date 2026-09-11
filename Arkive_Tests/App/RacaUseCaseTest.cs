@@ -1,4 +1,4 @@
-using Arkive_API.Application.Dtos;
+﻿using Arkive_API.Application.Dtos;
 using Arkive_API.Application.Exceptions;
 using Arkive_API.Application.Mappers;
 using Arkive_API.Application.UseCases;
@@ -150,7 +150,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("UseCase", "Racas")]
-        public async Task AdicionarAsync_DeveAdicionarRaca_QuandoEspecieExisteEAtiva()
+        public async Task AdicionarAsync_QuandoEspecieExisteEAtiva_DeveAdicionarRaca()
         {
             // Arrange
             int idEspecie = 1;
@@ -172,7 +172,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("UseCase", "Racas")]
-        public async Task AdicionarAsync_DeveLancarExcecao_QuandoEspecieNaoExiste()
+        public async Task AdicionarAsync_QuandoEspecieNaoExiste_DeveLancarExcecao()
         {
             // Arrange
             var dto = new RacaRequestDto { Raca = "Labrador", IdEspecie = 999 };
@@ -187,7 +187,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("UseCase", "Racas")]
-        public async Task AdicionarAsync_DeveLancarExcecao_QuandoEspecieEstaInativa()
+        public async Task AdicionarAsync_QuandoEspecieEstaInativa_DeveLancarExcecao()
         {
             // Arrange
             int idEspecie = 1;
@@ -204,7 +204,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("UseCase", "Racas")]
-        public async Task EditarAsync_DeveEditarRaca_QuandoEspecieValida()
+        public async Task EditarAsync_QuandoEspecieValida_DeveEditarRaca()
         {
             // Arrange
             int idRaca = 1;
@@ -229,7 +229,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("UseCase", "Racas")]
-        public async Task EditarAsync_DeveLancarExcecao_QuandoEspecieInvalida()
+        public async Task EditarAsync_QuandoEspecieInvalida_DeveLancarExcecao()
         {
             // Arrange
             int idRaca = 1;

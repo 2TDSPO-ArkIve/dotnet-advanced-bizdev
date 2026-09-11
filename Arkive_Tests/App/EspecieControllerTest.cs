@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using System.Net.Http.Json;
 using Arkive_API.Application.Dtos;
 using Arkive_API.Application.Interfaces;
@@ -23,7 +23,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "Especies")]
-        public async Task GetAll_DeveRetornar200_ComListaDeEspecies()
+        public async Task GetAll_ComListaDeEspecies_DeveRetornar200()
         {
             // Arrange
             _useCase.Setup(x => x.ObterTodasAsync()).ReturnsAsync(new List<EspecieEntity>
@@ -43,7 +43,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "Especies")]
-        public async Task GetAll_DeveRetornar204_QuandoNaoHaEspecies()
+        public async Task GetAll_QuandoNaoHaEspecies_DeveRetornar204()
         {
             // Arrange
             _useCase.Setup(x => x.ObterTodasAsync()).ReturnsAsync(new List<EspecieEntity>());
@@ -57,7 +57,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "Especies")]
-        public async Task GetById_DeveRetornar200_QuandoEspecieExiste()
+        public async Task GetById_QuandoEspecieExiste_DeveRetornar200()
         {
             // Arrange
             _useCase.Setup(x => x.ObterPorIdAsync(4))
@@ -74,7 +74,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "Especies")]
-        public async Task GetById_DeveRetornar404_QuandoEspecieNaoExiste()
+        public async Task GetById_QuandoEspecieNaoExiste_DeveRetornar404()
         {
             // Arrange
             _useCase.Setup(x => x.ObterPorIdAsync(It.IsAny<int>())).ReturnsAsync((EspecieEntity?)null);
@@ -88,7 +88,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "Especies")]
-        public async Task Create_DeveRetornar201_QuandoDadosValidos()
+        public async Task Create_QuandoDadosValidos_DeveRetornar201()
         {
             // Arrange
             _useCase.Setup(x => x.AdicionarAsync(It.IsAny<EspecieRequestDto>()))
@@ -103,7 +103,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "Especies")]
-        public async Task Update_DeveRetornar404_QuandoEspecieNaoExisteOuInativa()
+        public async Task Update_QuandoEspecieNaoExisteOuInativa_DeveRetornar404()
         {
             // Arrange
             _useCase.Setup(x => x.EditarAsync(It.IsAny<int>(), It.IsAny<EspecieRequestDto>()))
@@ -118,7 +118,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "Especies")]
-        public async Task Delete_DeveRetornar200_QuandoInativadaComSucesso()
+        public async Task Delete_QuandoInativadaComSucesso_DeveRetornar200()
         {
             // Arrange
             _useCase.Setup(x => x.InativarAsync(2))

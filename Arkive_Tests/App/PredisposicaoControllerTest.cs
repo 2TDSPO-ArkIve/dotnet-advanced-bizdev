@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using System.Net.Http.Json;
 using Arkive_API.Application.Dtos;
 using Arkive_API.Application.Exceptions;
@@ -25,7 +25,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "Predisposicoes")]
-        public async Task GetAll_DeveRetornar200_ComListaDePredisposicoes()
+        public async Task GetAll_ComListaDePredisposicoes_DeveRetornar200()
         {
             // Arrange
             var predisposicoes = new List<PredisposicaoEntity>
@@ -47,7 +47,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "Predisposicoes")]
-        public async Task GetAll_DeveRetornar204_QuandoNaoHaPredisposicoes()
+        public async Task GetAll_QuandoNaoHaPredisposicoes_DeveRetornar204()
         {
             // Arrange
             _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>()))
@@ -62,7 +62,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "Predisposicoes")]
-        public async Task GetById_DeveRetornar200_QuandoVinculoExiste()
+        public async Task GetById_QuandoVinculoExiste_DeveRetornar200()
         {
             // Arrange
             _useCase.Setup(x => x.ObterPorIdAsync(5))
@@ -79,7 +79,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "Predisposicoes")]
-        public async Task GetById_DeveRetornar404_QuandoVinculoNaoExiste()
+        public async Task GetById_QuandoVinculoNaoExiste_DeveRetornar404()
         {
             // Arrange
             _useCase.Setup(x => x.ObterPorIdAsync(It.IsAny<int>())).ReturnsAsync((PredisposicaoEntity?)null);
@@ -93,7 +93,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "Predisposicoes")]
-        public async Task Create_DeveRetornar201_QuandoDadosValidos()
+        public async Task Create_QuandoDadosValidos_DeveRetornar201()
         {
             // Arrange
             _useCase.Setup(x => x.AdicionarAsync(It.IsAny<PredisposicaoRequestDto>()))
@@ -109,7 +109,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "Predisposicoes")]
-        public async Task Create_DeveRetornar404_QuandoDoencaNaoEncontrada()
+        public async Task Create_QuandoDoencaNaoEncontrada_DeveRetornar404()
         {
             // Arrange
             _useCase.Setup(x => x.AdicionarAsync(It.IsAny<PredisposicaoRequestDto>()))
@@ -125,7 +125,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "Predisposicoes")]
-        public async Task Delete_DeveRetornar200_QuandoRemovidaComSucesso()
+        public async Task Delete_QuandoRemovidaComSucesso_DeveRetornar200()
         {
             // Arrange
             _useCase.Setup(x => x.DeletarAsync(4))
@@ -140,7 +140,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "Predisposicoes")]
-        public async Task Delete_DeveRetornar404_QuandoVinculoNaoExiste()
+        public async Task Delete_QuandoVinculoNaoExiste_DeveRetornar404()
         {
             // Arrange
             _useCase.Setup(x => x.DeletarAsync(It.IsAny<int>())).ReturnsAsync((PredisposicaoEntity?)null);

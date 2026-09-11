@@ -1,4 +1,4 @@
-using Arkive_API.Domain.Entities;
+﻿using Arkive_API.Domain.Entities;
 using Arkive_API.Infrastructure.Data;
 using Arkive_API.Infrastructure.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -100,7 +100,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "CategoriaDoencas")]
-        public async Task ObterPorIdAsync_DeveRetornarCategoria_QuandoExiste()
+        public async Task ObterPorIdAsync_QuandoExiste_DeveRetornarCategoria()
         {
             // Arrange
             var categoria = new CategoriaDoencaEntity { Nome = "Viral", StAtivo = "S" };
@@ -120,7 +120,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "CategoriaDoencas")]
-        public async Task ObterPorIdAsync_DeveRetornarNull_QuandoNaoExiste()
+        public async Task ObterPorIdAsync_QuandoNaoExiste_DeveRetornarNull()
         {
             // Act
             var resultado = await _categoriaDoencaRepository.ObterPorIdAsync(999);
@@ -170,7 +170,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "CategoriaDoencas")]
-        public async Task EditarAsync_DeveRetornarNull_QuandoIdNaoExiste()
+        public async Task EditarAsync_QuandoIdNaoExiste_DeveRetornarNull()
         {
             // Act
             var resultado = await _categoriaDoencaRepository.EditarAsync(999, new CategoriaDoencaEntity { Nome = "Outra" });
@@ -181,7 +181,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "CategoriaDoencas")]
-        public async Task EditarAsync_DeveRetornarNull_QuandoCategoriaNaoExisteOuInativa()
+        public async Task EditarAsync_QuandoCategoriaNaoExisteOuInativa_DeveRetornarNull()
         {
             // Arrange
             var categoria = new CategoriaDoencaEntity { Nome = "Viral", StAtivo = "N" };
@@ -216,7 +216,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "CategoriaDoencas")]
-        public async Task ReativarAsync_DeveRetornarNull_QuandoCategoriaJaAtiva()
+        public async Task ReativarAsync_QuandoCategoriaJaAtiva_DeveRetornarNull()
         {
             // Arrange
             var categoria = new CategoriaDoencaEntity { Nome = "Viral", StAtivo = "S" };
@@ -251,7 +251,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "CategoriaDoencas")]
-        public async Task InativarAsync_DeveRetornarNull_QuandoCategoriaJaInativa()
+        public async Task InativarAsync_QuandoCategoriaJaInativa_DeveRetornarNull()
         {
             // Arrange
             var categoria = new CategoriaDoencaEntity { Nome = "Viral", StAtivo = "N" };

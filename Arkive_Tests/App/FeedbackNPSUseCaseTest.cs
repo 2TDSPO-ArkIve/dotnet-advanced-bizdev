@@ -1,4 +1,4 @@
-using Arkive_API.Application.Dtos;
+﻿using Arkive_API.Application.Dtos;
 using Arkive_API.Application.Exceptions;
 using Arkive_API.Application.Mappers;
 using Arkive_API.Application.UseCases;
@@ -77,7 +77,7 @@ namespace Arkive_Tests.App
         [Trait("UseCase", "FeedbackNPS")]
         [InlineData(0)]
         [InlineData(10)]
-        public async Task ObterPorNotaAsync_DeveRetornarFeedbacks_QuandoNotaValida(int nota)
+        public async Task ObterPorNotaAsync_QuandoNotaValida_DeveRetornarFeedbacks(int nota)
         {
             // Arrange
             var feedbacks = new List<FeedbackNPSEntity> { new FeedbackNPSEntity { Id = 1, Nota = nota } };
@@ -98,7 +98,7 @@ namespace Arkive_Tests.App
         [Trait("UseCase", "FeedbackNPS")]
         [InlineData(-1)]
         [InlineData(11)]
-        public async Task ObterPorNotaAsync_DeveLancarExcecao_QuandoNotaForaDoIntervalo(int nota)
+        public async Task ObterPorNotaAsync_QuandoNotaForaDoIntervalo_DeveLancarExcecao(int nota)
         {
             // Act & Assert
             await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => _feedbackNPSUseCase.ObterPorNotaAsync(nota));
@@ -204,7 +204,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("UseCase", "FeedbackNPS")]
-        public async Task AdicionarAsync_DeveLancarExcecao_QuandoNenhumContextoInformado()
+        public async Task AdicionarAsync_QuandoNenhumContextoInformado_DeveLancarExcecao()
         {
             // Arrange
             var dto = new FeedbackNPSRequestDto { Nota = 8 };
@@ -217,7 +217,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("UseCase", "FeedbackNPS")]
-        public async Task AdicionarAsync_DeveLancarExcecao_QuandoResponsavelNaoExiste()
+        public async Task AdicionarAsync_QuandoResponsavelNaoExiste_DeveLancarExcecao()
         {
             // Arrange
             var dto = new FeedbackNPSRequestDto { Nota = 8, IdResponsavel = 1 };
@@ -232,7 +232,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("UseCase", "FeedbackNPS")]
-        public async Task AdicionarAsync_DeveLancarExcecao_QuandoAnimalNaoExiste()
+        public async Task AdicionarAsync_QuandoAnimalNaoExiste_DeveLancarExcecao()
         {
             // Arrange
             var dto = new FeedbackNPSRequestDto { Nota = 8, IdAnimal = 1 };
@@ -247,7 +247,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("UseCase", "FeedbackNPS")]
-        public async Task AdicionarAsync_DeveLancarExcecao_QuandoClinicaNaoExiste()
+        public async Task AdicionarAsync_QuandoClinicaNaoExiste_DeveLancarExcecao()
         {
             // Arrange
             var dto = new FeedbackNPSRequestDto { Nota = 8, IdClinica = 1 };
@@ -262,7 +262,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("UseCase", "FeedbackNPS")]
-        public async Task AdicionarAsync_DeveLancarExcecao_QuandoConsultaNaoExiste()
+        public async Task AdicionarAsync_QuandoConsultaNaoExiste_DeveLancarExcecao()
         {
             // Arrange
             var dto = new FeedbackNPSRequestDto { Nota = 8, IdConsulta = 1 };
@@ -277,7 +277,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("UseCase", "FeedbackNPS")]
-        public async Task AdicionarAsync_DeveLancarExcecao_QuandoVeterinarioNaoExiste()
+        public async Task AdicionarAsync_QuandoVeterinarioNaoExiste_DeveLancarExcecao()
         {
             // Arrange
             var dto = new FeedbackNPSRequestDto { Nota = 8, IdVeterinario = 1 };
@@ -292,7 +292,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("UseCase", "FeedbackNPS")]
-        public async Task AdicionarAsync_DeveAdicionarFeedback_QuandoContextoValido()
+        public async Task AdicionarAsync_QuandoContextoValido_DeveAdicionarFeedback()
         {
             // Arrange
             var dto = new FeedbackNPSRequestDto { Nota = 9, IdResponsavel = 1, Comentario = "Ótimo atendimento" };
@@ -331,7 +331,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("UseCase", "FeedbackNPS")]
-        public async Task DeletarAsync_DeveRetornarNull_QuandoFeedbackNaoExiste()
+        public async Task DeletarAsync_QuandoFeedbackNaoExiste_DeveRetornarNull()
         {
             // Arrange
             _feedbackNPSRepository.Setup(obj => obj.DeletarAsync(It.IsAny<int>())).ReturnsAsync((FeedbackNPSEntity?)null);

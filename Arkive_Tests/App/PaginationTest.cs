@@ -1,4 +1,4 @@
-using Arkive_API.Application;
+﻿using Arkive_API.Application;
 
 namespace Arkive_Tests.App
 {
@@ -30,7 +30,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Helper", "Pagination")]
-        public void Normalizar_AplicaTakePadrao_QuandoTakeZeradoOuNegativo()
+        public void Normalizar_QuandoTakeZeradoOuNegativo_AplicaTakePadrao()
         {
             // Act
             var (skip, take) = Pagination.Normalizar(10, 0);

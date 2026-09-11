@@ -1,4 +1,4 @@
-using Arkive_API.Application.Dtos;
+﻿using Arkive_API.Application.Dtos;
 using Arkive_API.Application.Mappers;
 using Arkive_API.Application.UseCases;
 using Arkive_API.Domain.Entities;
@@ -102,7 +102,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("UseCase", "CategoriaDoencas")]
-        public async Task ObterPorIdAsync_DeveRetornarNull_QuandoNaoExiste()
+        public async Task ObterPorIdAsync_QuandoNaoExiste_DeveRetornarNull()
         {
             // Arrange
             _categoriaDoencaRepository.Setup(obj => obj.ObterPorIdAsync(It.IsAny<int>())).ReturnsAsync((CategoriaDoencaEntity?)null);
@@ -156,7 +156,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("UseCase", "CategoriaDoencas")]
-        public async Task EditarAsync_DeveRetornarNull_QuandoCategoriaNaoExiste()
+        public async Task EditarAsync_QuandoCategoriaNaoExiste_DeveRetornarNull()
         {
             // Arrange
             var dto = new CategoriaDoencaRequestDto { Nome = "Viral Respiratória" };

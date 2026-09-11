@@ -1,4 +1,4 @@
-using Arkive_API.Domain.Entities;
+﻿using Arkive_API.Domain.Entities;
 using Arkive_API.Infrastructure.Data;
 using Arkive_API.Infrastructure.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -100,7 +100,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "Especies")]
-        public async Task ObterPorIdAsync_DeveRetornarEspecie_QuandoExiste()
+        public async Task ObterPorIdAsync_QuandoExiste_DeveRetornarEspecie()
         {
             // Arrange
             var especie = new EspecieEntity { Especie = "Canina", StAtivo = "S" };
@@ -120,7 +120,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "Especies")]
-        public async Task ObterPorIdAsync_DeveRetornarNull_QuandoNaoExiste()
+        public async Task ObterPorIdAsync_QuandoNaoExiste_DeveRetornarNull()
         {
             // Act
             var resultado = await _especieRepository.ObterPorIdAsync(999);
@@ -170,7 +170,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "Especies")]
-        public async Task EditarAsync_DeveRetornarNull_QuandoIdNaoExiste()
+        public async Task EditarAsync_QuandoIdNaoExiste_DeveRetornarNull()
         {
             // Act
             var resultado = await _especieRepository.EditarAsync(999, new EspecieEntity { Especie = "Outra" });
@@ -181,7 +181,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "Especies")]
-        public async Task EditarAsync_DeveRetornarNull_QuandoEspecieNaoExisteOuInativa()
+        public async Task EditarAsync_QuandoEspecieNaoExisteOuInativa_DeveRetornarNull()
         {
             // Arrange
             var especie = new EspecieEntity { Especie = "Canina", StAtivo = "N" };
@@ -216,7 +216,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "Especies")]
-        public async Task ReativarAsync_DeveRetornarNull_QuandoEspecieJaAtiva()
+        public async Task ReativarAsync_QuandoEspecieJaAtiva_DeveRetornarNull()
         {
             // Arrange
             var especie = new EspecieEntity { Especie = "Canina", StAtivo = "S" };
@@ -251,7 +251,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "Especies")]
-        public async Task InativarAsync_DeveRetornarNull_QuandoEspecieJaInativa()
+        public async Task InativarAsync_QuandoEspecieJaInativa_DeveRetornarNull()
         {
             // Arrange
             var especie = new EspecieEntity { Especie = "Canina", StAtivo = "N" };

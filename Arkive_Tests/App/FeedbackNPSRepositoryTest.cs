@@ -1,4 +1,4 @@
-using Arkive_API.Domain.Entities;
+﻿using Arkive_API.Domain.Entities;
 using Arkive_API.Domain.Entities.External;
 using Arkive_API.Infrastructure.Data;
 using Arkive_API.Infrastructure.Data.Repositories;
@@ -54,7 +54,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "FeedbackNPS")]
-        public async Task ObterPorIdAsync_DeveRetornarFeedback_QuandoExiste()
+        public async Task ObterPorIdAsync_QuandoExiste_DeveRetornarFeedback()
         {
             // Arrange
             var feedback = new FeedbackNPSEntity { Nota = 10, IdResponsavel = 1 };
@@ -74,7 +74,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "FeedbackNPS")]
-        public async Task ObterPorIdAsync_DeveRetornarNull_QuandoNaoExiste()
+        public async Task ObterPorIdAsync_QuandoNaoExiste_DeveRetornarNull()
         {
             // Act
             var resultado = await _feedbackNPSRepository.ObterPorIdAsync(999);
@@ -248,7 +248,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "FeedbackNPS")]
-        public async Task DeletarAsync_DeveDeletarFeedback_QuandoExiste()
+        public async Task DeletarAsync_QuandoExiste_DeveDeletarFeedback()
         {
             // Arrange
             var feedback = new FeedbackNPSEntity { Nota = 9, IdResponsavel = 1 };
@@ -269,7 +269,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "FeedbackNPS")]
-        public async Task DeletarAsync_DeveRetornarNull_QuandoNaoExiste()
+        public async Task DeletarAsync_QuandoNaoExiste_DeveRetornarNull()
         {
             // Act
             var resultado = await _feedbackNPSRepository.DeletarAsync(999);
@@ -280,7 +280,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "FeedbackNPS")]
-        public async Task ResponsavelExisteAsync_DeveRetornarTrue_QuandoExiste()
+        public async Task ResponsavelExisteAsync_QuandoExiste_DeveRetornarTrue()
         {
             // Arrange
             _applicationContext.Responsavel.Add(new ResponsavelExternal { Id = 1 });
@@ -295,7 +295,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "FeedbackNPS")]
-        public async Task ResponsavelExisteAsync_DeveRetornarFalse_QuandoNaoExiste()
+        public async Task ResponsavelExisteAsync_QuandoNaoExiste_DeveRetornarFalse()
         {
             // Act
             var resultado = await _feedbackNPSRepository.ResponsavelExisteAsync(999);
@@ -306,7 +306,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "FeedbackNPS")]
-        public async Task AnimalExisteAsync_DeveRetornarTrue_QuandoExiste()
+        public async Task AnimalExisteAsync_QuandoExiste_DeveRetornarTrue()
         {
             // Arrange
             _applicationContext.Animal.Add(new AnimalExternal { Id = 1 });
@@ -321,7 +321,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "FeedbackNPS")]
-        public async Task AnimalExisteAsync_DeveRetornarFalse_QuandoNaoExiste()
+        public async Task AnimalExisteAsync_QuandoNaoExiste_DeveRetornarFalse()
         {
             // Act
             var resultado = await _feedbackNPSRepository.AnimalExisteAsync(999);
@@ -332,7 +332,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "FeedbackNPS")]
-        public async Task ClinicaExisteAsync_DeveRetornarTrue_QuandoExiste()
+        public async Task ClinicaExisteAsync_QuandoExiste_DeveRetornarTrue()
         {
             // Arrange
             _applicationContext.Clinica.Add(new ClinicaExternal { Id = 1 });
@@ -347,7 +347,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "FeedbackNPS")]
-        public async Task ClinicaExisteAsync_DeveRetornarFalse_QuandoNaoExiste()
+        public async Task ClinicaExisteAsync_QuandoNaoExiste_DeveRetornarFalse()
         {
             // Act
             var resultado = await _feedbackNPSRepository.ClinicaExisteAsync(999);
@@ -358,7 +358,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "FeedbackNPS")]
-        public async Task ConsultaExisteAsync_DeveRetornarTrue_QuandoExiste()
+        public async Task ConsultaExisteAsync_QuandoExiste_DeveRetornarTrue()
         {
             // Arrange
             _applicationContext.Consulta.Add(new ConsultaExternal { Id = 1 });
@@ -373,7 +373,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "FeedbackNPS")]
-        public async Task ConsultaExisteAsync_DeveRetornarFalse_QuandoNaoExiste()
+        public async Task ConsultaExisteAsync_QuandoNaoExiste_DeveRetornarFalse()
         {
             // Act
             var resultado = await _feedbackNPSRepository.ConsultaExisteAsync(999);
@@ -384,7 +384,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "FeedbackNPS")]
-        public async Task VeterinarioExisteAsync_DeveRetornarTrue_QuandoExiste()
+        public async Task VeterinarioExisteAsync_QuandoExiste_DeveRetornarTrue()
         {
             // Arrange
             _applicationContext.Veterinario.Add(new VeterinarioExternal { Id = 1 });
@@ -399,7 +399,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "FeedbackNPS")]
-        public async Task VeterinarioExisteAsync_DeveRetornarFalse_QuandoNaoExiste()
+        public async Task VeterinarioExisteAsync_QuandoNaoExiste_DeveRetornarFalse()
         {
             // Act
             var resultado = await _feedbackNPSRepository.VeterinarioExisteAsync(999);

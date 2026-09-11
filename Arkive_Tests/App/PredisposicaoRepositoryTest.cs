@@ -1,4 +1,4 @@
-using Arkive_API.Domain.Entities;
+﻿using Arkive_API.Domain.Entities;
 using Arkive_API.Infrastructure.Data;
 using Arkive_API.Infrastructure.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -99,7 +99,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "Predisposicoes")]
-        public async Task ObterPorIdAsync_DeveRetornarPredisposicao_QuandoExiste()
+        public async Task ObterPorIdAsync_QuandoExiste_DeveRetornarPredisposicao()
         {
             // Arrange
             var predisposicao = new PredisposicaoEntity { IdEspecie = 1, IdDoenca = 1 };
@@ -129,7 +129,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "Predisposicoes")]
-        public async Task ObterPorIdAsync_DeveRetornarNull_QuandoNaoExiste()
+        public async Task ObterPorIdAsync_QuandoNaoExiste_DeveRetornarNull()
         {
             // Act
             var resultado = await _predisposicaoRepository.ObterPorIdAsync(999);
@@ -264,7 +264,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "Predisposicoes")]
-        public async Task DeletarAsync_DeveDeletarPredisposicao_QuandoExiste()
+        public async Task DeletarAsync_QuandoExiste_DeveDeletarPredisposicao()
         {
             // Arrange
             var predisposicao = new PredisposicaoEntity { IdEspecie = 1, IdDoenca = 1 };
@@ -286,7 +286,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "Predisposicoes")]
-        public async Task DeletarAsync_DeveRetornarNull_QuandoNaoExiste()
+        public async Task DeletarAsync_QuandoNaoExiste_DeveRetornarNull()
         {
             // Act
             var resultado = await _predisposicaoRepository.DeletarAsync(999);

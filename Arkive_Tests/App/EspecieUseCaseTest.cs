@@ -1,4 +1,4 @@
-using Arkive_API.Application.Dtos;
+﻿using Arkive_API.Application.Dtos;
 using Arkive_API.Application.Mappers;
 using Arkive_API.Application.UseCases;
 using Arkive_API.Domain.Entities;
@@ -102,7 +102,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("UseCase", "Especies")]
-        public async Task ObterPorIdAsync_DeveRetornarNull_QuandoNaoExiste()
+        public async Task ObterPorIdAsync_QuandoNaoExiste_DeveRetornarNull()
         {
             // Arrange
             _especieRepository.Setup(obj => obj.ObterPorIdAsync(It.IsAny<int>())).ReturnsAsync((EspecieEntity?)null);
@@ -156,7 +156,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("UseCase", "Especies")]
-        public async Task EditarAsync_DeveRetornarNull_QuandoEspecieNaoExiste()
+        public async Task EditarAsync_QuandoEspecieNaoExiste_DeveRetornarNull()
         {
             // Arrange
             var dto = new EspecieRequestDto { Especie = "Canina Doméstica" };

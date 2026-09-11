@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace Arkive_Tests.App
@@ -15,7 +15,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "Health")]
-        public async Task Live_DeveRetornar200_QuandoApiNoAr()
+        public async Task Live_QuandoApiNoAr_DeveRetornar200()
         {
             // Act
             var response = await _client.GetAsync("/health/live");

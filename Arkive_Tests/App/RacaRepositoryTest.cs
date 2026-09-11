@@ -1,4 +1,4 @@
-using Arkive_API.Domain.Entities;
+﻿using Arkive_API.Domain.Entities;
 using Arkive_API.Infrastructure.Data;
 using Arkive_API.Infrastructure.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -133,7 +133,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "Racas")]
-        public async Task ObterPorIdAsync_DeveRetornarRaca_QuandoExiste()
+        public async Task ObterPorIdAsync_QuandoExiste_DeveRetornarRaca()
         {
             // Arrange
             var raca = new RacaEntity { Raca = "Labrador", IdEspecie = 1, StAtivo = "S" };
@@ -158,7 +158,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "Racas")]
-        public async Task ObterPorIdAsync_DeveRetornarNull_QuandoNaoExiste()
+        public async Task ObterPorIdAsync_QuandoNaoExiste_DeveRetornarNull()
         {
             // Act
             var resultado = await _racaRepository.ObterPorIdAsync(999);
@@ -241,7 +241,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "Racas")]
-        public async Task EditarAsync_DeveRetornarNull_QuandoIdNaoExiste()
+        public async Task EditarAsync_QuandoIdNaoExiste_DeveRetornarNull()
         {
             // Act
             var resultado = await _racaRepository.EditarAsync(999, new RacaEntity { Raca = "Outra", IdEspecie = 1 });
@@ -252,7 +252,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "Racas")]
-        public async Task EditarAsync_DeveRetornarNull_QuandoRacaNaoExisteOuInativa()
+        public async Task EditarAsync_QuandoRacaNaoExisteOuInativa_DeveRetornarNull()
         {
             // Arrange
             var raca = new RacaEntity { Raca = "Labrador", IdEspecie = 1, StAtivo = "N" };
@@ -290,7 +290,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "Racas")]
-        public async Task ReativarAsync_DeveRetornarNull_QuandoRacaJaAtiva()
+        public async Task ReativarAsync_QuandoRacaJaAtiva_DeveRetornarNull()
         {
             // Arrange
             var raca = new RacaEntity { Raca = "Labrador", IdEspecie = 1, StAtivo = "S" };
@@ -328,7 +328,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "Racas")]
-        public async Task InativarAsync_DeveRetornarNull_QuandoRacaJaInativa()
+        public async Task InativarAsync_QuandoRacaJaInativa_DeveRetornarNull()
         {
             // Arrange
             var raca = new RacaEntity { Raca = "Labrador", IdEspecie = 1, StAtivo = "N" };

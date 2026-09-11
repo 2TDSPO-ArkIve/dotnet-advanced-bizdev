@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using System.Net.Http.Json;
 using Arkive_API.Application.Dtos;
 using Arkive_API.Domain.Entities;
@@ -26,7 +26,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "CategoriaDoenca")]
-        public async Task GetAll_DeveRetornar200_ComListaDeCategorias()
+        public async Task GetAll_ComListaDeCategorias_DeveRetornar200()
         {
             // Arrange
             var categorias = new List<CategoriaDoencaEntity>
@@ -48,7 +48,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "CategoriaDoenca")]
-        public async Task GetAll_DeveRetornar204_QuandoNaoHaCategorias()
+        public async Task GetAll_QuandoNaoHaCategorias_DeveRetornar204()
         {
             // Arrange
             _useCase.Setup(x => x.ObterTodasAsync()).ReturnsAsync(new List<CategoriaDoencaEntity>());
@@ -62,7 +62,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "CategoriaDoenca")]
-        public async Task GetById_DeveRetornar200_QuandoCategoriaExiste()
+        public async Task GetById_QuandoCategoriaExiste_DeveRetornar200()
         {
             // Arrange
             var categoria = new CategoriaDoencaEntity { Id = 5, Nome = "Viral", StAtivo = "S" };
@@ -80,7 +80,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "CategoriaDoenca")]
-        public async Task GetById_DeveRetornar404_QuandoCategoriaNaoExiste()
+        public async Task GetById_QuandoCategoriaNaoExiste_DeveRetornar404()
         {
             // Arrange
             _useCase.Setup(x => x.ObterPorIdAsync(It.IsAny<int>())).ReturnsAsync((CategoriaDoencaEntity?)null);
@@ -94,7 +94,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "CategoriaDoenca")]
-        public async Task Create_DeveRetornar201_QuandoDadosValidos()
+        public async Task Create_QuandoDadosValidos_DeveRetornar201()
         {
             // Arrange
             var dto = new CategoriaDoencaRequestDto { Nome = "Parasitária" };
@@ -112,7 +112,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "CategoriaDoenca")]
-        public async Task Update_DeveRetornar404_QuandoCategoriaNaoExisteOuInativa()
+        public async Task Update_QuandoCategoriaNaoExisteOuInativa_DeveRetornar404()
         {
             // Arrange
             _useCase.Setup(x => x.EditarAsync(It.IsAny<int>(), It.IsAny<CategoriaDoencaRequestDto>()))
@@ -128,7 +128,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "CategoriaDoenca")]
-        public async Task Delete_DeveRetornar200_QuandoInativadaComSucesso()
+        public async Task Delete_QuandoInativadaComSucesso_DeveRetornar200()
         {
             // Arrange
             var inativada = new CategoriaDoencaEntity { Id = 3, Nome = "Viral", StAtivo = "N" };

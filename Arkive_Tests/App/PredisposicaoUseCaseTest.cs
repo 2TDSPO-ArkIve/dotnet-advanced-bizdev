@@ -1,4 +1,4 @@
-using Arkive_API.Application.Dtos;
+﻿using Arkive_API.Application.Dtos;
 using Arkive_API.Application.Exceptions;
 using Arkive_API.Application.Mappers;
 using Arkive_API.Application.UseCases;
@@ -165,7 +165,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("UseCase", "Predisposicoes")]
-        public async Task AdicionarAsync_DeveAdicionarPredisposicao_QuandoTudoValidoSemRaca()
+        public async Task AdicionarAsync_QuandoTudoValidoSemRaca_DeveAdicionarPredisposicao()
         {
             // Arrange
             var dto = new PredisposicaoRequestDto { IdEspecie = 1, IdRaca = null, IdDoenca = 1 };
@@ -189,7 +189,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("UseCase", "Predisposicoes")]
-        public async Task AdicionarAsync_DeveAdicionarPredisposicao_QuandoTudoValidoComRaca()
+        public async Task AdicionarAsync_QuandoTudoValidoComRaca_DeveAdicionarPredisposicao()
         {
             // Arrange
             var dto = new PredisposicaoRequestDto { IdEspecie = 1, IdRaca = 1, IdDoenca = 1 };
@@ -212,7 +212,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("UseCase", "Predisposicoes")]
-        public async Task AdicionarAsync_DeveLancarExcecao_QuandoEspecieNaoExisteOuInativa()
+        public async Task AdicionarAsync_QuandoEspecieNaoExisteOuInativa_DeveLancarExcecao()
         {
             // Arrange
             var dto = new PredisposicaoRequestDto { IdEspecie = 999, IdDoenca = 1 };
@@ -227,7 +227,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("UseCase", "Predisposicoes")]
-        public async Task AdicionarAsync_DeveLancarExcecao_QuandoRacaNaoExisteOuInativa()
+        public async Task AdicionarAsync_QuandoRacaNaoExisteOuInativa_DeveLancarExcecao()
         {
             // Arrange
             var dto = new PredisposicaoRequestDto { IdEspecie = 1, IdRaca = 999, IdDoenca = 1 };
@@ -243,7 +243,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("UseCase", "Predisposicoes")]
-        public async Task AdicionarAsync_DeveLancarExcecao_QuandoDoencaNaoExisteOuInativa()
+        public async Task AdicionarAsync_QuandoDoencaNaoExisteOuInativa_DeveLancarExcecao()
         {
             // Arrange
             var dto = new PredisposicaoRequestDto { IdEspecie = 1, IdDoenca = 999 };
@@ -279,7 +279,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("UseCase", "Predisposicoes")]
-        public async Task DeletarAsync_DeveRetornarNull_QuandoNaoExiste()
+        public async Task DeletarAsync_QuandoNaoExiste_DeveRetornarNull()
         {
             // Arrange
             _predisposicaoRepository.Setup(obj => obj.DeletarAsync(It.IsAny<int>())).ReturnsAsync((PredisposicaoEntity?)null);

@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using System.Net.Http.Json;
 using Arkive_API.Application.Dtos;
 using Arkive_API.Application.Exceptions;
@@ -24,7 +24,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "Racas")]
-        public async Task GetAll_DeveRetornar200_ComListaDeRacas()
+        public async Task GetAll_ComListaDeRacas_DeveRetornar200()
         {
             // Arrange
             _useCase.Setup(x => x.ObterTodasAsync()).ReturnsAsync(new List<RacaEntity>
@@ -44,7 +44,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "Racas")]
-        public async Task GetAll_DeveRetornar204_QuandoNaoHaRacas()
+        public async Task GetAll_QuandoNaoHaRacas_DeveRetornar204()
         {
             // Arrange
             _useCase.Setup(x => x.ObterTodasAsync()).ReturnsAsync(new List<RacaEntity>());
@@ -58,7 +58,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "Racas")]
-        public async Task GetById_DeveRetornar200_QuandoRacaExiste()
+        public async Task GetById_QuandoRacaExiste_DeveRetornar200()
         {
             // Arrange
             _useCase.Setup(x => x.ObterPorIdAsync(3))
@@ -75,7 +75,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "Racas")]
-        public async Task GetById_DeveRetornar404_QuandoRacaNaoExiste()
+        public async Task GetById_QuandoRacaNaoExiste_DeveRetornar404()
         {
             // Arrange
             _useCase.Setup(x => x.ObterPorIdAsync(It.IsAny<int>())).ReturnsAsync((RacaEntity?)null);
@@ -89,7 +89,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "Racas")]
-        public async Task Create_DeveRetornar201_QuandoDadosValidos()
+        public async Task Create_QuandoDadosValidos_DeveRetornar201()
         {
             // Arrange
             _useCase.Setup(x => x.AdicionarAsync(It.IsAny<RacaRequestDto>()))
@@ -105,7 +105,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "Racas")]
-        public async Task Create_DeveRetornar404_QuandoEspecieNaoEncontrada()
+        public async Task Create_QuandoEspecieNaoEncontrada_DeveRetornar404()
         {
             // Arrange
             _useCase.Setup(x => x.AdicionarAsync(It.IsAny<RacaRequestDto>()))
@@ -121,7 +121,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "Racas")]
-        public async Task Update_DeveRetornar404_QuandoRacaNaoExisteOuInativa()
+        public async Task Update_QuandoRacaNaoExisteOuInativa_DeveRetornar404()
         {
             // Arrange
             _useCase.Setup(x => x.EditarAsync(It.IsAny<int>(), It.IsAny<RacaRequestDto>()))
@@ -137,7 +137,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "Racas")]
-        public async Task Delete_DeveRetornar200_QuandoInativadaComSucesso()
+        public async Task Delete_QuandoInativadaComSucesso_DeveRetornar200()
         {
             // Arrange
             _useCase.Setup(x => x.InativarAsync(3))

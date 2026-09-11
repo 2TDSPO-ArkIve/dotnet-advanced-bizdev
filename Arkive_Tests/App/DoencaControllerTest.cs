@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using System.Net.Http.Json;
 using Arkive_API.Application.Dtos;
 using Arkive_API.Application.Exceptions;
@@ -25,7 +25,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "Doencas")]
-        public async Task GetAll_DeveRetornar200_ComListaDeDoencas()
+        public async Task GetAll_ComListaDeDoencas_DeveRetornar200()
         {
             // Arrange
             var doencas = new List<DoencaEntity>
@@ -47,7 +47,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "Doencas")]
-        public async Task GetAll_DeveRetornar204_QuandoNaoHaDoencas()
+        public async Task GetAll_QuandoNaoHaDoencas_DeveRetornar204()
         {
             // Arrange
             _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>()))
@@ -62,7 +62,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "Doencas")]
-        public async Task GetById_DeveRetornar200_QuandoDoencaExiste()
+        public async Task GetById_QuandoDoencaExiste_DeveRetornar200()
         {
             // Arrange
             _useCase.Setup(x => x.ObterPorIdAsync(7))
@@ -79,7 +79,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "Doencas")]
-        public async Task GetById_DeveRetornar404_QuandoDoencaNaoExiste()
+        public async Task GetById_QuandoDoencaNaoExiste_DeveRetornar404()
         {
             // Arrange
             _useCase.Setup(x => x.ObterPorIdAsync(It.IsAny<int>())).ReturnsAsync((DoencaEntity?)null);
@@ -93,7 +93,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "Doencas")]
-        public async Task Create_DeveRetornar201_QuandoDadosValidos()
+        public async Task Create_QuandoDadosValidos_DeveRetornar201()
         {
             // Arrange
             var dto = new DoencaRequestDto { Nome = "Leptospirose" };
@@ -109,7 +109,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "Doencas")]
-        public async Task Create_DeveRetornar404_QuandoCategoriaNaoEncontrada()
+        public async Task Create_QuandoCategoriaNaoEncontrada_DeveRetornar404()
         {
             // Arrange
             _useCase.Setup(x => x.AdicionarAsync(It.IsAny<DoencaRequestDto>()))
@@ -125,7 +125,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "Doencas")]
-        public async Task Update_DeveRetornar404_QuandoDoencaNaoExisteOuInativa()
+        public async Task Update_QuandoDoencaNaoExisteOuInativa_DeveRetornar404()
         {
             // Arrange
             _useCase.Setup(x => x.EditarAsync(It.IsAny<int>(), It.IsAny<DoencaRequestDto>()))
@@ -140,7 +140,7 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Controller", "Doencas")]
-        public async Task Delete_DeveRetornar200_QuandoInativadaComSucesso()
+        public async Task Delete_QuandoInativadaComSucesso_DeveRetornar200()
         {
             // Arrange
             _useCase.Setup(x => x.InativarAsync(3))
