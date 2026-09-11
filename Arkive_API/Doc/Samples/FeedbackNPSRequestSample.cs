@@ -14,7 +14,7 @@ namespace Arkive_API.Doc.Samples
                 IdClinica = 1,
                 IdConsulta = 1,
                 IdVeterinario = null,
-                Nota = 9,
+                Nota = 5,
                 Comentario = "Atendimento excelente, equipe muito atenciosa."
             };
         }

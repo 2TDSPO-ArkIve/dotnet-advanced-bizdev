@@ -20,10 +20,10 @@ namespace Arkive_Tests.App
         [Theory]
         [Trait("Domain", "Validacao")]
         [InlineData(0, true)]
-        [InlineData(10, true)]
+        [InlineData(5, true)]
         [InlineData(-1, false)]
-        [InlineData(11, false)]
-        public void FeedbackNPS_Nota_DeveAceitarSomenteIntervalo0a10(int nota, bool esperadoValido)
+        [InlineData(6, false)]
+        public void FeedbackNPS_Nota_DeveAceitarSomenteIntervalo0a5(int nota, bool esperadoValido)
         {
             // Arrange
             var feedback = new FeedbackNPSEntity { Nota = nota, IdResponsavel = 1 };

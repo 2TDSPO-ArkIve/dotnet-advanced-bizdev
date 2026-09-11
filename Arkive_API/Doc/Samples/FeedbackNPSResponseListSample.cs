@@ -17,7 +17,7 @@ namespace Arkive_API.Doc.Samples
                     IdClinica = 1,
                     IdConsulta = 1,
                     IdVeterinario = null,
-                    Nota = 9,
+                    Nota = 5,
                     Comentario = "Atendimento excelente, equipe muito atenciosa.",
                     DataFeedback = new DateTime(2026, 8, 20, 14, 30, 0)
                 },
@@ -29,7 +29,7 @@ namespace Arkive_API.Doc.Samples
                     IdClinica = 2,
                     IdConsulta = null,
                     IdVeterinario = 3,
-                    Nota = 6,
+                    Nota = 3,
                     Comentario = "Tempo de espera um pouco longo.",
                     DataFeedback = new DateTime(2026, 8, 22, 9, 15, 0)
                 },

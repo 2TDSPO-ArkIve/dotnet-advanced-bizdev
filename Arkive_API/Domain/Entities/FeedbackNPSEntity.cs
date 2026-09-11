@@ -28,7 +28,7 @@ namespace Arkive_API.Domain.Entities
 
         [Required(ErrorMessage = "A Nota é obrigatória.")]
         [Column("NR_NOTA")]
-        [Range(0, 10, ErrorMessage = "A Nota deve estar entre 0 e 10")]
+        [Range(0, 5, ErrorMessage = "A Nota deve estar entre 0 e 5")]
         public int Nota { get; set; }
 
         [Column("DS_COMENTARIO", TypeName = "CLOB")]

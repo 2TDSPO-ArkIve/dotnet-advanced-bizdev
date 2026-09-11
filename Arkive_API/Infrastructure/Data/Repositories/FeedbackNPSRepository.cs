@@ -254,27 +254,27 @@ namespace Arkive_API.Infrastructure.Data.Repositories
 
         public async Task<bool> ResponsavelExisteAsync(int id)
         {
-            return await _context.Responsavel.AnyAsync(x => x.Id == id);
+            return await _context.Responsavel.CountAsync(x => x.Id == id) > 0;
         }
 
         public async Task<bool> AnimalExisteAsync(int id)
         {
-            return await _context.Animal.AnyAsync(x => x.Id == id);
+            return await _context.Animal.CountAsync(x => x.Id == id) > 0;
         }
 
         public async Task<bool> ClinicaExisteAsync(int id)
         {
-            return await _context.Clinica.AnyAsync(x => x.Id == id);
+            return await _context.Clinica.CountAsync(x => x.Id == id) > 0;
         }
 
         public async Task<bool> ConsultaExisteAsync(int id)
         {
-            return await _context.Consulta.AnyAsync(x => x.Id == id);
+            return await _context.Consulta.CountAsync(x => x.Id == id) > 0;
         }
 
         public async Task<bool> VeterinarioExisteAsync(int id)
         {
-            return await _context.Veterinario.AnyAsync(x => x.Id == id);
+            return await _context.Veterinario.CountAsync(x => x.Id == id) > 0;
         }
     }
 }

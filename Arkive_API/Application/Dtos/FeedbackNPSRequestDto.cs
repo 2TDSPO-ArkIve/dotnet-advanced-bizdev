@@ -15,7 +15,7 @@ namespace Arkive_API.Application.Dtos
         public int? IdVeterinario { get; set; }
 
         [Required(ErrorMessage = "A Nota é obrigatória.")]
-        [Range(0, 10, ErrorMessage = "A Nota deve estar entre 0 e 10")]
+        [Range(0, 5, ErrorMessage = "A Nota deve estar entre 0 e 5")]
         public int Nota { get; set; }
 
         public string? Comentario { get; set; }

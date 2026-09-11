@@ -106,10 +106,10 @@ namespace Arkive_API.Presentation.Controllers
             ## Informações do Retorno:
             * **Status 200 (OK):** Retorna uma lista contendo os feedbacks com a nota NPS informada.
             * **Status 204 (No Content):** Executado com sucesso, porém não há feedbacks com esta nota.
-            * **Status 400 (Bad Request):** A nota informada está fora do intervalo permitido (0 a 10), ou ocorreu uma falha durante a consulta.
+            * **Status 400 (Bad Request):** A nota informada está fora do intervalo permitido (0 a 5), ou ocorreu uma falha durante a consulta.
 
             ## Observações:
-            * A nota deve estar entre 0 e 10; valores fora deste intervalo resultam em 400 (Bad Request).
+            * A nota deve estar entre 0 e 5; valores fora deste intervalo resultam em 400 (Bad Request).
             """
         )]
         [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<FeedbackNPSEntity>>))]

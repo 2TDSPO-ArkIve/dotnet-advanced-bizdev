@@ -97,11 +97,11 @@ namespace Arkive_Tests.App
         {
             // Arrange
             _useCase.Setup(x => x.AdicionarAsync(It.IsAny<FeedbackNPSRequestDto>()))
-                .ReturnsAsync(new FeedbackNPSEntity { Id = 40, Nota = 9, IdResponsavel = 1 });
+                .ReturnsAsync(new FeedbackNPSEntity { Id = 40, Nota = 5, IdResponsavel = 1 });
 
             // Act
             var response = await _client.PostAsJsonAsync("/api/feedbacks-nps",
-                new FeedbackNPSRequestDto { Nota = 9, IdResponsavel = 1 });
+                new FeedbackNPSRequestDto { Nota = 5, IdResponsavel = 1 });
 
             // Assert
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
@@ -117,7 +117,7 @@ namespace Arkive_Tests.App
 
             // Act
             var response = await _client.PostAsJsonAsync("/api/feedbacks-nps",
-                new FeedbackNPSRequestDto { Nota = 9, IdResponsavel = 999 });
+                new FeedbackNPSRequestDto { Nota = 5, IdResponsavel = 999 });
 
             // Assert
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);

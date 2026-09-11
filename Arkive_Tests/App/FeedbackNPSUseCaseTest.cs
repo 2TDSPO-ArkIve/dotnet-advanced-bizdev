@@ -76,7 +76,7 @@ namespace Arkive_Tests.App
         [Theory]
         [Trait("UseCase", "FeedbackNPS")]
         [InlineData(0)]
-        [InlineData(10)]
+        [InlineData(5)]
         public async Task ObterPorNotaAsync_QuandoNotaValida_DeveRetornarFeedbacks(int nota)
         {
             // Arrange
@@ -97,7 +97,7 @@ namespace Arkive_Tests.App
         [Theory]
         [Trait("UseCase", "FeedbackNPS")]
         [InlineData(-1)]
-        [InlineData(11)]
+        [InlineData(6)]
         public async Task ObterPorNotaAsync_QuandoNotaForaDoIntervalo_DeveLancarExcecao(int nota)
         {
             // Act & Assert

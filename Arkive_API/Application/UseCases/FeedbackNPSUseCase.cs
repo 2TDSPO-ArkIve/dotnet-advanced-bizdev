@@ -54,10 +54,10 @@ namespace Arkive_API.Application.UseCases
         {
             _logger.LogInformation("Obtendo feedbacks NPS com nota {Nota} (skip {Skip}, take {Take})", nota, skip, take);
 
-            if (nota < 0 || nota > 10)
+            if (nota < 0 || nota > 5)
             {
                 _logger.LogWarning("Nota inválida recebida: {Nota}", nota);
-                throw new ArgumentOutOfRangeException(nameof(nota), "Nota inválida, deve estar entre 0 e 10");
+                throw new ArgumentOutOfRangeException(nameof(nota), "Nota inválida, deve estar entre 0 e 5");
             }
 
             try
