@@ -189,13 +189,24 @@ As listagens de **Doenças**, **Predisposições** e **Feedbacks NPS** aceitam o
 | Param | Default | Regras |
 |-------|---------|--------|
 | `skip` | `0` | valores negativos são tratados como `0` |
-| `take` | `50` | limitado ao intervalo `1..100` |
+| `take` | `50` | aplicado quando `take` vem `0` ou negativo; sem teto máximo |
 
 Exemplo: `GET /api/doencas?skip=100&take=25`
 
-A resposta continua sendo um array JSON (`200 OK`) ou `204 No Content` quando vazio — sem envelope de metadados. Ordenação por `Id` ascendente.
+A resposta (`200 OK`) vem em um envelope com metadados de paginação (`PageResultModel<T>`), ou `204 No Content` quando vazio:
 
-> Espécies, Raças e Categorias de Doença não são paginadas.
+```json
+{
+  "data": [ { "id": 1, "nome": "Cinomose", "stAtivo": "S" } ],
+  "deslocamento": 100,
+  "registroRetornado": 25,
+  "totalRegistros": 137
+}
+```
+
+Ordenação por `Id` ascendente.
+
+> Espécies, Raças e Categorias de Doença não são paginadas — retornam array JSON puro, sem envelope.
 
 ### Rate Limiting
 
