@@ -291,7 +291,9 @@ desempenho.
 
 **POST / PUT — Body:**
 ```json
-{ "especie": "Cachorro" }
+{ 
+  "especie": "Cachorro" 
+}
 ```
 
 ---
@@ -311,7 +313,9 @@ desempenho.
 
 **POST / PUT — Body:**
 ```json
-{ "nome": "Infecciosa" }
+{ 
+  "nome": "Infecciosa" 
+}
 ```
 
 ---
@@ -332,7 +336,11 @@ desempenho.
 
 **POST / PUT — Body:**
 ```json
-{ "raca": "Labrador", "idEspecie": 1, "porte": "GRANDE" }
+{ 
+  "raca": "Labrador", 
+  "idEspecie": 1, 
+  "porte": "GRANDE" 
+}
 ```
 > `porte` aceita: `PEQUENO`, `MEDIO`, `GRANDE`
 
@@ -386,12 +394,19 @@ desempenho.
 
 **POST — Body (com raça):**
 ```json
-{ "idEspecie": 1, "idRaca": 1, "idDoenca": 3 }
+{ 
+  "idEspecie": 1, 
+  "idRaca": 1, 
+  "idDoenca": 3 
+}
 ```
 
 **POST — Body (sem raça — predisposição por espécie):**
 ```json
-{ "idEspecie": 1, "idDoenca": 3 }
+{ 
+  "idEspecie": 1, 
+  "idDoenca": 3 
+}
 ```
 
 ---
@@ -419,8 +434,12 @@ desempenho.
 ```json
 {
   "idResponsavel": 1,
-  "nota": 9,
-  "comentario": "Ótimo atendimento"
+  "idAnimal": 1,
+  "idClinica": 1,
+  "idConsulta": 1,
+  "idVeterinario": null,
+  "nota": 5,
+  "comentario": "Atendimento excelente, equipe muito atenciosa."
 }
 ```
 
@@ -436,8 +455,11 @@ prints/
 ├── Doenca/            (10 endpoints)
 ├── Especie/           (8 endpoints)
 ├── FeedbackNPS/       (10 endpoints)
+├── Health/            (2 endpoints)
 ├── Predisposicao/     (7 endpoints)
-└── Raca/              (9 endpoints)
+├── Raca/              (9 endpoints)
+├── Testes/            (22 evidências — execução por trait)
+└── Telemetria/        (1 evidência — Application Insights)
 ```
 
 | Controller | Endpoints | Evidência |
@@ -448,8 +470,16 @@ prints/
 | **FeedbackNPS** | 10 endpoints | [Visualizar Prints](prints/FeedbackNPS/) |
 | **Predisposicao** | 7 endpoints | [Visualizar Prints](prints/Predisposicao/) |
 | **Raca** | 9 endpoints | [Visualizar Prints](prints/Raca/) |
+| **Health** | 2 endpoints | [Visualizar Prints](prints/Health/) |
 
 > **Total:** 52 endpoints testados e documentados.
+
+Além dos prints por endpoint, também há evidências de execução da suíte de testes e de telemetria:
+
+| Evidência | Itens | Descrição | Link |
+| :--- | :---: | :--- | :--- |
+| **Testes** | 22 prints | Execução por trait (`Controller`, `Domain`, `Helper`, `Repository`, `UseCase`) | [Visualizar Prints](prints/Testes/) |
+| **Telemetria** | 1 print | Application Insights (OpenTelemetry) | [Visualizar Prints](prints/Telemetria/) |
 
 ---
 
