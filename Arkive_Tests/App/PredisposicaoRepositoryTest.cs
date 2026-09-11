@@ -70,7 +70,8 @@ namespace Arkive_Tests.App
 
             // Assert — repositório ordena por Id ascendente (Skip/Take determinístico)
             Assert.NotNull(resultado);
-            Assert.Collection(resultado,
+            Assert.Equal(2, resultado.TotalRegistros);
+            Assert.Collection(resultado.Data,
                 item =>
                 {
                     Assert.Equal(1, item.IdEspecie);
@@ -156,7 +157,7 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Collection(resultado, item =>
+            Assert.Collection(resultado.Data, item =>
             {
                 Assert.Equal(1, item.IdEspecie);
                 Assert.Null(item.IdRaca);
@@ -187,7 +188,7 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Collection(resultado, item =>
+            Assert.Collection(resultado.Data, item =>
             {
                 Assert.Equal(1, item.IdEspecie);
                 Assert.Equal(1, item.IdRaca);
@@ -220,7 +221,7 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Collection(resultado, item =>
+            Assert.Collection(resultado.Data, item =>
             {
                 Assert.Equal(1, item.IdEspecie);
                 Assert.Null(item.IdRaca);

@@ -3,6 +3,7 @@ using Arkive_API.Application.Exceptions;
 using Arkive_API.Application.Interfaces;
 using Arkive_API.Doc.Samples;
 using Arkive_API.Domain.Entities;
+using Arkive_API.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Swashbuckle.AspNetCore.Annotations;
@@ -38,7 +39,7 @@ namespace Arkive_API.Presentation.Controllers
             * Esta entidade não possui soft delete; um vínculo removido é apagado fisicamente.
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<PredisposicaoEntity>))]
+        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<PredisposicaoEntity>>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma predisposição encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
         [SwaggerResponseExample(statusCode: 200, typeof(PredisposicaoResponseListSample))]
@@ -50,7 +51,7 @@ namespace Arkive_API.Presentation.Controllers
             {
                 var resultado = await _predisposicaoUseCase.ObterTodasAsync(skip, take);
 
-                if (!resultado.Any())
+                if (!resultado.Data.Any())
                     return NoContent();
 
                 return Ok(resultado);
@@ -115,7 +116,7 @@ namespace Arkive_API.Presentation.Controllers
             * Este filtro não valida se o ID de espécie informado existe; caso não exista, o retorno será uma lista vazia (204).
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<PredisposicaoEntity>))]
+        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<PredisposicaoEntity>>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma predisposição encontrada para esta espécie")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
         public async Task<IActionResult> GetPredisposicaoByEspecie(int idEspecie, int skip = 0, int take = 50)
@@ -126,7 +127,7 @@ namespace Arkive_API.Presentation.Controllers
             {
                 var resultado = await _predisposicaoUseCase.ObterPorEspecieAsync(idEspecie, skip, take);
 
-                if (!resultado.Any())
+                if (!resultado.Data.Any())
                     return NoContent();
 
                 return Ok(resultado);
@@ -151,7 +152,7 @@ namespace Arkive_API.Presentation.Controllers
             * Este filtro não valida se o ID de raça informado existe; caso não exista, o retorno será uma lista vazia (204).
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<PredisposicaoEntity>))]
+        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<PredisposicaoEntity>>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma predisposição encontrada para esta raça")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
         public async Task<IActionResult> GetPredisposicaoByRaca(int idRaca, int skip = 0, int take = 50)
@@ -162,7 +163,7 @@ namespace Arkive_API.Presentation.Controllers
             {
                 var resultado = await _predisposicaoUseCase.ObterPorRacaAsync(idRaca, skip, take);
 
-                if (!resultado.Any())
+                if (!resultado.Data.Any())
                     return NoContent();
 
                 return Ok(resultado);
@@ -187,7 +188,7 @@ namespace Arkive_API.Presentation.Controllers
             * Este filtro não valida se o ID de doença informado existe; caso não exista, o retorno será uma lista vazia (204).
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<PredisposicaoEntity>))]
+        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<PredisposicaoEntity>>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma predisposição encontrada para esta doença")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
         public async Task<IActionResult> GetPredisposicaoByDoenca(int idDoenca, int skip = 0, int take = 50)
@@ -198,7 +199,7 @@ namespace Arkive_API.Presentation.Controllers
             {
                 var resultado = await _predisposicaoUseCase.ObterPorDoencaAsync(idDoenca, skip, take);
 
-                if (!resultado.Any())
+                if (!resultado.Data.Any())
                     return NoContent();
 
                 return Ok(resultado);

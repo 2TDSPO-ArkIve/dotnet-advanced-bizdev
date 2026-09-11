@@ -46,7 +46,8 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Collection(resultado,
+            Assert.Equal(2, resultado.TotalRegistros);
+            Assert.Collection(resultado.Data,
                 item => { Assert.Equal(10, item.Nota); Assert.Equal(1, item.IdResponsavel); },
                 item => { Assert.Equal(5, item.Nota); Assert.Equal(1, item.IdAnimal); });
         }
@@ -101,7 +102,7 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Collection(resultado,
+            Assert.Collection(resultado.Data,
                 item => { Assert.Equal(10, item.Nota); Assert.Equal(1, item.IdResponsavel); });
         }
 
@@ -124,7 +125,7 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Collection(resultado,
+            Assert.Collection(resultado.Data,
                 item => { Assert.Equal(10, item.Nota); Assert.Equal(1, item.IdResponsavel); });
         }
 
@@ -147,7 +148,7 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Collection(resultado,
+            Assert.Collection(resultado.Data,
                 item => { Assert.Equal(10, item.Nota); Assert.Equal(1, item.IdAnimal); });
         }
 
@@ -170,7 +171,7 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Collection(resultado,
+            Assert.Collection(resultado.Data,
                 item => { Assert.Equal(10, item.Nota); Assert.Equal(1, item.IdClinica); });
         }
 
@@ -193,7 +194,7 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Collection(resultado,
+            Assert.Collection(resultado.Data,
                 item => { Assert.Equal(10, item.Nota); Assert.Equal(1, item.IdVeterinario); });
         }
 
@@ -219,7 +220,7 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Collection(resultado,
+            Assert.Collection(resultado.Data,
                 item => { Assert.Equal(10, item.Nota); Assert.Equal(1, item.IdResponsavel); Assert.Equal(hoje, item.DataFeedback); });
         }
 

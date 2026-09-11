@@ -4,6 +4,7 @@ using Arkive_API.Application.Dtos;
 using Arkive_API.Application.Exceptions;
 using Arkive_API.Application.Interfaces;
 using Arkive_API.Domain.Entities;
+using Arkive_API.Domain.Models;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Moq;
 
@@ -25,17 +26,19 @@ namespace Arkive_Tests.App
         [Trait("Controller", "Predisposicoes")]
         public async Task GetAll_DeveRetornar200_ComListaDePredisposicoes()
         {
-            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new List<PredisposicaoEntity>
+            var predisposicoes = new List<PredisposicaoEntity>
             {
                 new PredisposicaoEntity { Id = 1, IdEspecie = 1, IdDoenca = 1 },
                 new PredisposicaoEntity { Id = 2, IdEspecie = 1, IdRaca = 3, IdDoenca = 2 }
-            });
+            };
+            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>()))
+                .ReturnsAsync(new PageResultModel<IEnumerable<PredisposicaoEntity>> { Data = predisposicoes, TotalRegistros = predisposicoes.Count });
 
             var response = await _client.GetAsync("/api/predisposicoes");
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var body = await response.Content.ReadFromJsonAsync<List<PredisposicaoEntity>>();
-            Assert.Equal(2, body!.Count);
+            var body = await response.Content.ReadFromJsonAsync<PageResultModel<List<PredisposicaoEntity>>>();
+            Assert.Equal(2, body!.Data.Count);
         }
 
         [Fact]
@@ -43,7 +46,7 @@ namespace Arkive_Tests.App
         public async Task GetAll_DeveRetornar204_QuandoNaoHaPredisposicoes()
         {
             _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>()))
-                .ReturnsAsync(new List<PredisposicaoEntity>());
+                .ReturnsAsync(new PageResultModel<IEnumerable<PredisposicaoEntity>> { Data = new List<PredisposicaoEntity>() });
 
             var response = await _client.GetAsync("/api/predisposicoes");
 

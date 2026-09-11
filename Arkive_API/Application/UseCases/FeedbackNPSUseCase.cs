@@ -4,6 +4,7 @@ using Arkive_API.Application.Interfaces;
 using Arkive_API.Application.Mappers;
 using Arkive_API.Domain.Entities;
 using Arkive_API.Domain.Interfaces;
+using Arkive_API.Domain.Models;
 
 namespace Arkive_API.Application.UseCases
 {
@@ -18,7 +19,7 @@ namespace Arkive_API.Application.UseCases
             _logger = logger;
         }
 
-        public async Task<IEnumerable<FeedbackNPSEntity>> ObterTodosAsync(int skip = 0, int take = 50)
+        public async Task<PageResultModel<IEnumerable<FeedbackNPSEntity>>> ObterTodosAsync(int skip = 0, int take = 50)
         {
             _logger.LogInformation("Obtendo feedbacks NPS (skip {Skip}, take {Take})", skip, take);
 
@@ -49,7 +50,7 @@ namespace Arkive_API.Application.UseCases
             }
         }
 
-        public async Task<IEnumerable<FeedbackNPSEntity>> ObterPorNotaAsync(int nota, int skip = 0, int take = 50)
+        public async Task<PageResultModel<IEnumerable<FeedbackNPSEntity>>> ObterPorNotaAsync(int nota, int skip = 0, int take = 50)
         {
             _logger.LogInformation("Obtendo feedbacks NPS com nota {Nota} (skip {Skip}, take {Take})", nota, skip, take);
 
@@ -71,7 +72,7 @@ namespace Arkive_API.Application.UseCases
             }
         }
 
-        public async Task<IEnumerable<FeedbackNPSEntity>> ObterPorResponsavelAsync(int idResponsavel, int skip = 0, int take = 50)
+        public async Task<PageResultModel<IEnumerable<FeedbackNPSEntity>>> ObterPorResponsavelAsync(int idResponsavel, int skip = 0, int take = 50)
         {
             _logger.LogInformation("Obtendo feedbacks NPS do responsável {IdResponsavel} (skip {Skip}, take {Take})", idResponsavel, skip, take);
 
@@ -87,7 +88,7 @@ namespace Arkive_API.Application.UseCases
             }
         }
 
-        public async Task<IEnumerable<FeedbackNPSEntity>> ObterPorAnimalAsync(int idAnimal, int skip = 0, int take = 50)
+        public async Task<PageResultModel<IEnumerable<FeedbackNPSEntity>>> ObterPorAnimalAsync(int idAnimal, int skip = 0, int take = 50)
         {
             _logger.LogInformation("Obtendo feedbacks NPS do animal {IdAnimal} (skip {Skip}, take {Take})", idAnimal, skip, take);
 
@@ -103,7 +104,7 @@ namespace Arkive_API.Application.UseCases
             }
         }
 
-        public async Task<IEnumerable<FeedbackNPSEntity>> ObterPorClinicaAsync(int idClinica, int skip = 0, int take = 50)
+        public async Task<PageResultModel<IEnumerable<FeedbackNPSEntity>>> ObterPorClinicaAsync(int idClinica, int skip = 0, int take = 50)
         {
             _logger.LogInformation("Obtendo feedbacks NPS da clínica {IdClinica} (skip {Skip}, take {Take})", idClinica, skip, take);
 
@@ -119,7 +120,7 @@ namespace Arkive_API.Application.UseCases
             }
         }
 
-        public async Task<IEnumerable<FeedbackNPSEntity>> ObterPorVeterinarioAsync(int idVeterinario, int skip = 0, int take = 50)
+        public async Task<PageResultModel<IEnumerable<FeedbackNPSEntity>>> ObterPorVeterinarioAsync(int idVeterinario, int skip = 0, int take = 50)
         {
             _logger.LogInformation("Obtendo feedbacks NPS do veterinário {IdVeterinario} (skip {Skip}, take {Take})", idVeterinario, skip, take);
 
@@ -135,7 +136,7 @@ namespace Arkive_API.Application.UseCases
             }
         }
 
-        public async Task<IEnumerable<FeedbackNPSEntity>> ObterPorDataAsync(DateTime data, int skip = 0, int take = 50)
+        public async Task<PageResultModel<IEnumerable<FeedbackNPSEntity>>> ObterPorDataAsync(DateTime data, int skip = 0, int take = 50)
         {
             _logger.LogInformation("Obtendo feedbacks NPS da data {Data:yyyy-MM-dd} (skip {Skip}, take {Take})", data, skip, take);
 

@@ -4,6 +4,7 @@ using Arkive_API.Application.Interfaces;
 using Arkive_API.Application.Mappers;
 using Arkive_API.Domain.Entities;
 using Arkive_API.Domain.Interfaces;
+using Arkive_API.Domain.Models;
 
 namespace Arkive_API.Application.UseCases
 {
@@ -29,7 +30,7 @@ namespace Arkive_API.Application.UseCases
             _logger = logger;
         }
 
-        public async Task<IEnumerable<PredisposicaoEntity>> ObterTodasAsync(int skip = 0, int take = 50)
+        public async Task<PageResultModel<IEnumerable<PredisposicaoEntity>>> ObterTodasAsync(int skip = 0, int take = 50)
         {
             _logger.LogInformation("Obtendo predisposições (skip {Skip}, take {Take})", skip, take);
 
@@ -60,7 +61,7 @@ namespace Arkive_API.Application.UseCases
             }
         }
 
-        public async Task<IEnumerable<PredisposicaoEntity>> ObterPorEspecieAsync(int idEspecie, int skip = 0, int take = 50)
+        public async Task<PageResultModel<IEnumerable<PredisposicaoEntity>>> ObterPorEspecieAsync(int idEspecie, int skip = 0, int take = 50)
         {
             _logger.LogInformation("Obtendo predisposições da espécie {IdEspecie} (skip {Skip}, take {Take})", idEspecie, skip, take);
 
@@ -76,7 +77,7 @@ namespace Arkive_API.Application.UseCases
             }
         }
 
-        public async Task<IEnumerable<PredisposicaoEntity>> ObterPorRacaAsync(int idRaca, int skip = 0, int take = 50)
+        public async Task<PageResultModel<IEnumerable<PredisposicaoEntity>>> ObterPorRacaAsync(int idRaca, int skip = 0, int take = 50)
         {
             _logger.LogInformation("Obtendo predisposições da raça {IdRaca} (skip {Skip}, take {Take})", idRaca, skip, take);
 
@@ -92,7 +93,7 @@ namespace Arkive_API.Application.UseCases
             }
         }
 
-        public async Task<IEnumerable<PredisposicaoEntity>> ObterPorDoencaAsync(int idDoenca, int skip = 0, int take = 50)
+        public async Task<PageResultModel<IEnumerable<PredisposicaoEntity>>> ObterPorDoencaAsync(int idDoenca, int skip = 0, int take = 50)
         {
             _logger.LogInformation("Obtendo predisposições da doença {IdDoenca} (skip {Skip}, take {Take})", idDoenca, skip, take);
 

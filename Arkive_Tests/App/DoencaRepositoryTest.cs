@@ -46,7 +46,8 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Collection(resultado,
+            Assert.Equal(3, resultado.TotalRegistros);
+            Assert.Collection(resultado.Data,
                 item => { Assert.Equal("Cinomose", item.Nome); Assert.Equal("S", item.StAtivo); },
                 item => { Assert.Equal("Raiva", item.Nome); Assert.Equal("N", item.StAtivo); },
                 item => { Assert.Equal("Parvovirose", item.Nome); Assert.Equal("S", item.StAtivo); });
@@ -71,7 +72,8 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Collection(resultado,
+            Assert.Equal(1, resultado.TotalRegistros);
+            Assert.Collection(resultado.Data,
                 item => { Assert.Equal("Cinomose", item.Nome); Assert.Equal("S", item.StAtivo); });
         }
 
@@ -94,7 +96,8 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Collection(resultado,
+            Assert.Equal(1, resultado.TotalRegistros);
+            Assert.Collection(resultado.Data,
                 item => { Assert.Equal("Raiva", item.Nome); Assert.Equal("N", item.StAtivo); });
         }
 

@@ -4,6 +4,7 @@ using Arkive_API.Application.Mappers;
 using Arkive_API.Application.UseCases;
 using Arkive_API.Domain.Entities;
 using Arkive_API.Domain.Interfaces;
+using Arkive_API.Domain.Models;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 
@@ -35,14 +36,15 @@ namespace Arkive_Tests.App
                 new DoencaEntity { Id = 2, Nome = "Raiva", StAtivo = "N" }
             };
 
-            _doencaRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(doencas);
+            _doencaRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>()))
+                .ReturnsAsync(new PageResultModel<IEnumerable<DoencaEntity>> { Data = doencas, TotalRegistros = doencas.Count });
 
             // Act
             var resultado = await _doencaUseCase.ObterTodasAsync();
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Collection(resultado,
+            Assert.Collection(resultado.Data,
                 item => { Assert.Equal(1, item.Id); Assert.Equal("Cinomose", item.Nome); Assert.Equal("S", item.StAtivo); },
                 item => { Assert.Equal(2, item.Id); Assert.Equal("Raiva", item.Nome); Assert.Equal("N", item.StAtivo); });
         }
@@ -54,14 +56,15 @@ namespace Arkive_Tests.App
             // Arrange
             var doencas = new List<DoencaEntity> { new DoencaEntity { Id = 1, Nome = "Cinomose", StAtivo = "S" } };
 
-            _doencaRepository.Setup(obj => obj.ObterAtivosAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(doencas);
+            _doencaRepository.Setup(obj => obj.ObterAtivosAsync(It.IsAny<int>(), It.IsAny<int>()))
+                .ReturnsAsync(new PageResultModel<IEnumerable<DoencaEntity>> { Data = doencas, TotalRegistros = doencas.Count });
 
             // Act
             var resultado = await _doencaUseCase.ObterAtivasAsync();
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Collection(resultado,
+            Assert.Collection(resultado.Data,
                 item => { Assert.Equal(1, item.Id); Assert.Equal("Cinomose", item.Nome); Assert.Equal("S", item.StAtivo); });
         }
 
@@ -72,14 +75,15 @@ namespace Arkive_Tests.App
             // Arrange
             var doencas = new List<DoencaEntity> { new DoencaEntity { Id = 2, Nome = "Raiva", StAtivo = "N" } };
 
-            _doencaRepository.Setup(obj => obj.ObterInativosAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(doencas);
+            _doencaRepository.Setup(obj => obj.ObterInativosAsync(It.IsAny<int>(), It.IsAny<int>()))
+                .ReturnsAsync(new PageResultModel<IEnumerable<DoencaEntity>> { Data = doencas, TotalRegistros = doencas.Count });
 
             // Act
             var resultado = await _doencaUseCase.ObterInativasAsync();
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Collection(resultado,
+            Assert.Collection(resultado.Data,
                 item => { Assert.Equal(2, item.Id); Assert.Equal("Raiva", item.Nome); Assert.Equal("N", item.StAtivo); });
         }
 

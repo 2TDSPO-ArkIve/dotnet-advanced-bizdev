@@ -4,6 +4,7 @@ using Arkive_API.Application.Dtos;
 using Arkive_API.Application.Exceptions;
 using Arkive_API.Application.Interfaces;
 using Arkive_API.Domain.Entities;
+using Arkive_API.Domain.Models;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Moq;
 
@@ -30,13 +31,14 @@ namespace Arkive_Tests.App
                 new DoencaEntity { Id = 1, Nome = "Cinomose", StAtivo = "S" },
                 new DoencaEntity { Id = 2, Nome = "Raiva", StAtivo = "N" }
             };
-            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(doencas);
+            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>()))
+                .ReturnsAsync(new PageResultModel<IEnumerable<DoencaEntity>> { Data = doencas, TotalRegistros = doencas.Count });
 
             var response = await _client.GetAsync("/api/doencas");
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var body = await response.Content.ReadFromJsonAsync<List<DoencaEntity>>();
-            Assert.Equal(2, body!.Count);
+            var body = await response.Content.ReadFromJsonAsync<PageResultModel<List<DoencaEntity>>>();
+            Assert.Equal(2, body!.Data.Count);
         }
 
         [Fact]
@@ -44,7 +46,7 @@ namespace Arkive_Tests.App
         public async Task GetAll_DeveRetornar204_QuandoNaoHaDoencas()
         {
             _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>()))
-                .ReturnsAsync(new List<DoencaEntity>());
+                .ReturnsAsync(new PageResultModel<IEnumerable<DoencaEntity>> { Data = new List<DoencaEntity>() });
 
             var response = await _client.GetAsync("/api/doencas");
 

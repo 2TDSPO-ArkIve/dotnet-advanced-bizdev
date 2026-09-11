@@ -4,6 +4,7 @@ using Arkive_API.Application.Dtos;
 using Arkive_API.Application.Exceptions;
 using Arkive_API.Application.Interfaces;
 using Arkive_API.Domain.Entities;
+using Arkive_API.Domain.Models;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Moq;
 
@@ -25,17 +26,19 @@ namespace Arkive_Tests.App
         [Trait("Controller", "FeedbackNPS")]
         public async Task GetAll_DeveRetornar200_ComListaDeFeedbacks()
         {
-            _useCase.Setup(x => x.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new List<FeedbackNPSEntity>
+            var feedbacks = new List<FeedbackNPSEntity>
             {
                 new FeedbackNPSEntity { Id = 1, Nota = 10, IdResponsavel = 1 },
                 new FeedbackNPSEntity { Id = 2, Nota = 7, IdAnimal = 5 }
-            });
+            };
+            _useCase.Setup(x => x.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>()))
+                .ReturnsAsync(new PageResultModel<IEnumerable<FeedbackNPSEntity>> { Data = feedbacks, TotalRegistros = feedbacks.Count });
 
             var response = await _client.GetAsync("/api/feedbacks-nps");
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var body = await response.Content.ReadFromJsonAsync<List<FeedbackNPSEntity>>();
-            Assert.Equal(2, body!.Count);
+            var body = await response.Content.ReadFromJsonAsync<PageResultModel<List<FeedbackNPSEntity>>>();
+            Assert.Equal(2, body!.Data.Count);
         }
 
         [Fact]
@@ -43,7 +46,7 @@ namespace Arkive_Tests.App
         public async Task GetAll_DeveRetornar204_QuandoNaoHaFeedbacks()
         {
             _useCase.Setup(x => x.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>()))
-                .ReturnsAsync(new List<FeedbackNPSEntity>());
+                .ReturnsAsync(new PageResultModel<IEnumerable<FeedbackNPSEntity>> { Data = new List<FeedbackNPSEntity>() });
 
             var response = await _client.GetAsync("/api/feedbacks-nps");
 

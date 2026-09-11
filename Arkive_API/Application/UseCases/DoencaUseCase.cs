@@ -4,6 +4,7 @@ using Arkive_API.Application.Interfaces;
 using Arkive_API.Application.Mappers;
 using Arkive_API.Domain.Entities;
 using Arkive_API.Domain.Interfaces;
+using Arkive_API.Domain.Models;
 
 namespace Arkive_API.Application.UseCases
 {
@@ -20,7 +21,7 @@ namespace Arkive_API.Application.UseCases
             _logger = logger;
         }
 
-        public async Task<IEnumerable<DoencaEntity>> ObterTodasAsync(int skip = 0, int take = 50)
+        public async Task<PageResultModel<IEnumerable<DoencaEntity>>> ObterTodasAsync(int skip = 0, int take = 50)
         {
             _logger.LogInformation("Obtendo doenças (skip {Skip}, take {Take})", skip, take);
 
@@ -36,7 +37,7 @@ namespace Arkive_API.Application.UseCases
             }
         }
 
-        public async Task<IEnumerable<DoencaEntity>> ObterAtivasAsync(int skip = 0, int take = 50)
+        public async Task<PageResultModel<IEnumerable<DoencaEntity>>> ObterAtivasAsync(int skip = 0, int take = 50)
         {
             _logger.LogInformation("Obtendo doenças ativas (skip {Skip}, take {Take})", skip, take);
 
@@ -52,7 +53,7 @@ namespace Arkive_API.Application.UseCases
             }
         }
 
-        public async Task<IEnumerable<DoencaEntity>> ObterInativasAsync(int skip = 0, int take = 50)
+        public async Task<PageResultModel<IEnumerable<DoencaEntity>>> ObterInativasAsync(int skip = 0, int take = 50)
         {
             _logger.LogInformation("Obtendo doenças inativas (skip {Skip}, take {Take})", skip, take);
 

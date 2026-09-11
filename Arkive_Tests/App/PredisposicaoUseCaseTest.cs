@@ -4,6 +4,7 @@ using Arkive_API.Application.Mappers;
 using Arkive_API.Application.UseCases;
 using Arkive_API.Domain.Entities;
 using Arkive_API.Domain.Interfaces;
+using Arkive_API.Domain.Models;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 
@@ -44,14 +45,15 @@ namespace Arkive_Tests.App
                 new PredisposicaoEntity { Id = 2, IdEspecie = 2, IdDoenca = 2 }
             };
 
-            _predisposicaoRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(predisposicoes);
+            _predisposicaoRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>()))
+                .ReturnsAsync(new PageResultModel<IEnumerable<PredisposicaoEntity>> { Data = predisposicoes, TotalRegistros = predisposicoes.Count });
 
             // Act
             var resultado = await _predisposicaoUseCase.ObterTodasAsync();
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Collection(resultado,
+            Assert.Collection(resultado.Data,
                 item =>
                 {
                     Assert.Equal(1, item.Id);
@@ -96,14 +98,15 @@ namespace Arkive_Tests.App
             int idEspecie = 1;
             var predisposicoes = new List<PredisposicaoEntity> { new PredisposicaoEntity { Id = 1, IdEspecie = idEspecie, IdDoenca = 1 } };
 
-            _predisposicaoRepository.Setup(obj => obj.ObterPorEspecieAsync(idEspecie, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(predisposicoes);
+            _predisposicaoRepository.Setup(obj => obj.ObterPorEspecieAsync(idEspecie, It.IsAny<int>(), It.IsAny<int>()))
+                .ReturnsAsync(new PageResultModel<IEnumerable<PredisposicaoEntity>> { Data = predisposicoes, TotalRegistros = predisposicoes.Count });
 
             // Act
             var resultado = await _predisposicaoUseCase.ObterPorEspecieAsync(idEspecie);
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Collection(resultado, item =>
+            Assert.Collection(resultado.Data, item =>
             {
                 Assert.Equal(1, item.Id);
                 Assert.Equal(idEspecie, item.IdEspecie);
@@ -119,14 +122,15 @@ namespace Arkive_Tests.App
             int idRaca = 1;
             var predisposicoes = new List<PredisposicaoEntity> { new PredisposicaoEntity { Id = 1, IdEspecie = 1, IdRaca = idRaca, IdDoenca = 1 } };
 
-            _predisposicaoRepository.Setup(obj => obj.ObterPorRacaAsync(idRaca, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(predisposicoes);
+            _predisposicaoRepository.Setup(obj => obj.ObterPorRacaAsync(idRaca, It.IsAny<int>(), It.IsAny<int>()))
+                .ReturnsAsync(new PageResultModel<IEnumerable<PredisposicaoEntity>> { Data = predisposicoes, TotalRegistros = predisposicoes.Count });
 
             // Act
             var resultado = await _predisposicaoUseCase.ObterPorRacaAsync(idRaca);
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Collection(resultado, item =>
+            Assert.Collection(resultado.Data, item =>
             {
                 Assert.Equal(1, item.Id);
                 Assert.Equal(1, item.IdEspecie);
@@ -143,14 +147,15 @@ namespace Arkive_Tests.App
             int idDoenca = 1;
             var predisposicoes = new List<PredisposicaoEntity> { new PredisposicaoEntity { Id = 1, IdEspecie = 1, IdDoenca = idDoenca } };
 
-            _predisposicaoRepository.Setup(obj => obj.ObterPorDoencaAsync(idDoenca, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(predisposicoes);
+            _predisposicaoRepository.Setup(obj => obj.ObterPorDoencaAsync(idDoenca, It.IsAny<int>(), It.IsAny<int>()))
+                .ReturnsAsync(new PageResultModel<IEnumerable<PredisposicaoEntity>> { Data = predisposicoes, TotalRegistros = predisposicoes.Count });
 
             // Act
             var resultado = await _predisposicaoUseCase.ObterPorDoencaAsync(idDoenca);
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Collection(resultado, item =>
+            Assert.Collection(resultado.Data, item =>
             {
                 Assert.Equal(1, item.Id);
                 Assert.Equal(1, item.IdEspecie);

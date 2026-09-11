@@ -4,6 +4,7 @@ using Arkive_API.Application.Mappers;
 using Arkive_API.Application.UseCases;
 using Arkive_API.Domain.Entities;
 using Arkive_API.Domain.Interfaces;
+using Arkive_API.Domain.Models;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 
@@ -40,14 +41,15 @@ namespace Arkive_Tests.App
                 new FeedbackNPSEntity { Id = 2, Nota = 5 }
             };
 
-            _feedbackNPSRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(feedbacks);
+            _feedbackNPSRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>()))
+                .ReturnsAsync(new PageResultModel<IEnumerable<FeedbackNPSEntity>> { Data = feedbacks, TotalRegistros = feedbacks.Count });
 
             // Act
             var resultado = await _feedbackNPSUseCase.ObterTodosAsync();
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Collection(resultado,
+            Assert.Collection(resultado.Data,
                 item => { Assert.Equal(1, item.Id); Assert.Equal(10, item.Nota); },
                 item => { Assert.Equal(2, item.Id); Assert.Equal(5, item.Nota); });
         }
@@ -80,14 +82,15 @@ namespace Arkive_Tests.App
             // Arrange
             var feedbacks = new List<FeedbackNPSEntity> { new FeedbackNPSEntity { Id = 1, Nota = nota } };
 
-            _feedbackNPSRepository.Setup(obj => obj.ObterPorNotaAsync(nota, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(feedbacks);
+            _feedbackNPSRepository.Setup(obj => obj.ObterPorNotaAsync(nota, It.IsAny<int>(), It.IsAny<int>()))
+                .ReturnsAsync(new PageResultModel<IEnumerable<FeedbackNPSEntity>> { Data = feedbacks, TotalRegistros = feedbacks.Count });
 
             // Act
             var resultado = await _feedbackNPSUseCase.ObterPorNotaAsync(nota);
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Collection(resultado,
+            Assert.Collection(resultado.Data,
                 item => { Assert.Equal(1, item.Id); Assert.Equal(nota, item.Nota); });
         }
 
@@ -110,14 +113,15 @@ namespace Arkive_Tests.App
             // Arrange
             var feedbacks = new List<FeedbackNPSEntity> { new FeedbackNPSEntity { Id = 1, IdResponsavel = 1, Nota = 10 } };
 
-            _feedbackNPSRepository.Setup(obj => obj.ObterPorResponsavelAsync(1, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(feedbacks);
+            _feedbackNPSRepository.Setup(obj => obj.ObterPorResponsavelAsync(1, It.IsAny<int>(), It.IsAny<int>()))
+                .ReturnsAsync(new PageResultModel<IEnumerable<FeedbackNPSEntity>> { Data = feedbacks, TotalRegistros = feedbacks.Count });
 
             // Act
             var resultado = await _feedbackNPSUseCase.ObterPorResponsavelAsync(1);
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Collection(resultado,
+            Assert.Collection(resultado.Data,
                 item => { Assert.Equal(1, item.Id); Assert.Equal(1, item.IdResponsavel); Assert.Equal(10, item.Nota); });
         }
 
@@ -128,14 +132,15 @@ namespace Arkive_Tests.App
             // Arrange
             var feedbacks = new List<FeedbackNPSEntity> { new FeedbackNPSEntity { Id = 1, IdAnimal = 1, Nota = 10 } };
 
-            _feedbackNPSRepository.Setup(obj => obj.ObterPorAnimalAsync(1, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(feedbacks);
+            _feedbackNPSRepository.Setup(obj => obj.ObterPorAnimalAsync(1, It.IsAny<int>(), It.IsAny<int>()))
+                .ReturnsAsync(new PageResultModel<IEnumerable<FeedbackNPSEntity>> { Data = feedbacks, TotalRegistros = feedbacks.Count });
 
             // Act
             var resultado = await _feedbackNPSUseCase.ObterPorAnimalAsync(1);
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Collection(resultado,
+            Assert.Collection(resultado.Data,
                 item => { Assert.Equal(1, item.Id); Assert.Equal(1, item.IdAnimal); Assert.Equal(10, item.Nota); });
         }
 
@@ -146,14 +151,15 @@ namespace Arkive_Tests.App
             // Arrange
             var feedbacks = new List<FeedbackNPSEntity> { new FeedbackNPSEntity { Id = 1, IdClinica = 1, Nota = 10 } };
 
-            _feedbackNPSRepository.Setup(obj => obj.ObterPorClinicaAsync(1, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(feedbacks);
+            _feedbackNPSRepository.Setup(obj => obj.ObterPorClinicaAsync(1, It.IsAny<int>(), It.IsAny<int>()))
+                .ReturnsAsync(new PageResultModel<IEnumerable<FeedbackNPSEntity>> { Data = feedbacks, TotalRegistros = feedbacks.Count });
 
             // Act
             var resultado = await _feedbackNPSUseCase.ObterPorClinicaAsync(1);
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Collection(resultado,
+            Assert.Collection(resultado.Data,
                 item => { Assert.Equal(1, item.Id); Assert.Equal(1, item.IdClinica); Assert.Equal(10, item.Nota); });
         }
 
@@ -164,14 +170,15 @@ namespace Arkive_Tests.App
             // Arrange
             var feedbacks = new List<FeedbackNPSEntity> { new FeedbackNPSEntity { Id = 1, IdVeterinario = 1, Nota = 10 } };
 
-            _feedbackNPSRepository.Setup(obj => obj.ObterPorVeterinarioAsync(1, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(feedbacks);
+            _feedbackNPSRepository.Setup(obj => obj.ObterPorVeterinarioAsync(1, It.IsAny<int>(), It.IsAny<int>()))
+                .ReturnsAsync(new PageResultModel<IEnumerable<FeedbackNPSEntity>> { Data = feedbacks, TotalRegistros = feedbacks.Count });
 
             // Act
             var resultado = await _feedbackNPSUseCase.ObterPorVeterinarioAsync(1);
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Collection(resultado,
+            Assert.Collection(resultado.Data,
                 item => { Assert.Equal(1, item.Id); Assert.Equal(1, item.IdVeterinario); Assert.Equal(10, item.Nota); });
         }
 
@@ -183,14 +190,15 @@ namespace Arkive_Tests.App
             var data = DateTime.Today;
             var feedbacks = new List<FeedbackNPSEntity> { new FeedbackNPSEntity { Id = 1, Nota = 10, DataFeedback = data } };
 
-            _feedbackNPSRepository.Setup(obj => obj.ObterPorDataAsync(data, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(feedbacks);
+            _feedbackNPSRepository.Setup(obj => obj.ObterPorDataAsync(data, It.IsAny<int>(), It.IsAny<int>()))
+                .ReturnsAsync(new PageResultModel<IEnumerable<FeedbackNPSEntity>> { Data = feedbacks, TotalRegistros = feedbacks.Count });
 
             // Act
             var resultado = await _feedbackNPSUseCase.ObterPorDataAsync(data);
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Collection(resultado,
+            Assert.Collection(resultado.Data,
                 item => { Assert.Equal(1, item.Id); Assert.Equal(10, item.Nota); Assert.Equal(data, item.DataFeedback); });
         }
 

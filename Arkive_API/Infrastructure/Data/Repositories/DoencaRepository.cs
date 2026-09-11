@@ -1,5 +1,6 @@
 using Arkive_API.Domain.Entities;
 using Arkive_API.Domain.Interfaces;
+using Arkive_API.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Arkive_API.Infrastructure.Data.Repositories
@@ -13,16 +14,26 @@ namespace Arkive_API.Infrastructure.Data.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<DoencaEntity>> ObterTodosAsync(int skip = 0, int take = 50)
+        public async Task<PageResultModel<IEnumerable<DoencaEntity>>> ObterTodosAsync(int skip = 0, int take = 50)
         {
             try
             {
-                return await _context.Doenca
-                    .Include(x => x.Categoria)
+                var query = _context.Doenca.Include(x => x.Categoria);
+
+                var total = await query.CountAsync();
+                var dados = await query
                     .OrderBy(x => x.Id)
                     .Skip(skip)
                     .Take(take)
                     .ToListAsync();
+
+                return new PageResultModel<IEnumerable<DoencaEntity>>
+                {
+                    Data = dados,
+                    Deslocamento = skip,
+                    RegistroRetornado = take,
+                    TotalRegistros = total
+                };
             }
             catch (Exception ex)
             {
@@ -30,17 +41,28 @@ namespace Arkive_API.Infrastructure.Data.Repositories
             }
         }
 
-        public async Task<IEnumerable<DoencaEntity>> ObterAtivosAsync(int skip = 0, int take = 50)
+        public async Task<PageResultModel<IEnumerable<DoencaEntity>>> ObterAtivosAsync(int skip = 0, int take = 50)
         {
             try
             {
-                return await _context.Doenca
+                var query = _context.Doenca
                     .Include(x => x.Categoria)
-                    .Where(x => x.StAtivo == "S")
+                    .Where(x => x.StAtivo == "S");
+
+                var total = await query.CountAsync();
+                var dados = await query
                     .OrderBy(x => x.Id)
                     .Skip(skip)
                     .Take(take)
                     .ToListAsync();
+
+                return new PageResultModel<IEnumerable<DoencaEntity>>
+                {
+                    Data = dados,
+                    Deslocamento = skip,
+                    RegistroRetornado = take,
+                    TotalRegistros = total
+                };
             }
             catch (Exception ex)
             {
@@ -48,17 +70,28 @@ namespace Arkive_API.Infrastructure.Data.Repositories
             }
         }
 
-        public async Task<IEnumerable<DoencaEntity>> ObterInativosAsync(int skip = 0, int take = 50)
+        public async Task<PageResultModel<IEnumerable<DoencaEntity>>> ObterInativosAsync(int skip = 0, int take = 50)
         {
             try
             {
-                return await _context.Doenca
+                var query = _context.Doenca
                     .Include(x => x.Categoria)
-                    .Where(x => x.StAtivo == "N")
+                    .Where(x => x.StAtivo == "N");
+
+                var total = await query.CountAsync();
+                var dados = await query
                     .OrderBy(x => x.Id)
                     .Skip(skip)
                     .Take(take)
                     .ToListAsync();
+
+                return new PageResultModel<IEnumerable<DoencaEntity>>
+                {
+                    Data = dados,
+                    Deslocamento = skip,
+                    RegistroRetornado = take,
+                    TotalRegistros = total
+                };
             }
             catch (Exception ex)
             {

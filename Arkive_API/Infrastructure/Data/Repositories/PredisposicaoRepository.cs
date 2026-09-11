@@ -1,5 +1,6 @@
 using Arkive_API.Domain.Entities;
 using Arkive_API.Domain.Interfaces;
+using Arkive_API.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Arkive_API.Infrastructure.Data.Repositories
@@ -22,15 +23,26 @@ namespace Arkive_API.Infrastructure.Data.Repositories
                     .ThenInclude(d => d.Categoria);
         }
 
-        public async Task<IEnumerable<PredisposicaoEntity>> ObterTodosAsync(int skip = 0, int take = 50)
+        public async Task<PageResultModel<IEnumerable<PredisposicaoEntity>>> ObterTodosAsync(int skip = 0, int take = 50)
         {
             try
             {
-                return await ComRelacionamentos()
+                var query = ComRelacionamentos();
+
+                var total = await query.CountAsync();
+                var dados = await query
                     .OrderBy(x => x.Id)
                     .Skip(skip)
                     .Take(take)
                     .ToListAsync();
+
+                return new PageResultModel<IEnumerable<PredisposicaoEntity>>
+                {
+                    Data = dados,
+                    Deslocamento = skip,
+                    RegistroRetornado = take,
+                    TotalRegistros = total
+                };
             }
             catch (Exception ex)
             {
@@ -50,16 +62,26 @@ namespace Arkive_API.Infrastructure.Data.Repositories
             }
         }
 
-        public async Task<IEnumerable<PredisposicaoEntity>> ObterPorEspecieAsync(int idEspecie, int skip = 0, int take = 50)
+        public async Task<PageResultModel<IEnumerable<PredisposicaoEntity>>> ObterPorEspecieAsync(int idEspecie, int skip = 0, int take = 50)
         {
             try
             {
-                return await ComRelacionamentos()
-                    .Where(x => x.IdEspecie == idEspecie)
+                var query = ComRelacionamentos().Where(x => x.IdEspecie == idEspecie);
+
+                var total = await query.CountAsync();
+                var dados = await query
                     .OrderBy(x => x.Id)
                     .Skip(skip)
                     .Take(take)
                     .ToListAsync();
+
+                return new PageResultModel<IEnumerable<PredisposicaoEntity>>
+                {
+                    Data = dados,
+                    Deslocamento = skip,
+                    RegistroRetornado = take,
+                    TotalRegistros = total
+                };
             }
             catch (Exception ex)
             {
@@ -67,16 +89,26 @@ namespace Arkive_API.Infrastructure.Data.Repositories
             }
         }
 
-        public async Task<IEnumerable<PredisposicaoEntity>> ObterPorRacaAsync(int idRaca, int skip = 0, int take = 50)
+        public async Task<PageResultModel<IEnumerable<PredisposicaoEntity>>> ObterPorRacaAsync(int idRaca, int skip = 0, int take = 50)
         {
             try
             {
-                return await ComRelacionamentos()
-                    .Where(x => x.IdRaca == idRaca)
+                var query = ComRelacionamentos().Where(x => x.IdRaca == idRaca);
+
+                var total = await query.CountAsync();
+                var dados = await query
                     .OrderBy(x => x.Id)
                     .Skip(skip)
                     .Take(take)
                     .ToListAsync();
+
+                return new PageResultModel<IEnumerable<PredisposicaoEntity>>
+                {
+                    Data = dados,
+                    Deslocamento = skip,
+                    RegistroRetornado = take,
+                    TotalRegistros = total
+                };
             }
             catch (Exception ex)
             {
@@ -84,16 +116,26 @@ namespace Arkive_API.Infrastructure.Data.Repositories
             }
         }
 
-        public async Task<IEnumerable<PredisposicaoEntity>> ObterPorDoencaAsync(int idDoenca, int skip = 0, int take = 50)
+        public async Task<PageResultModel<IEnumerable<PredisposicaoEntity>>> ObterPorDoencaAsync(int idDoenca, int skip = 0, int take = 50)
         {
             try
             {
-                return await ComRelacionamentos()
-                    .Where(x => x.IdDoenca == idDoenca)
+                var query = ComRelacionamentos().Where(x => x.IdDoenca == idDoenca);
+
+                var total = await query.CountAsync();
+                var dados = await query
                     .OrderBy(x => x.Id)
                     .Skip(skip)
                     .Take(take)
                     .ToListAsync();
+
+                return new PageResultModel<IEnumerable<PredisposicaoEntity>>
+                {
+                    Data = dados,
+                    Deslocamento = skip,
+                    RegistroRetornado = take,
+                    TotalRegistros = total
+                };
             }
             catch (Exception ex)
             {
