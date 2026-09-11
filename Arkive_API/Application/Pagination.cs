@@ -6,12 +6,11 @@ namespace Arkive_API.Application
     public static class Pagination
     {
         public const int TakePadrao = 50;
-        public const int TakeMaximo = 100;
 
         /// <summary>
-        /// Garante skip &gt;= 0 e take dentro do intervalo [1, TakeMaximo].
+        /// Garante skip &gt;= 0 e take &gt;= 1, aplicando TakePadrao quando take vier zerado ou negativo.
         /// </summary>
         public static (int Skip, int Take) Normalizar(int skip, int take)
-            => (Math.Max(skip, 0), Math.Clamp(take, 1, TakeMaximo));
+            => (Math.Max(skip, 0), take <= 0 ? TakePadrao : take);
     }
 }

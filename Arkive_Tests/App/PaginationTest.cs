@@ -18,26 +18,26 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Helper", "Pagination")]
-        public void Normalizar_LimitaTakeAoMaximo()
+        public void Normalizar_NaoLimitaTakeAlto_ESkipNegativoViraZero()
         {
             // Act
             var (skip, take) = Pagination.Normalizar(-5, 999);
 
             // Assert
             Assert.Equal(0, skip);
-            Assert.Equal(Pagination.TakeMaximo, take);
+            Assert.Equal(999, take);
         }
 
         [Fact]
         [Trait("Helper", "Pagination")]
-        public void Normalizar_ForcaTakeMinimoDeUm()
+        public void Normalizar_AplicaTakePadrao_QuandoTakeZeradoOuNegativo()
         {
             // Act
             var (skip, take) = Pagination.Normalizar(10, 0);
 
             // Assert
             Assert.Equal(10, skip);
-            Assert.Equal(1, take);
+            Assert.Equal(Pagination.TakePadrao, take);
         }
     }
 }
