@@ -10,7 +10,8 @@ using Moq;
 
 namespace Arkive_Tests.App
 {
-    public class DoencaControllerTest : IClassFixture<CustomWebApplicationFactory>
+    [Collection("Controller Collection")]
+    public class DoencaControllerTest
     {
         private readonly Mock<IDoencaUseCase> _useCase;
         private readonly HttpClient _client;
@@ -26,6 +27,7 @@ namespace Arkive_Tests.App
         [Trait("Controller", "Doencas")]
         public async Task GetAll_DeveRetornar200_ComListaDeDoencas()
         {
+            // Arrange
             var doencas = new List<DoencaEntity>
             {
                 new DoencaEntity { Id = 1, Nome = "Cinomose", StAtivo = "S" },
@@ -34,8 +36,10 @@ namespace Arkive_Tests.App
             _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>()))
                 .ReturnsAsync(new PageResultModel<IEnumerable<DoencaEntity>> { Data = doencas, TotalRegistros = doencas.Count });
 
+            // Act
             var response = await _client.GetAsync("/api/doencas");
 
+            // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             var body = await response.Content.ReadFromJsonAsync<PageResultModel<List<DoencaEntity>>>();
             Assert.Equal(2, body!.Data.Count);
@@ -45,11 +49,14 @@ namespace Arkive_Tests.App
         [Trait("Controller", "Doencas")]
         public async Task GetAll_DeveRetornar204_QuandoNaoHaDoencas()
         {
+            // Arrange
             _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>()))
                 .ReturnsAsync(new PageResultModel<IEnumerable<DoencaEntity>> { Data = new List<DoencaEntity>() });
 
+            // Act
             var response = await _client.GetAsync("/api/doencas");
 
+            // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
         }
 
@@ -57,11 +64,14 @@ namespace Arkive_Tests.App
         [Trait("Controller", "Doencas")]
         public async Task GetById_DeveRetornar200_QuandoDoencaExiste()
         {
+            // Arrange
             _useCase.Setup(x => x.ObterPorIdAsync(7))
                 .ReturnsAsync(new DoencaEntity { Id = 7, Nome = "Parvovirose", StAtivo = "S" });
 
+            // Act
             var response = await _client.GetAsync("/api/doencas/7");
 
+            // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             var body = await response.Content.ReadFromJsonAsync<DoencaEntity>();
             Assert.Equal("Parvovirose", body!.Nome);
@@ -71,10 +81,13 @@ namespace Arkive_Tests.App
         [Trait("Controller", "Doencas")]
         public async Task GetById_DeveRetornar404_QuandoDoencaNaoExiste()
         {
+            // Arrange
             _useCase.Setup(x => x.ObterPorIdAsync(It.IsAny<int>())).ReturnsAsync((DoencaEntity?)null);
 
+            // Act
             var response = await _client.GetAsync("/api/doencas/999");
 
+            // Assert
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
@@ -82,12 +95,15 @@ namespace Arkive_Tests.App
         [Trait("Controller", "Doencas")]
         public async Task Create_DeveRetornar201_QuandoDadosValidos()
         {
+            // Arrange
             var dto = new DoencaRequestDto { Nome = "Leptospirose" };
             _useCase.Setup(x => x.AdicionarAsync(It.IsAny<DoencaRequestDto>()))
                 .ReturnsAsync(new DoencaEntity { Id = 20, Nome = "Leptospirose", StAtivo = "S" });
 
+            // Act
             var response = await _client.PostAsJsonAsync("/api/doencas", dto);
 
+            // Assert
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         }
 
@@ -95,12 +111,15 @@ namespace Arkive_Tests.App
         [Trait("Controller", "Doencas")]
         public async Task Create_DeveRetornar404_QuandoCategoriaNaoEncontrada()
         {
+            // Arrange
             _useCase.Setup(x => x.AdicionarAsync(It.IsAny<DoencaRequestDto>()))
                 .ThrowsAsync(new CategoriaNaoEncontradaException(999));
 
+            // Act
             var response = await _client.PostAsJsonAsync("/api/doencas",
                 new DoencaRequestDto { Nome = "X", IdCategoria = 999 });
 
+            // Assert
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
@@ -108,11 +127,14 @@ namespace Arkive_Tests.App
         [Trait("Controller", "Doencas")]
         public async Task Update_DeveRetornar404_QuandoDoencaNaoExisteOuInativa()
         {
+            // Arrange
             _useCase.Setup(x => x.EditarAsync(It.IsAny<int>(), It.IsAny<DoencaRequestDto>()))
                 .ReturnsAsync((DoencaEntity?)null);
 
+            // Act
             var response = await _client.PutAsJsonAsync("/api/doencas/999", new DoencaRequestDto { Nome = "X" });
 
+            // Assert
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
@@ -120,11 +142,14 @@ namespace Arkive_Tests.App
         [Trait("Controller", "Doencas")]
         public async Task Delete_DeveRetornar200_QuandoInativadaComSucesso()
         {
+            // Arrange
             _useCase.Setup(x => x.InativarAsync(3))
                 .ReturnsAsync(new DoencaEntity { Id = 3, Nome = "Cinomose", StAtivo = "N" });
 
+            // Act
             var response = await _client.DeleteAsync("/api/doencas/3");
 
+            // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
     }

@@ -43,4 +43,12 @@ namespace Arkive_Tests.App
             });
         }
     }
+
+    /// <summary>
+    /// Collection Fixture: compartilha UMA única instância de <see cref="CustomWebApplicationFactory"/>
+    /// entre todas as classes de teste de Controller marcadas com [Collection("Controller Collection")],
+    /// em vez de criar uma instância por classe (o que IClassFixture faria sozinho).
+    /// </summary>
+    [CollectionDefinition("Controller Collection")]
+    public class ControllerCollection : ICollectionFixture<CustomWebApplicationFactory> { }
 }

@@ -14,7 +14,7 @@ namespace Arkive_Tests.App
         public EspecieRepositoryTest()
         {
             _options = new DbContextOptionsBuilder<ApplicationContext>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .UseInMemoryDatabase(databaseName: "EspecieTestDatabase")
                 .Options;
 
             _applicationContext = new ApplicationContext(_options);

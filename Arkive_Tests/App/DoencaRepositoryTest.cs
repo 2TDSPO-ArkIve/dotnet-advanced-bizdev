@@ -14,7 +14,7 @@ namespace Arkive_Tests.App
         public DoencaRepositoryTest()
         {
             _options = new DbContextOptionsBuilder<ApplicationContext>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .UseInMemoryDatabase(databaseName: "DoencaTestDatabase")
                 .Options;
 
             _applicationContext = new ApplicationContext(_options);

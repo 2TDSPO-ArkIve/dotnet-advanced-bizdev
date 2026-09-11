@@ -9,7 +9,8 @@ using Moq;
 
 namespace Arkive_Tests.App
 {
-    public class RacaControllerTest : IClassFixture<CustomWebApplicationFactory>
+    [Collection("Controller Collection")]
+    public class RacaControllerTest
     {
         private readonly Mock<IRacaUseCase> _useCase;
         private readonly HttpClient _client;
@@ -25,14 +26,17 @@ namespace Arkive_Tests.App
         [Trait("Controller", "Racas")]
         public async Task GetAll_DeveRetornar200_ComListaDeRacas()
         {
+            // Arrange
             _useCase.Setup(x => x.ObterTodasAsync()).ReturnsAsync(new List<RacaEntity>
             {
                 new RacaEntity { Id = 1, Raca = "Poodle", IdEspecie = 1, StAtivo = "S" },
                 new RacaEntity { Id = 2, Raca = "Siamês", IdEspecie = 2, StAtivo = "S" }
             });
 
+            // Act
             var response = await _client.GetAsync("/api/racas");
 
+            // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             var body = await response.Content.ReadFromJsonAsync<List<RacaEntity>>();
             Assert.Equal(2, body!.Count);
@@ -42,10 +46,13 @@ namespace Arkive_Tests.App
         [Trait("Controller", "Racas")]
         public async Task GetAll_DeveRetornar204_QuandoNaoHaRacas()
         {
+            // Arrange
             _useCase.Setup(x => x.ObterTodasAsync()).ReturnsAsync(new List<RacaEntity>());
 
+            // Act
             var response = await _client.GetAsync("/api/racas");
 
+            // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
         }
 
@@ -53,11 +60,14 @@ namespace Arkive_Tests.App
         [Trait("Controller", "Racas")]
         public async Task GetById_DeveRetornar200_QuandoRacaExiste()
         {
+            // Arrange
             _useCase.Setup(x => x.ObterPorIdAsync(3))
                 .ReturnsAsync(new RacaEntity { Id = 3, Raca = "Bulldog", IdEspecie = 1, StAtivo = "S" });
 
+            // Act
             var response = await _client.GetAsync("/api/racas/3");
 
+            // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             var body = await response.Content.ReadFromJsonAsync<RacaEntity>();
             Assert.Equal("Bulldog", body!.Raca);
@@ -67,10 +77,13 @@ namespace Arkive_Tests.App
         [Trait("Controller", "Racas")]
         public async Task GetById_DeveRetornar404_QuandoRacaNaoExiste()
         {
+            // Arrange
             _useCase.Setup(x => x.ObterPorIdAsync(It.IsAny<int>())).ReturnsAsync((RacaEntity?)null);
 
+            // Act
             var response = await _client.GetAsync("/api/racas/999");
 
+            // Assert
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
@@ -78,12 +91,15 @@ namespace Arkive_Tests.App
         [Trait("Controller", "Racas")]
         public async Task Create_DeveRetornar201_QuandoDadosValidos()
         {
+            // Arrange
             _useCase.Setup(x => x.AdicionarAsync(It.IsAny<RacaRequestDto>()))
                 .ReturnsAsync(new RacaEntity { Id = 15, Raca = "Beagle", IdEspecie = 1, StAtivo = "S" });
 
+            // Act
             var response = await _client.PostAsJsonAsync("/api/racas",
                 new RacaRequestDto { Raca = "Beagle", IdEspecie = 1 });
 
+            // Assert
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         }
 
@@ -91,12 +107,15 @@ namespace Arkive_Tests.App
         [Trait("Controller", "Racas")]
         public async Task Create_DeveRetornar404_QuandoEspecieNaoEncontrada()
         {
+            // Arrange
             _useCase.Setup(x => x.AdicionarAsync(It.IsAny<RacaRequestDto>()))
                 .ThrowsAsync(new EspecieNaoEncontradaException(999));
 
+            // Act
             var response = await _client.PostAsJsonAsync("/api/racas",
                 new RacaRequestDto { Raca = "X", IdEspecie = 999 });
 
+            // Assert
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
@@ -104,12 +123,15 @@ namespace Arkive_Tests.App
         [Trait("Controller", "Racas")]
         public async Task Update_DeveRetornar404_QuandoRacaNaoExisteOuInativa()
         {
+            // Arrange
             _useCase.Setup(x => x.EditarAsync(It.IsAny<int>(), It.IsAny<RacaRequestDto>()))
                 .ReturnsAsync((RacaEntity?)null);
 
+            // Act
             var response = await _client.PutAsJsonAsync("/api/racas/999",
                 new RacaRequestDto { Raca = "X", IdEspecie = 1 });
 
+            // Assert
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
@@ -117,11 +139,14 @@ namespace Arkive_Tests.App
         [Trait("Controller", "Racas")]
         public async Task Delete_DeveRetornar200_QuandoInativadaComSucesso()
         {
+            // Arrange
             _useCase.Setup(x => x.InativarAsync(3))
                 .ReturnsAsync(new RacaEntity { Id = 3, Raca = "Bulldog", IdEspecie = 1, StAtivo = "N" });
 
+            // Act
             var response = await _client.DeleteAsync("/api/racas/3");
 
+            // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
     }

@@ -14,7 +14,7 @@ namespace Arkive_Tests.App
         public PredisposicaoRepositoryTest()
         {
             _options = new DbContextOptionsBuilder<ApplicationContext>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .UseInMemoryDatabase(databaseName: "PredisposicaoTestDatabase")
                 .Options;
 
             _applicationContext = new ApplicationContext(_options);

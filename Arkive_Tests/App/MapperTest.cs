@@ -78,8 +78,13 @@ namespace Arkive_Tests.App
         [Trait("Domain", "Mappers")]
         public void CategoriaDoencaMapper_DeveMapearNome()
         {
-            var entity = new CategoriaDoencaRequestDto { Nome = "Viral" }.ToCategoriaDoencaEntity();
+            // Arrange
+            var dto = new CategoriaDoencaRequestDto { Nome = "Viral" };
 
+            // Act
+            var entity = dto.ToCategoriaDoencaEntity();
+
+            // Assert
             Assert.Equal("Viral", entity.Nome);
             Assert.Equal("S", entity.StAtivo);
         }
@@ -88,8 +93,13 @@ namespace Arkive_Tests.App
         [Trait("Domain", "Mappers")]
         public void EspecieMapper_DeveMapearEspecie()
         {
-            var entity = new EspecieRequestDto { Especie = "Canina" }.ToEspecieEntity();
+            // Arrange
+            var dto = new EspecieRequestDto { Especie = "Canina" };
 
+            // Act
+            var entity = dto.ToEspecieEntity();
+
+            // Assert
             Assert.Equal("Canina", entity.Especie);
             Assert.Equal("S", entity.StAtivo);
         }

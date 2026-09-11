@@ -3,7 +3,8 @@ using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace Arkive_Tests.App
 {
-    public class HealthControllerTest : IClassFixture<CustomWebApplicationFactory>
+    [Collection("Controller Collection")]
+    public class HealthControllerTest
     {
         private readonly HttpClient _client;
 
@@ -16,7 +17,7 @@ namespace Arkive_Tests.App
         [Trait("Controller", "Health")]
         public async Task Live_DeveRetornar200_QuandoApiNoAr()
         {
-            // Arrange / Act
+            // Act
             var response = await _client.GetAsync("/health/live");
 
             // Assert
@@ -27,7 +28,7 @@ namespace Arkive_Tests.App
         [Trait("Controller", "Health")]
         public async Task LiveDetalhado_DeveRetornarStatusHealthy()
         {
-            // Arrange / Act
+            // Act
             var response = await _client.GetAsync("/api/health2/live");
             var body = await response.Content.ReadAsStringAsync();
 

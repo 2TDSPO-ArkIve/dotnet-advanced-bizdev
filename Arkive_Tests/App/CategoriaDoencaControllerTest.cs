@@ -6,7 +6,8 @@ using Moq;
 
 namespace Arkive_Tests.App
 {
-    public class CategoriaDoencaControllerTest : IClassFixture<CustomWebApplicationFactory>
+    [Collection("Controller Collection")]
+    public class CategoriaDoencaControllerTest
     {
         private readonly CustomWebApplicationFactory _factory;
         private readonly Mock<Arkive_API.Application.Interfaces.ICategoriaDoencaUseCase> _useCase;
@@ -49,10 +50,13 @@ namespace Arkive_Tests.App
         [Trait("Controller", "CategoriaDoenca")]
         public async Task GetAll_DeveRetornar204_QuandoNaoHaCategorias()
         {
+            // Arrange
             _useCase.Setup(x => x.ObterTodasAsync()).ReturnsAsync(new List<CategoriaDoencaEntity>());
 
+            // Act
             var response = await _client.GetAsync("/api/categorias-doenca");
 
+            // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
         }
 
@@ -60,11 +64,14 @@ namespace Arkive_Tests.App
         [Trait("Controller", "CategoriaDoenca")]
         public async Task GetById_DeveRetornar200_QuandoCategoriaExiste()
         {
+            // Arrange
             var categoria = new CategoriaDoencaEntity { Id = 5, Nome = "Viral", StAtivo = "S" };
             _useCase.Setup(x => x.ObterPorIdAsync(5)).ReturnsAsync(categoria);
 
+            // Act
             var response = await _client.GetAsync("/api/categorias-doenca/5");
 
+            // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             var body = await response.Content.ReadFromJsonAsync<CategoriaDoencaEntity>();
             Assert.Equal(5, body!.Id);
@@ -75,10 +82,13 @@ namespace Arkive_Tests.App
         [Trait("Controller", "CategoriaDoenca")]
         public async Task GetById_DeveRetornar404_QuandoCategoriaNaoExiste()
         {
+            // Arrange
             _useCase.Setup(x => x.ObterPorIdAsync(It.IsAny<int>())).ReturnsAsync((CategoriaDoencaEntity?)null);
 
+            // Act
             var response = await _client.GetAsync("/api/categorias-doenca/999");
 
+            // Assert
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
@@ -86,12 +96,15 @@ namespace Arkive_Tests.App
         [Trait("Controller", "CategoriaDoenca")]
         public async Task Create_DeveRetornar201_QuandoDadosValidos()
         {
+            // Arrange
             var dto = new CategoriaDoencaRequestDto { Nome = "Parasitária" };
             var criada = new CategoriaDoencaEntity { Id = 10, Nome = "Parasitária", StAtivo = "S" };
             _useCase.Setup(x => x.AdicionarAsync(It.IsAny<CategoriaDoencaRequestDto>())).ReturnsAsync(criada);
 
+            // Act
             var response = await _client.PostAsJsonAsync("/api/categorias-doenca", dto);
 
+            // Assert
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
             var body = await response.Content.ReadFromJsonAsync<CategoriaDoencaEntity>();
             Assert.Equal(10, body!.Id);
@@ -101,12 +114,15 @@ namespace Arkive_Tests.App
         [Trait("Controller", "CategoriaDoenca")]
         public async Task Update_DeveRetornar404_QuandoCategoriaNaoExisteOuInativa()
         {
+            // Arrange
             _useCase.Setup(x => x.EditarAsync(It.IsAny<int>(), It.IsAny<CategoriaDoencaRequestDto>()))
                 .ReturnsAsync((CategoriaDoencaEntity?)null);
 
+            // Act
             var response = await _client.PutAsJsonAsync("/api/categorias-doenca/999",
                 new CategoriaDoencaRequestDto { Nome = "Nova" });
 
+            // Assert
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
@@ -114,11 +130,14 @@ namespace Arkive_Tests.App
         [Trait("Controller", "CategoriaDoenca")]
         public async Task Delete_DeveRetornar200_QuandoInativadaComSucesso()
         {
+            // Arrange
             var inativada = new CategoriaDoencaEntity { Id = 3, Nome = "Viral", StAtivo = "N" };
             _useCase.Setup(x => x.InativarAsync(3)).ReturnsAsync(inativada);
 
+            // Act
             var response = await _client.DeleteAsync("/api/categorias-doenca/3");
 
+            // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
     }
