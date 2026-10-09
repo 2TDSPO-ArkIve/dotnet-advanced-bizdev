@@ -12,6 +12,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Serilog;
 using Serilog.Events;
 using Swashbuckle.AspNetCore.Filters;
+using System.Reflection;
 using System.Threading.RateLimiting;
 
 Log.Logger = new LoggerConfiguration()
@@ -75,6 +76,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c => {
     c.EnableAnnotations();
     c.ExampleFilters();
+    c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
 });
 
 builder.Services.AddSwaggerExamplesFromAssemblyOf<Program>();

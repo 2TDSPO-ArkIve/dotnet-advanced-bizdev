@@ -4,6 +4,9 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Gera o XML dos comentários /// para o Swagger; 1591 silencia aviso de membro público sem doc -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,19 +26,6 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.6.2" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.6.2" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.6.2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Application\Dtos\" />
-    <Folder Include="Application\Mappers\" />
-    <Folder Include="Application\Mappers\" />
-    <Folder Include="Application\Dtos\" />
-    <Folder Include="Application\UseCases\" />
-    <Folder Include="Doc\Samples\" />
-    <Folder Include="Doc\Samples\" />
-    <Folder Include="Domain\Interfaces\" />
-    <Folder Include="Domain\Interfaces\" />
-    <Folder Include="Infrastructure\Data\Repositories\" />
   </ItemGroup>
 
 </Project>
