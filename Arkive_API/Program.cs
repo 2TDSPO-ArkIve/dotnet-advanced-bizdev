@@ -1,61 +1,18 @@
-using Arkive_API.Application.Interfaces;
-using Arkive_API.Application.UseCases;
-using Arkive_API.Domain.Interfaces;
-using Arkive_API.Infrastructure.Data;
-using Arkive_API.Infrastructure.Data.Repositories;
-using Azure.Monitor.OpenTelemetry.AspNetCore;
+using Arkive_API.Infrastructure.IoC;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.ResponseCompression;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Serilog;
-using Serilog.Events;
 using Swashbuckle.AspNetCore.Filters;
 using System.Reflection;
 using System.Threading.RateLimiting;
 
-Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Information()
-    .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
-    .Enrich.FromLogContext()
-    .WriteTo.Console()
-    .WriteTo.File(
-        path: Path.Combine(AppContext.BaseDirectory, "logs", "api-.log"),
-        rollingInterval: RollingInterval.Day,
-        retainedFileCountLimit: 7,
-        outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:u3}] {SourceContext}{NewLine}    {Message:lj}{NewLine}{Exception}")
-    .CreateLogger();
-
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSerilog();
-
-// Application Insights via OpenTelemetry. Só liga quando há connection string configurada
-// (env de teste / dev sem Azure ficam sem telemetria em vez de quebrar no boot).
-var connString = builder.Configuration["ApplicationInsights:ConnectionString"];
-if (!string.IsNullOrWhiteSpace(connString))
-{
-    builder.Services.AddOpenTelemetry()
-        .UseAzureMonitor(options => options.ConnectionString = connString);
-}
-
-builder.Services.AddDbContext<ApplicationContext>(options => {
-    options.UseOracle(builder.Configuration.GetConnectionString("Oracle"));
-});
-
-builder.Services.AddScoped<ICategoriaDoencaRepository, CategoriaDoencaRepository>();
-builder.Services.AddScoped<ICategoriaDoencaUseCase, CategoriaDoencaUseCase>();
-builder.Services.AddScoped<IEspecieRepository, EspecieRepository>();
-builder.Services.AddScoped<IEspecieUseCase, EspecieUseCase>();
-builder.Services.AddScoped<IDoencaRepository, DoencaRepository>();
-builder.Services.AddScoped<IDoencaUseCase, DoencaUseCase>();
-builder.Services.AddScoped<IRacaRepository, RacaRepository>();
-builder.Services.AddScoped<IRacaUseCase, RacaUseCase>();
-builder.Services.AddScoped<IPredisposicaoRepository, PredisposicaoRepository>();
-builder.Services.AddScoped<IPredisposicaoUseCase, PredisposicaoUseCase>();
-builder.Services.AddScoped<IFeedbackNPSRepository, FeedbackNPSRepository>();
-builder.Services.AddScoped<IFeedbackNPSUseCase, FeedbackNPSUseCase>();
+builder.Services.AddLogApi();
+builder.Services.AddTelemetria(builder.Configuration);
+builder.Services.AddIoC(builder.Configuration);
 
 builder.Services.AddHealthChecks()
     // Liveness: o processo está de pé? (auto-contido, sem I/O externo)
