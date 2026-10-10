@@ -1,5 +1,4 @@
 ﻿using Arkive_API.Application.Dtos;
-using Arkive_API.Application.Exceptions;
 using Arkive_API.Application.Mappers;
 using Arkive_API.Application.UseCases;
 using Arkive_API.Domain.Entities;
@@ -48,8 +47,8 @@ namespace Arkive_Tests.App
             var resultado = await _feedbackNPSUseCase.ObterTodosAsync();
 
             // Assert
-            Assert.NotNull(resultado);
-            Assert.Collection(resultado.Data,
+            Assert.True(resultado.IsSuccess);
+            Assert.Collection(resultado.Value!.Data,
                 item => { Assert.Equal(1, item.Id); Assert.Equal(10, item.Nota); },
                 item => { Assert.Equal(2, item.Id); Assert.Equal(5, item.Nota); });
         }
@@ -68,9 +67,9 @@ namespace Arkive_Tests.App
             var resultado = await _feedbackNPSUseCase.ObterPorIdAsync(idFeedback);
 
             // Assert
-            Assert.NotNull(resultado);
-            Assert.Equal(idFeedback, resultado!.Id);
-            Assert.Equal(feedback.Nota, resultado.Nota);
+            Assert.True(resultado.IsSuccess);
+            Assert.Equal(idFeedback, resultado.Value!.Id);
+            Assert.Equal(feedback.Nota, resultado.Value.Nota);
         }
 
         [Theory]
@@ -89,8 +88,8 @@ namespace Arkive_Tests.App
             var resultado = await _feedbackNPSUseCase.ObterPorNotaAsync(nota);
 
             // Assert
-            Assert.NotNull(resultado);
-            Assert.Collection(resultado.Data,
+            Assert.True(resultado.IsSuccess);
+            Assert.Collection(resultado.Value!.Data,
                 item => { Assert.Equal(1, item.Id); Assert.Equal(nota, item.Nota); });
         }
 
@@ -98,10 +97,14 @@ namespace Arkive_Tests.App
         [Trait("UseCase", "FeedbackNPS")]
         [InlineData(-1)]
         [InlineData(6)]
-        public async Task ObterPorNotaAsync_QuandoNotaForaDoIntervalo_DeveLancarExcecao(int nota)
+        public async Task ObterPorNotaAsync_QuandoNotaForaDoIntervalo_DeveRetornar400(int nota)
         {
-            // Act & Assert
-            await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => _feedbackNPSUseCase.ObterPorNotaAsync(nota));
+            // Act
+            var resultado = await _feedbackNPSUseCase.ObterPorNotaAsync(nota);
+
+            // Assert
+            Assert.False(resultado.IsSuccess);
+            Assert.Equal(400, resultado.StatusCode);
 
             _feedbackNPSRepository.Verify(obj => obj.ObterPorNotaAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()), Times.Never);
         }
@@ -120,8 +123,8 @@ namespace Arkive_Tests.App
             var resultado = await _feedbackNPSUseCase.ObterPorResponsavelAsync(1);
 
             // Assert
-            Assert.NotNull(resultado);
-            Assert.Collection(resultado.Data,
+            Assert.True(resultado.IsSuccess);
+            Assert.Collection(resultado.Value!.Data,
                 item => { Assert.Equal(1, item.Id); Assert.Equal(1, item.IdResponsavel); Assert.Equal(10, item.Nota); });
         }
 
@@ -139,8 +142,8 @@ namespace Arkive_Tests.App
             var resultado = await _feedbackNPSUseCase.ObterPorAnimalAsync(1);
 
             // Assert
-            Assert.NotNull(resultado);
-            Assert.Collection(resultado.Data,
+            Assert.True(resultado.IsSuccess);
+            Assert.Collection(resultado.Value!.Data,
                 item => { Assert.Equal(1, item.Id); Assert.Equal(1, item.IdAnimal); Assert.Equal(10, item.Nota); });
         }
 
@@ -158,8 +161,8 @@ namespace Arkive_Tests.App
             var resultado = await _feedbackNPSUseCase.ObterPorClinicaAsync(1);
 
             // Assert
-            Assert.NotNull(resultado);
-            Assert.Collection(resultado.Data,
+            Assert.True(resultado.IsSuccess);
+            Assert.Collection(resultado.Value!.Data,
                 item => { Assert.Equal(1, item.Id); Assert.Equal(1, item.IdClinica); Assert.Equal(10, item.Nota); });
         }
 
@@ -177,8 +180,8 @@ namespace Arkive_Tests.App
             var resultado = await _feedbackNPSUseCase.ObterPorVeterinarioAsync(1);
 
             // Assert
-            Assert.NotNull(resultado);
-            Assert.Collection(resultado.Data,
+            Assert.True(resultado.IsSuccess);
+            Assert.Collection(resultado.Value!.Data,
                 item => { Assert.Equal(1, item.Id); Assert.Equal(1, item.IdVeterinario); Assert.Equal(10, item.Nota); });
         }
 
@@ -197,95 +200,119 @@ namespace Arkive_Tests.App
             var resultado = await _feedbackNPSUseCase.ObterPorDataAsync(data);
 
             // Assert
-            Assert.NotNull(resultado);
-            Assert.Collection(resultado.Data,
+            Assert.True(resultado.IsSuccess);
+            Assert.Collection(resultado.Value!.Data,
                 item => { Assert.Equal(1, item.Id); Assert.Equal(10, item.Nota); Assert.Equal(data, item.DataFeedback); });
         }
 
         [Fact]
         [Trait("UseCase", "FeedbackNPS")]
-        public async Task AdicionarAsync_QuandoNenhumContextoInformado_DeveLancarExcecao()
+        public async Task AdicionarAsync_QuandoNenhumContextoInformado_DeveRetornar400()
         {
             // Arrange
             var dto = new FeedbackNPSRequestDto { Nota = 8 };
 
-            // Act & Assert
-            await Assert.ThrowsAsync<ArgumentException>(() => _feedbackNPSUseCase.AdicionarAsync(dto));
+            // Act
+            var resultado = await _feedbackNPSUseCase.AdicionarAsync(dto);
+
+            // Assert
+            Assert.False(resultado.IsSuccess);
+            Assert.Equal(400, resultado.StatusCode);
 
             _feedbackNPSRepository.Verify(obj => obj.AdicionarAsync(It.IsAny<FeedbackNPSEntity>()), Times.Never);
         }
 
         [Fact]
         [Trait("UseCase", "FeedbackNPS")]
-        public async Task AdicionarAsync_QuandoResponsavelNaoExiste_DeveLancarExcecao()
+        public async Task AdicionarAsync_QuandoResponsavelNaoExiste_DeveRetornar404()
         {
             // Arrange
             var dto = new FeedbackNPSRequestDto { Nota = 8, IdResponsavel = 1 };
 
             _feedbackNPSRepository.Setup(obj => obj.ResponsavelExisteAsync(1)).ReturnsAsync(false);
 
-            // Act & Assert
-            await Assert.ThrowsAsync<ContextoNaoEncontradoException>(() => _feedbackNPSUseCase.AdicionarAsync(dto));
+            // Act
+            var resultado = await _feedbackNPSUseCase.AdicionarAsync(dto);
+
+            // Assert
+            Assert.False(resultado.IsSuccess);
+            Assert.Equal(404, resultado.StatusCode);
 
             _feedbackNPSRepository.Verify(obj => obj.AdicionarAsync(It.IsAny<FeedbackNPSEntity>()), Times.Never);
         }
 
         [Fact]
         [Trait("UseCase", "FeedbackNPS")]
-        public async Task AdicionarAsync_QuandoAnimalNaoExiste_DeveLancarExcecao()
+        public async Task AdicionarAsync_QuandoAnimalNaoExiste_DeveRetornar404()
         {
             // Arrange
             var dto = new FeedbackNPSRequestDto { Nota = 8, IdAnimal = 1 };
 
             _feedbackNPSRepository.Setup(obj => obj.AnimalExisteAsync(1)).ReturnsAsync(false);
 
-            // Act & Assert
-            await Assert.ThrowsAsync<ContextoNaoEncontradoException>(() => _feedbackNPSUseCase.AdicionarAsync(dto));
+            // Act
+            var resultado = await _feedbackNPSUseCase.AdicionarAsync(dto);
+
+            // Assert
+            Assert.False(resultado.IsSuccess);
+            Assert.Equal(404, resultado.StatusCode);
 
             _feedbackNPSRepository.Verify(obj => obj.AdicionarAsync(It.IsAny<FeedbackNPSEntity>()), Times.Never);
         }
 
         [Fact]
         [Trait("UseCase", "FeedbackNPS")]
-        public async Task AdicionarAsync_QuandoClinicaNaoExiste_DeveLancarExcecao()
+        public async Task AdicionarAsync_QuandoClinicaNaoExiste_DeveRetornar404()
         {
             // Arrange
             var dto = new FeedbackNPSRequestDto { Nota = 8, IdClinica = 1 };
 
             _feedbackNPSRepository.Setup(obj => obj.ClinicaExisteAsync(1)).ReturnsAsync(false);
 
-            // Act & Assert
-            await Assert.ThrowsAsync<ContextoNaoEncontradoException>(() => _feedbackNPSUseCase.AdicionarAsync(dto));
+            // Act
+            var resultado = await _feedbackNPSUseCase.AdicionarAsync(dto);
+
+            // Assert
+            Assert.False(resultado.IsSuccess);
+            Assert.Equal(404, resultado.StatusCode);
 
             _feedbackNPSRepository.Verify(obj => obj.AdicionarAsync(It.IsAny<FeedbackNPSEntity>()), Times.Never);
         }
 
         [Fact]
         [Trait("UseCase", "FeedbackNPS")]
-        public async Task AdicionarAsync_QuandoConsultaNaoExiste_DeveLancarExcecao()
+        public async Task AdicionarAsync_QuandoConsultaNaoExiste_DeveRetornar404()
         {
             // Arrange
             var dto = new FeedbackNPSRequestDto { Nota = 8, IdConsulta = 1 };
 
             _feedbackNPSRepository.Setup(obj => obj.ConsultaExisteAsync(1)).ReturnsAsync(false);
 
-            // Act & Assert
-            await Assert.ThrowsAsync<ContextoNaoEncontradoException>(() => _feedbackNPSUseCase.AdicionarAsync(dto));
+            // Act
+            var resultado = await _feedbackNPSUseCase.AdicionarAsync(dto);
+
+            // Assert
+            Assert.False(resultado.IsSuccess);
+            Assert.Equal(404, resultado.StatusCode);
 
             _feedbackNPSRepository.Verify(obj => obj.AdicionarAsync(It.IsAny<FeedbackNPSEntity>()), Times.Never);
         }
 
         [Fact]
         [Trait("UseCase", "FeedbackNPS")]
-        public async Task AdicionarAsync_QuandoVeterinarioNaoExiste_DeveLancarExcecao()
+        public async Task AdicionarAsync_QuandoVeterinarioNaoExiste_DeveRetornar404()
         {
             // Arrange
             var dto = new FeedbackNPSRequestDto { Nota = 8, IdVeterinario = 1 };
 
             _feedbackNPSRepository.Setup(obj => obj.VeterinarioExisteAsync(1)).ReturnsAsync(false);
 
-            // Act & Assert
-            await Assert.ThrowsAsync<ContextoNaoEncontradoException>(() => _feedbackNPSUseCase.AdicionarAsync(dto));
+            // Act
+            var resultado = await _feedbackNPSUseCase.AdicionarAsync(dto);
+
+            // Assert
+            Assert.False(resultado.IsSuccess);
+            Assert.Equal(404, resultado.StatusCode);
 
             _feedbackNPSRepository.Verify(obj => obj.AdicionarAsync(It.IsAny<FeedbackNPSEntity>()), Times.Never);
         }
@@ -304,10 +331,11 @@ namespace Arkive_Tests.App
             var resultado = await _feedbackNPSUseCase.AdicionarAsync(dto);
 
             // Assert
-            Assert.NotNull(resultado);
-            Assert.Equal(dto.Nota, resultado!.Nota);
-            Assert.Equal(dto.Comentario, resultado.Comentario);
-            Assert.Equal(dto.IdResponsavel, resultado.IdResponsavel);
+            Assert.True(resultado.IsSuccess);
+            Assert.Equal(201, resultado.StatusCode);
+            Assert.Equal(dto.Nota, resultado.Value!.Nota);
+            Assert.Equal(dto.Comentario, resultado.Value.Comentario);
+            Assert.Equal(dto.IdResponsavel, resultado.Value.IdResponsavel);
         }
 
         [Fact]
@@ -324,14 +352,14 @@ namespace Arkive_Tests.App
             var resultado = await _feedbackNPSUseCase.DeletarAsync(idFeedback);
 
             // Assert
-            Assert.NotNull(resultado);
-            Assert.Equal(idFeedback, resultado!.Id);
-            Assert.Equal(feedback.Nota, resultado.Nota);
+            Assert.True(resultado.IsSuccess);
+            Assert.Equal(idFeedback, resultado.Value!.Id);
+            Assert.Equal(feedback.Nota, resultado.Value.Nota);
         }
 
         [Fact]
         [Trait("UseCase", "FeedbackNPS")]
-        public async Task DeletarAsync_QuandoFeedbackNaoExiste_DeveRetornarNull()
+        public async Task DeletarAsync_QuandoFeedbackNaoExiste_DeveRetornar404()
         {
             // Arrange
             _feedbackNPSRepository.Setup(obj => obj.DeletarAsync(It.IsAny<int>())).ReturnsAsync((FeedbackNPSEntity?)null);
@@ -340,7 +368,56 @@ namespace Arkive_Tests.App
             var resultado = await _feedbackNPSUseCase.DeletarAsync(999);
 
             // Assert
-            Assert.Null(resultado);
+            Assert.False(resultado.IsSuccess);
+            Assert.Equal(404, resultado.StatusCode);
+        }
+
+        [Fact]
+        [Trait("UseCase", "FeedbackNPS")]
+        public async Task ObterPorIdAsync_QuandoNaoExiste_DeveRetornar404()
+        {
+            // Arrange
+            _feedbackNPSRepository.Setup(obj => obj.ObterPorIdAsync(It.IsAny<int>())).ReturnsAsync((FeedbackNPSEntity?)null);
+
+            // Act
+            var resultado = await _feedbackNPSUseCase.ObterPorIdAsync(999);
+
+            // Assert
+            Assert.False(resultado.IsSuccess);
+            Assert.Equal(404, resultado.StatusCode);
+        }
+
+        [Fact]
+        [Trait("UseCase", "FeedbackNPS")]
+        public async Task ObterTodosAsync_QuandoListaVazia_DeveRetornar204()
+        {
+            // Arrange
+            _feedbackNPSRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>()))
+                .ReturnsAsync(new PageResultModel<IEnumerable<FeedbackNPSEntity>> { Data = new List<FeedbackNPSEntity>() });
+
+            // Act
+            var resultado = await _feedbackNPSUseCase.ObterTodosAsync();
+
+            // Assert
+            Assert.False(resultado.IsSuccess);
+            Assert.Equal(204, resultado.StatusCode);
+        }
+
+        [Fact]
+        [Trait("UseCase", "FeedbackNPS")]
+        public async Task ObterTodosAsync_QuandoRepositorioFalha_DeveRetornar400SemVazarMensagem()
+        {
+            // Arrange
+            _feedbackNPSRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>()))
+                .ThrowsAsync(new Exception("ORA-12541: detalhe interno"));
+
+            // Act
+            var resultado = await _feedbackNPSUseCase.ObterTodosAsync();
+
+            // Assert
+            Assert.False(resultado.IsSuccess);
+            Assert.Equal(400, resultado.StatusCode);
+            Assert.DoesNotContain("ORA-12541", resultado.Error);
         }
     }
 }

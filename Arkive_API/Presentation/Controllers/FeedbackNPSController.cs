@@ -1,5 +1,4 @@
 using Arkive_API.Application.Dtos;
-using Arkive_API.Application.Exceptions;
 using Arkive_API.Application.Interfaces;
 using Arkive_API.Doc.Samples;
 using Arkive_API.Domain.Entities;
@@ -46,20 +45,11 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Listando feedbacks NPS (skip {Skip}, take {Take})", skip, take);
 
-            try
-            {
-                var resultado = await _feedbackNPSUseCase.ObterTodosAsync(skip, take);
+            var resultado = await _feedbackNPSUseCase.ObterTodosAsync(skip, take);
 
-                if (!resultado.Data.Any())
-                    return NoContent();
-
-                return Ok(resultado);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (resultado.StatusCode == 204) return NoContent();
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpGet("{id}")]
@@ -80,23 +70,10 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Buscando feedback NPS {Id}", id);
 
-            try
-            {
-                var feedback = await _feedbackNPSUseCase.ObterPorIdAsync(id);
+            var resultado = await _feedbackNPSUseCase.ObterPorIdAsync(id);
 
-                if (feedback is null)
-                {
-                    _logger.LogWarning("Feedback NPS {Id} não encontrado", id);
-                    return NotFound();
-                }
-
-                return Ok(feedback);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpGet("nota/{nota}")]
@@ -119,20 +96,11 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Listando feedbacks NPS com nota {Nota} (skip {Skip}, take {Take})", nota, skip, take);
 
-            try
-            {
-                var resultado = await _feedbackNPSUseCase.ObterPorNotaAsync(nota, skip, take);
+            var resultado = await _feedbackNPSUseCase.ObterPorNotaAsync(nota, skip, take);
 
-                if (!resultado.Data.Any())
-                    return NoContent();
-
-                return Ok(resultado);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (resultado.StatusCode == 204) return NoContent();
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpGet("responsavel/{idResponsavel}")]
@@ -155,20 +123,11 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Listando feedbacks NPS do responsável {IdResponsavel} (skip {Skip}, take {Take})", idResponsavel, skip, take);
 
-            try
-            {
-                var resultado = await _feedbackNPSUseCase.ObterPorResponsavelAsync(idResponsavel, skip, take);
+            var resultado = await _feedbackNPSUseCase.ObterPorResponsavelAsync(idResponsavel, skip, take);
 
-                if (!resultado.Data.Any())
-                    return NoContent();
-
-                return Ok(resultado);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (resultado.StatusCode == 204) return NoContent();
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpGet("animal/{idAnimal}")]
@@ -191,20 +150,11 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Listando feedbacks NPS do animal {IdAnimal} (skip {Skip}, take {Take})", idAnimal, skip, take);
 
-            try
-            {
-                var resultado = await _feedbackNPSUseCase.ObterPorAnimalAsync(idAnimal, skip, take);
+            var resultado = await _feedbackNPSUseCase.ObterPorAnimalAsync(idAnimal, skip, take);
 
-                if (!resultado.Data.Any())
-                    return NoContent();
-
-                return Ok(resultado);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (resultado.StatusCode == 204) return NoContent();
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpGet("clinica/{idClinica}")]
@@ -227,20 +177,11 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Listando feedbacks NPS da clínica {IdClinica} (skip {Skip}, take {Take})", idClinica, skip, take);
 
-            try
-            {
-                var resultado = await _feedbackNPSUseCase.ObterPorClinicaAsync(idClinica, skip, take);
+            var resultado = await _feedbackNPSUseCase.ObterPorClinicaAsync(idClinica, skip, take);
 
-                if (!resultado.Data.Any())
-                    return NoContent();
-
-                return Ok(resultado);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (resultado.StatusCode == 204) return NoContent();
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpGet("veterinario/{idVeterinario}")]
@@ -263,20 +204,11 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Listando feedbacks NPS do veterinário {IdVeterinario} (skip {Skip}, take {Take})", idVeterinario, skip, take);
 
-            try
-            {
-                var resultado = await _feedbackNPSUseCase.ObterPorVeterinarioAsync(idVeterinario, skip, take);
+            var resultado = await _feedbackNPSUseCase.ObterPorVeterinarioAsync(idVeterinario, skip, take);
 
-                if (!resultado.Data.Any())
-                    return NoContent();
-
-                return Ok(resultado);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (resultado.StatusCode == 204) return NoContent();
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpGet("data/{data}")]
@@ -300,28 +232,19 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Listando feedbacks NPS da data {Data} (skip {Skip}, take {Take})", data, skip, take);
 
-            try
+            // Parsing de formato de entrada (rota é string) — não é regra de negócio,
+            // então permanece no Controller, igual ao original.
+            if (!DateTime.TryParse(data, out DateTime dataParsed))
             {
-                // Parsing de formato de entrada (rota é string) — não é regra de negócio,
-                // então permanece no Controller, igual ao original.
-                if (!DateTime.TryParse(data, out DateTime dataParsed))
-                {
-                    _logger.LogWarning("Formato de data inválido recebido: {Data}", data);
-                    return BadRequest("Formato de data inválido. Use o formato yyyy-MM-dd.");
-                }
-
-                var resultado = await _feedbackNPSUseCase.ObterPorDataAsync(dataParsed, skip, take);
-
-                if (!resultado.Data.Any())
-                    return NoContent();
-
-                return Ok(resultado);
+                _logger.LogWarning("Formato de data inválido recebido: {Data}", data);
+                return BadRequest("Formato de data inválido. Use o formato yyyy-MM-dd.");
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+
+            var resultado = await _feedbackNPSUseCase.ObterPorDataAsync(dataParsed, skip, take);
+
+            if (resultado.StatusCode == 204) return NoContent();
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpPost]
@@ -349,23 +272,12 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Registrando feedback NPS com nota {Nota}", model.Nota);
 
-            try
-            {
-                var feedback = await _feedbackNPSUseCase.AdicionarAsync(model);
+            var resultado = await _feedbackNPSUseCase.AdicionarAsync(model);
 
-                _logger.LogInformation("Feedback NPS registrado com sucesso: {Id}", feedback?.Id ?? 0);
-                return CreatedAtAction(nameof(GetFeedbackById), new { id = feedback?.Id ?? 0 }, feedback);
-            }
-            catch (ContextoNaoEncontradoException ex)
-            {
-                _logger.LogWarning(ex, "Validação falhou ao registrar feedback NPS: {Mensagem}", ex.Message);
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+
+            _logger.LogInformation("Feedback NPS registrado com sucesso: {Id}", resultado.Value?.Id ?? 0);
+            return CreatedAtAction(nameof(GetFeedbackById), new { id = resultado.Value?.Id ?? 0 }, resultado.Value);
         }
 
         // Sem PUT — feedback NPS é um registro imutável por natureza
@@ -391,23 +303,10 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Removendo feedback NPS {Id}", id);
 
-            try
-            {
-                var feedback = await _feedbackNPSUseCase.DeletarAsync(id);
+            var resultado = await _feedbackNPSUseCase.DeletarAsync(id);
 
-                if (feedback is null)
-                {
-                    _logger.LogWarning("Feedback NPS {Id} não encontrado", id);
-                    return NotFound();
-                }
-
-                return Ok(feedback);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
     }
 }

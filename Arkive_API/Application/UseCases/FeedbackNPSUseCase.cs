@@ -19,204 +19,268 @@ namespace Arkive_API.Application.UseCases
             _logger = logger;
         }
 
-        public async Task<PageResultModel<IEnumerable<FeedbackNPSEntity>>> ObterTodosAsync(int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>> ObterTodosAsync(int skip = 0, int take = 50)
         {
             _logger.LogInformation("Obtendo feedbacks NPS (skip {Skip}, take {Take})", skip, take);
 
             try
             {
                 var (s, t) = Pagination.Normalizar(skip, take);
-                return await _feedbackNPSRepository.ObterTodosAsync(s, t);
+                var resultado = await _feedbackNPSRepository.ObterTodosAsync(s, t);
+
+                if (!resultado.Data.Any())
+                    return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Failure("Nenhum feedback NPS encontrado", 204);
+
+                return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Success(resultado);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter feedbacks NPS");
-                throw;
+                return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Failure("Ocorreu um erro ao obter os feedbacks NPS");
             }
         }
 
-        public async Task<FeedbackNPSEntity?> ObterPorIdAsync(int id)
+        public async Task<OperationResult<FeedbackNPSEntity?>> ObterPorIdAsync(int id)
         {
             _logger.LogInformation("Obtendo feedback NPS {Id}", id);
 
             try
             {
-                return await _feedbackNPSRepository.ObterPorIdAsync(id);
+                var feedback = await _feedbackNPSRepository.ObterPorIdAsync(id);
+
+                if (feedback is null)
+                {
+                    _logger.LogWarning("Feedback NPS {Id} não encontrado", id);
+                    return OperationResult<FeedbackNPSEntity?>.Failure("Feedback NPS não encontrado", 404);
+                }
+
+                return OperationResult<FeedbackNPSEntity?>.Success(feedback);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter feedback NPS {Id}", id);
-                throw;
+                return OperationResult<FeedbackNPSEntity?>.Failure("Ocorreu um erro ao obter o feedback NPS");
             }
         }
 
-        public async Task<PageResultModel<IEnumerable<FeedbackNPSEntity>>> ObterPorNotaAsync(int nota, int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>> ObterPorNotaAsync(int nota, int skip = 0, int take = 50)
         {
             _logger.LogInformation("Obtendo feedbacks NPS com nota {Nota} (skip {Skip}, take {Take})", nota, skip, take);
 
-            if (nota < 0 || nota > 5)
-            {
-                _logger.LogWarning("Nota inválida recebida: {Nota}", nota);
-                throw new ArgumentOutOfRangeException(nameof(nota), "Nota inválida, deve estar entre 0 e 5");
-            }
-
             try
             {
+                if (nota < 0 || nota > 5)
+                {
+                    _logger.LogWarning("Nota inválida recebida: {Nota}", nota);
+                    throw new ArgumentOutOfRangeException(nameof(nota), "Nota inválida, deve estar entre 0 e 5");
+                }
+
                 var (s, t) = Pagination.Normalizar(skip, take);
-                return await _feedbackNPSRepository.ObterPorNotaAsync(nota, s, t);
+                var resultado = await _feedbackNPSRepository.ObterPorNotaAsync(nota, s, t);
+
+                if (!resultado.Data.Any())
+                    return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Failure("Nenhum feedback NPS encontrado para esta nota", 204);
+
+                return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Success(resultado);
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Failure(ex.Message, 400);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter feedbacks NPS com nota {Nota}", nota);
-                throw;
+                return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Failure("Ocorreu um erro ao obter os feedbacks NPS por nota");
             }
         }
 
-        public async Task<PageResultModel<IEnumerable<FeedbackNPSEntity>>> ObterPorResponsavelAsync(int idResponsavel, int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>> ObterPorResponsavelAsync(int idResponsavel, int skip = 0, int take = 50)
         {
             _logger.LogInformation("Obtendo feedbacks NPS do responsável {IdResponsavel} (skip {Skip}, take {Take})", idResponsavel, skip, take);
 
             try
             {
                 var (s, t) = Pagination.Normalizar(skip, take);
-                return await _feedbackNPSRepository.ObterPorResponsavelAsync(idResponsavel, s, t);
+                var resultado = await _feedbackNPSRepository.ObterPorResponsavelAsync(idResponsavel, s, t);
+
+                if (!resultado.Data.Any())
+                    return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Failure("Nenhum feedback NPS encontrado para este responsável", 204);
+
+                return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Success(resultado);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter feedbacks NPS do responsável {IdResponsavel}", idResponsavel);
-                throw;
+                return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Failure("Ocorreu um erro ao obter os feedbacks NPS do responsável");
             }
         }
 
-        public async Task<PageResultModel<IEnumerable<FeedbackNPSEntity>>> ObterPorAnimalAsync(int idAnimal, int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>> ObterPorAnimalAsync(int idAnimal, int skip = 0, int take = 50)
         {
             _logger.LogInformation("Obtendo feedbacks NPS do animal {IdAnimal} (skip {Skip}, take {Take})", idAnimal, skip, take);
 
             try
             {
                 var (s, t) = Pagination.Normalizar(skip, take);
-                return await _feedbackNPSRepository.ObterPorAnimalAsync(idAnimal, s, t);
+                var resultado = await _feedbackNPSRepository.ObterPorAnimalAsync(idAnimal, s, t);
+
+                if (!resultado.Data.Any())
+                    return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Failure("Nenhum feedback NPS encontrado para este animal", 204);
+
+                return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Success(resultado);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter feedbacks NPS do animal {IdAnimal}", idAnimal);
-                throw;
+                return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Failure("Ocorreu um erro ao obter os feedbacks NPS do animal");
             }
         }
 
-        public async Task<PageResultModel<IEnumerable<FeedbackNPSEntity>>> ObterPorClinicaAsync(int idClinica, int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>> ObterPorClinicaAsync(int idClinica, int skip = 0, int take = 50)
         {
             _logger.LogInformation("Obtendo feedbacks NPS da clínica {IdClinica} (skip {Skip}, take {Take})", idClinica, skip, take);
 
             try
             {
                 var (s, t) = Pagination.Normalizar(skip, take);
-                return await _feedbackNPSRepository.ObterPorClinicaAsync(idClinica, s, t);
+                var resultado = await _feedbackNPSRepository.ObterPorClinicaAsync(idClinica, s, t);
+
+                if (!resultado.Data.Any())
+                    return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Failure("Nenhum feedback NPS encontrado para esta clínica", 204);
+
+                return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Success(resultado);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter feedbacks NPS da clínica {IdClinica}", idClinica);
-                throw;
+                return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Failure("Ocorreu um erro ao obter os feedbacks NPS da clínica");
             }
         }
 
-        public async Task<PageResultModel<IEnumerable<FeedbackNPSEntity>>> ObterPorVeterinarioAsync(int idVeterinario, int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>> ObterPorVeterinarioAsync(int idVeterinario, int skip = 0, int take = 50)
         {
             _logger.LogInformation("Obtendo feedbacks NPS do veterinário {IdVeterinario} (skip {Skip}, take {Take})", idVeterinario, skip, take);
 
             try
             {
                 var (s, t) = Pagination.Normalizar(skip, take);
-                return await _feedbackNPSRepository.ObterPorVeterinarioAsync(idVeterinario, s, t);
+                var resultado = await _feedbackNPSRepository.ObterPorVeterinarioAsync(idVeterinario, s, t);
+
+                if (!resultado.Data.Any())
+                    return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Failure("Nenhum feedback NPS encontrado para este veterinário", 204);
+
+                return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Success(resultado);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter feedbacks NPS do veterinário {IdVeterinario}", idVeterinario);
-                throw;
+                return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Failure("Ocorreu um erro ao obter os feedbacks NPS do veterinário");
             }
         }
 
-        public async Task<PageResultModel<IEnumerable<FeedbackNPSEntity>>> ObterPorDataAsync(DateTime data, int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>> ObterPorDataAsync(DateTime data, int skip = 0, int take = 50)
         {
             _logger.LogInformation("Obtendo feedbacks NPS da data {Data:yyyy-MM-dd} (skip {Skip}, take {Take})", data, skip, take);
 
             try
             {
                 var (s, t) = Pagination.Normalizar(skip, take);
-                return await _feedbackNPSRepository.ObterPorDataAsync(data, s, t);
+                var resultado = await _feedbackNPSRepository.ObterPorDataAsync(data, s, t);
+
+                if (!resultado.Data.Any())
+                    return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Failure("Nenhum feedback NPS encontrado para esta data", 204);
+
+                return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Success(resultado);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter feedbacks NPS da data {Data:yyyy-MM-dd}", data);
-                throw;
+                return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Failure("Ocorreu um erro ao obter os feedbacks NPS da data");
             }
         }
 
-        public async Task<FeedbackNPSEntity?> AdicionarAsync(FeedbackNPSRequestDto dto)
+        public async Task<OperationResult<FeedbackNPSEntity?>> AdicionarAsync(FeedbackNPSRequestDto dto)
         {
             _logger.LogInformation("Registrando feedback NPS com nota {Nota}", dto.Nota);
 
-            if (dto.IdResponsavel is null && dto.IdAnimal is null &&
-                dto.IdClinica is null && dto.IdConsulta is null &&
-                dto.IdVeterinario is null)
-            {
-                _logger.LogWarning("Feedback NPS sem nenhum contexto informado");
-                throw new ArgumentException("Informe ao menos um contexto: responsável, animal, clínica, consulta ou veterinário.");
-            }
-
-            if (dto.IdResponsavel is not null && !await _feedbackNPSRepository.ResponsavelExisteAsync(dto.IdResponsavel.Value))
-            {
-                _logger.LogWarning("Responsável {IdResponsavel} não encontrado", dto.IdResponsavel);
-                throw new ContextoNaoEncontradoException($"Responsável com ID {dto.IdResponsavel} não encontrado.");
-            }
-
-            if (dto.IdAnimal is not null && !await _feedbackNPSRepository.AnimalExisteAsync(dto.IdAnimal.Value))
-            {
-                _logger.LogWarning("Animal {IdAnimal} não encontrado", dto.IdAnimal);
-                throw new ContextoNaoEncontradoException($"Animal com ID {dto.IdAnimal} não encontrado.");
-            }
-
-            if (dto.IdClinica is not null && !await _feedbackNPSRepository.ClinicaExisteAsync(dto.IdClinica.Value))
-            {
-                _logger.LogWarning("Clínica {IdClinica} não encontrada", dto.IdClinica);
-                throw new ContextoNaoEncontradoException($"Clínica com ID {dto.IdClinica} não encontrada.");
-            }
-
-            if (dto.IdConsulta is not null && !await _feedbackNPSRepository.ConsultaExisteAsync(dto.IdConsulta.Value))
-            {
-                _logger.LogWarning("Consulta {IdConsulta} não encontrada", dto.IdConsulta);
-                throw new ContextoNaoEncontradoException($"Consulta com ID {dto.IdConsulta} não encontrada.");
-            }
-
-            if (dto.IdVeterinario is not null && !await _feedbackNPSRepository.VeterinarioExisteAsync(dto.IdVeterinario.Value))
-            {
-                _logger.LogWarning("Veterinário {IdVeterinario} não encontrado", dto.IdVeterinario);
-                throw new ContextoNaoEncontradoException($"Veterinário com ID {dto.IdVeterinario} não encontrado.");
-            }
-
             try
             {
-                return await _feedbackNPSRepository.AdicionarAsync(dto.ToFeedbackNPSEntity());
+                if (dto.IdResponsavel is null && dto.IdAnimal is null &&
+                    dto.IdClinica is null && dto.IdConsulta is null &&
+                    dto.IdVeterinario is null)
+                {
+                    _logger.LogWarning("Feedback NPS sem nenhum contexto informado");
+                    throw new ArgumentException("Informe ao menos um contexto: responsável, animal, clínica, consulta ou veterinário.");
+                }
+
+                if (dto.IdResponsavel is not null && !await _feedbackNPSRepository.ResponsavelExisteAsync(dto.IdResponsavel.Value))
+                {
+                    _logger.LogWarning("Responsável {IdResponsavel} não encontrado", dto.IdResponsavel);
+                    throw new ContextoNaoEncontradoException($"Responsável com ID {dto.IdResponsavel} não encontrado.");
+                }
+
+                if (dto.IdAnimal is not null && !await _feedbackNPSRepository.AnimalExisteAsync(dto.IdAnimal.Value))
+                {
+                    _logger.LogWarning("Animal {IdAnimal} não encontrado", dto.IdAnimal);
+                    throw new ContextoNaoEncontradoException($"Animal com ID {dto.IdAnimal} não encontrado.");
+                }
+
+                if (dto.IdClinica is not null && !await _feedbackNPSRepository.ClinicaExisteAsync(dto.IdClinica.Value))
+                {
+                    _logger.LogWarning("Clínica {IdClinica} não encontrada", dto.IdClinica);
+                    throw new ContextoNaoEncontradoException($"Clínica com ID {dto.IdClinica} não encontrada.");
+                }
+
+                if (dto.IdConsulta is not null && !await _feedbackNPSRepository.ConsultaExisteAsync(dto.IdConsulta.Value))
+                {
+                    _logger.LogWarning("Consulta {IdConsulta} não encontrada", dto.IdConsulta);
+                    throw new ContextoNaoEncontradoException($"Consulta com ID {dto.IdConsulta} não encontrada.");
+                }
+
+                if (dto.IdVeterinario is not null && !await _feedbackNPSRepository.VeterinarioExisteAsync(dto.IdVeterinario.Value))
+                {
+                    _logger.LogWarning("Veterinário {IdVeterinario} não encontrado", dto.IdVeterinario);
+                    throw new ContextoNaoEncontradoException($"Veterinário com ID {dto.IdVeterinario} não encontrado.");
+                }
+
+                var feedback = await _feedbackNPSRepository.AdicionarAsync(dto.ToFeedbackNPSEntity());
+                return OperationResult<FeedbackNPSEntity?>.Success(feedback, 201);
+            }
+            catch (ContextoNaoEncontradoException ex)
+            {
+                return OperationResult<FeedbackNPSEntity?>.Failure(ex.Message, 404);
+            }
+            catch (ArgumentException ex)
+            {
+                return OperationResult<FeedbackNPSEntity?>.Failure(ex.Message, 400);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao registrar feedback NPS");
-                throw;
+                return OperationResult<FeedbackNPSEntity?>.Failure("Ocorreu um erro ao registrar o feedback NPS");
             }
         }
 
-        public async Task<FeedbackNPSEntity?> DeletarAsync(int id)
+        public async Task<OperationResult<FeedbackNPSEntity?>> DeletarAsync(int id)
         {
             _logger.LogInformation("Removendo feedback NPS {Id}", id);
 
             try
             {
-                return await _feedbackNPSRepository.DeletarAsync(id);
+                var feedback = await _feedbackNPSRepository.DeletarAsync(id);
+
+                if (feedback is null)
+                {
+                    _logger.LogWarning("Feedback NPS {Id} não encontrado", id);
+                    return OperationResult<FeedbackNPSEntity?>.Failure("Feedback NPS não encontrado", 404);
+                }
+
+                return OperationResult<FeedbackNPSEntity?>.Success(feedback);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao remover feedback NPS {Id}", id);
-                throw;
+                return OperationResult<FeedbackNPSEntity?>.Failure("Ocorreu um erro ao remover o feedback NPS");
             }
         }
     }
