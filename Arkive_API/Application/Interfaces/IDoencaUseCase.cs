@@ -6,24 +6,25 @@ namespace Arkive_API.Application.Interfaces
 {
     public interface IDoencaUseCase
     {
-        Task<PageResultModel<IEnumerable<DoencaEntity>>> ObterTodasAsync(int skip = 0, int take = 50);
-        Task<PageResultModel<IEnumerable<DoencaEntity>>> ObterAtivasAsync(int skip = 0, int take = 50);
-        Task<PageResultModel<IEnumerable<DoencaEntity>>> ObterInativasAsync(int skip = 0, int take = 50);
-        Task<DoencaEntity?> ObterPorIdAsync(int id);
-        Task<IEnumerable<DoencaEntity>> ObterPorNomeAsync(string nome);
-        Task<IEnumerable<DoencaEntity>> ObterPorCategoriaAsync(int idCategoria);
+        Task<OperationResult<PageResultModel<IEnumerable<DoencaEntity>>>> ObterTodasAsync(int skip = 0, int take = 50);
+        Task<OperationResult<PageResultModel<IEnumerable<DoencaEntity>>>> ObterAtivasAsync(int skip = 0, int take = 50);
+        Task<OperationResult<PageResultModel<IEnumerable<DoencaEntity>>>> ObterInativasAsync(int skip = 0, int take = 50);
+        Task<OperationResult<DoencaEntity?>> ObterPorIdAsync(int id);
+        Task<OperationResult<IEnumerable<DoencaEntity>>> ObterPorNomeAsync(string nome);
+        Task<OperationResult<IEnumerable<DoencaEntity>>> ObterPorCategoriaAsync(int idCategoria);
 
-        /// <exception cref="Arkive_API.Application.Exceptions.CategoriaNaoEncontradaException">
-        /// Lançada quando dto.IdCategoria é informado mas não existe ou está inativo.
-        /// </exception>
-        Task<DoencaEntity?> AdicionarAsync(DoencaRequestDto dto);
+        /// <summary>
+        /// Retorna Failure 404 quando dto.IdCategoria é informado mas não existe ou está inativo.
+        /// </summary>
+        Task<OperationResult<DoencaEntity?>> AdicionarAsync(DoencaRequestDto dto);
 
-        /// <exception cref="Arkive_API.Application.Exceptions.CategoriaNaoEncontradaException">
-        /// Lançada quando dto.IdCategoria é informado mas não existe ou está inativo.
-        /// </exception>
-        Task<DoencaEntity?> EditarAsync(int id, DoencaRequestDto dto);
+        /// <summary>
+        /// Retorna Failure 404 quando a doença não existe/está inativa ou quando dto.IdCategoria
+        /// é informado mas não existe ou está inativo.
+        /// </summary>
+        Task<OperationResult<DoencaEntity?>> EditarAsync(int id, DoencaRequestDto dto);
 
-        Task<DoencaEntity?> ReativarAsync(int id);
-        Task<DoencaEntity?> InativarAsync(int id);
+        Task<OperationResult<DoencaEntity?>> ReativarAsync(int id);
+        Task<OperationResult<DoencaEntity?>> InativarAsync(int id);
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Arkive_API.Application.Dtos;
-using Arkive_API.Application.Exceptions;
 using Arkive_API.Application.Mappers;
 using Arkive_API.Application.UseCases;
 using Arkive_API.Domain.Entities;
@@ -44,7 +43,8 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Collection(resultado.Data,
+            Assert.True(resultado.IsSuccess);
+            Assert.Collection(resultado.Value!.Data,
                 item => { Assert.Equal(1, item.Id); Assert.Equal("Cinomose", item.Nome); Assert.Equal("S", item.StAtivo); },
                 item => { Assert.Equal(2, item.Id); Assert.Equal("Raiva", item.Nome); Assert.Equal("N", item.StAtivo); });
         }
@@ -64,7 +64,8 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Collection(resultado.Data,
+            Assert.True(resultado.IsSuccess);
+            Assert.Collection(resultado.Value!.Data,
                 item => { Assert.Equal(1, item.Id); Assert.Equal("Cinomose", item.Nome); Assert.Equal("S", item.StAtivo); });
         }
 
@@ -83,7 +84,8 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Collection(resultado.Data,
+            Assert.True(resultado.IsSuccess);
+            Assert.Collection(resultado.Value!.Data,
                 item => { Assert.Equal(2, item.Id); Assert.Equal("Raiva", item.Nome); Assert.Equal("N", item.StAtivo); });
         }
 
@@ -102,9 +104,9 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Equal(idDoenca, resultado!.Id);
-            Assert.Equal(doenca.Nome, resultado.Nome);
-            Assert.Equal(doenca.StAtivo, resultado.StAtivo);
+            Assert.Equal(idDoenca, resultado.Value!.Id);
+            Assert.Equal(doenca.Nome, resultado.Value.Nome);
+            Assert.Equal(doenca.StAtivo, resultado.Value.StAtivo);
         }
 
         [Fact]
@@ -121,7 +123,8 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Collection(resultado,
+            Assert.True(resultado.IsSuccess);
+            Assert.Collection(resultado.Value!,
                 item => { Assert.Equal(1, item.Id); Assert.Equal("Cinomose", item.Nome); Assert.Equal("S", item.StAtivo); });
         }
 
@@ -140,7 +143,8 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Collection(resultado,
+            Assert.True(resultado.IsSuccess);
+            Assert.Collection(resultado.Value!,
                 item =>
                 {
                     Assert.Equal(1, item.Id);
@@ -164,9 +168,9 @@ namespace Arkive_Tests.App
             var resultado = await _doencaUseCase.AdicionarAsync(dto);
 
             // Assert
-            Assert.NotNull(resultado);
-            Assert.Equal(dto.Nome, resultado!.Nome);
-            Assert.Null(resultado.IdCategoria);
+            Assert.Equal(201, resultado.StatusCode);
+            Assert.Equal(dto.Nome, resultado.Value!.Nome);
+            Assert.Null(resultado.Value.IdCategoria);
 
             _categoriaDoencaRepository.Verify(obj => obj.ObterPorIdAsync(It.IsAny<int>()), Times.Never);
         }
@@ -188,14 +192,14 @@ namespace Arkive_Tests.App
             var resultado = await _doencaUseCase.AdicionarAsync(dto);
 
             // Assert
-            Assert.NotNull(resultado);
-            Assert.Equal(dto.Nome, resultado!.Nome);
-            Assert.Equal(idCategoria, resultado.IdCategoria);
+            Assert.Equal(201, resultado.StatusCode);
+            Assert.Equal(dto.Nome, resultado.Value!.Nome);
+            Assert.Equal(idCategoria, resultado.Value.IdCategoria);
         }
 
         [Fact]
         [Trait("UseCase", "Doencas")]
-        public async Task AdicionarAsync_QuandoCategoriaNaoExiste_DeveLancarExcecao()
+        public async Task AdicionarAsync_QuandoCategoriaNaoExiste_DeveRetornar404()
         {
             // Arrange
             int idCategoria = 999;
@@ -203,15 +207,19 @@ namespace Arkive_Tests.App
 
             _categoriaDoencaRepository.Setup(obj => obj.ObterPorIdAsync(idCategoria)).ReturnsAsync((CategoriaDoencaEntity?)null);
 
-            // Act & Assert
-            await Assert.ThrowsAsync<CategoriaNaoEncontradaException>(() => _doencaUseCase.AdicionarAsync(dto));
+            // Act
+            var resultado = await _doencaUseCase.AdicionarAsync(dto);
+
+            // Assert
+            Assert.False(resultado.IsSuccess);
+            Assert.Equal(404, resultado.StatusCode);
 
             _doencaRepository.Verify(obj => obj.AdicionarAsync(It.IsAny<DoencaEntity>()), Times.Never);
         }
 
         [Fact]
         [Trait("UseCase", "Doencas")]
-        public async Task AdicionarAsync_QuandoCategoriaEstaInativa_DeveLancarExcecao()
+        public async Task AdicionarAsync_QuandoCategoriaEstaInativa_DeveRetornar404()
         {
             // Arrange
             int idCategoria = 1;
@@ -220,8 +228,12 @@ namespace Arkive_Tests.App
 
             _categoriaDoencaRepository.Setup(obj => obj.ObterPorIdAsync(idCategoria)).ReturnsAsync(categoria);
 
-            // Act & Assert
-            await Assert.ThrowsAsync<CategoriaNaoEncontradaException>(() => _doencaUseCase.AdicionarAsync(dto));
+            // Act
+            var resultado = await _doencaUseCase.AdicionarAsync(dto);
+
+            // Assert
+            Assert.False(resultado.IsSuccess);
+            Assert.Equal(404, resultado.StatusCode);
 
             _doencaRepository.Verify(obj => obj.AdicionarAsync(It.IsAny<DoencaEntity>()), Times.Never);
         }
@@ -243,14 +255,14 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Equal(idDoenca, resultado!.Id);
-            Assert.Equal(dto.Nome, resultado.Nome);
-            Assert.Null(resultado.IdCategoria);
+            Assert.Equal(idDoenca, resultado.Value!.Id);
+            Assert.Equal(dto.Nome, resultado.Value.Nome);
+            Assert.Null(resultado.Value.IdCategoria);
         }
 
         [Fact]
         [Trait("UseCase", "Doencas")]
-        public async Task EditarAsync_QuandoCategoriaInvalida_DeveLancarExcecao()
+        public async Task EditarAsync_QuandoCategoriaInvalida_DeveRetornar404()
         {
             // Arrange
             int idDoenca = 1;
@@ -259,8 +271,12 @@ namespace Arkive_Tests.App
 
             _categoriaDoencaRepository.Setup(obj => obj.ObterPorIdAsync(idCategoria)).ReturnsAsync((CategoriaDoencaEntity?)null);
 
-            // Act & Assert
-            await Assert.ThrowsAsync<CategoriaNaoEncontradaException>(() => _doencaUseCase.EditarAsync(idDoenca, dto));
+            // Act
+            var resultado = await _doencaUseCase.EditarAsync(idDoenca, dto);
+
+            // Assert
+            Assert.False(resultado.IsSuccess);
+            Assert.Equal(404, resultado.StatusCode);
 
             _doencaRepository.Verify(obj => obj.EditarAsync(It.IsAny<int>(), It.IsAny<DoencaEntity>()), Times.Never);
         }
@@ -280,9 +296,9 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Equal(idDoenca, resultado!.Id);
-            Assert.Equal(doenca.Nome, resultado.Nome);
-            Assert.Equal("S", resultado.StAtivo);
+            Assert.Equal(idDoenca, resultado.Value!.Id);
+            Assert.Equal(doenca.Nome, resultado.Value.Nome);
+            Assert.Equal("S", resultado.Value.StAtivo);
         }
 
         [Fact]
@@ -300,9 +316,57 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Equal(idDoenca, resultado!.Id);
-            Assert.Equal(doenca.Nome, resultado.Nome);
-            Assert.Equal("N", resultado.StAtivo);
+            Assert.Equal(idDoenca, resultado.Value!.Id);
+            Assert.Equal(doenca.Nome, resultado.Value.Nome);
+            Assert.Equal("N", resultado.Value.StAtivo);
+        }
+
+        [Fact]
+        [Trait("UseCase", "Doencas")]
+        public async Task ObterTodasAsync_QuandoListaVazia_DeveRetornar204()
+        {
+            // Arrange
+            _doencaRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>()))
+                .ReturnsAsync(new PageResultModel<IEnumerable<DoencaEntity>> { Data = new List<DoencaEntity>() });
+
+            // Act
+            var resultado = await _doencaUseCase.ObterTodasAsync();
+
+            // Assert
+            Assert.False(resultado.IsSuccess);
+            Assert.Equal(204, resultado.StatusCode);
+        }
+
+        [Fact]
+        [Trait("UseCase", "Doencas")]
+        public async Task ObterTodasAsync_QuandoRepositorioFalha_DeveRetornar400SemVazarMensagem()
+        {
+            // Arrange
+            _doencaRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>()))
+                .ThrowsAsync(new Exception("ORA-12541: detalhe interno"));
+
+            // Act
+            var resultado = await _doencaUseCase.ObterTodasAsync();
+
+            // Assert
+            Assert.False(resultado.IsSuccess);
+            Assert.Equal(400, resultado.StatusCode);
+            Assert.DoesNotContain("ORA-12541", resultado.Error);
+        }
+
+        [Fact]
+        [Trait("UseCase", "Doencas")]
+        public async Task ObterPorIdAsync_QuandoNaoExiste_DeveRetornar404()
+        {
+            // Arrange
+            _doencaRepository.Setup(obj => obj.ObterPorIdAsync(It.IsAny<int>())).ReturnsAsync((DoencaEntity?)null);
+
+            // Act
+            var resultado = await _doencaUseCase.ObterPorIdAsync(999);
+
+            // Assert
+            Assert.False(resultado.IsSuccess);
+            Assert.Equal(404, resultado.StatusCode);
         }
     }
 }

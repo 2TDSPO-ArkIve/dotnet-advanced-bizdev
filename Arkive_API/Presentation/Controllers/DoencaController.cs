@@ -1,5 +1,4 @@
 using Arkive_API.Application.Dtos;
-using Arkive_API.Application.Exceptions;
 using Arkive_API.Application.Interfaces;
 using Arkive_API.Doc.Samples;
 using Arkive_API.Domain.Entities;
@@ -47,20 +46,11 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Listando doenças (skip {Skip}, take {Take})", skip, take);
 
-            try
-            {
-                var resultado = await _doencaUseCase.ObterTodasAsync(skip, take);
+            var resultado = await _doencaUseCase.ObterTodasAsync(skip, take);
 
-                if (!resultado.Data.Any())
-                    return NoContent();
-
-                return Ok(resultado);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (resultado.StatusCode == 204) return NoContent();
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpGet("ativos")]
@@ -84,20 +74,11 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Listando doenças ativas (skip {Skip}, take {Take})", skip, take);
 
-            try
-            {
-                var resultado = await _doencaUseCase.ObterAtivasAsync(skip, take);
+            var resultado = await _doencaUseCase.ObterAtivasAsync(skip, take);
 
-                if (!resultado.Data.Any())
-                    return NoContent();
-
-                return Ok(resultado);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (resultado.StatusCode == 204) return NoContent();
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpGet("inativos")]
@@ -121,20 +102,11 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Listando doenças inativas (skip {Skip}, take {Take})", skip, take);
 
-            try
-            {
-                var resultado = await _doencaUseCase.ObterInativasAsync(skip, take);
+            var resultado = await _doencaUseCase.ObterInativasAsync(skip, take);
 
-                if (!resultado.Data.Any())
-                    return NoContent();
-
-                return Ok(resultado);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (resultado.StatusCode == 204) return NoContent();
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpGet("{id}")]
@@ -159,23 +131,10 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Buscando doença {Id}", id);
 
-            try
-            {
-                var doenca = await _doencaUseCase.ObterPorIdAsync(id);
+            var resultado = await _doencaUseCase.ObterPorIdAsync(id);
 
-                if (doenca is null)
-                {
-                    _logger.LogWarning("Doença {Id} não encontrada", id);
-                    return NotFound();
-                }
-
-                return Ok(doenca);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpGet("nome/{nome}")]
@@ -199,20 +158,11 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Buscando doenças por nome {Nome}", nome);
 
-            try
-            {
-                var resultado = await _doencaUseCase.ObterPorNomeAsync(nome);
+            var resultado = await _doencaUseCase.ObterPorNomeAsync(nome);
 
-                if (!resultado.Any())
-                    return NoContent();
-
-                return Ok(resultado);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (resultado.StatusCode == 204) return NoContent();
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpGet("categoria/{idCategoria}")]
@@ -235,20 +185,11 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Listando doenças da categoria {IdCategoria}", idCategoria);
 
-            try
-            {
-                var resultado = await _doencaUseCase.ObterPorCategoriaAsync(idCategoria);
+            var resultado = await _doencaUseCase.ObterPorCategoriaAsync(idCategoria);
 
-                if (!resultado.Any())
-                    return NoContent();
-
-                return Ok(resultado);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (resultado.StatusCode == 204) return NoContent();
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpPost]
@@ -276,23 +217,12 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Criando doença {Nome}", model.Nome);
 
-            try
-            {
-                var doenca = await _doencaUseCase.AdicionarAsync(model);
+            var resultado = await _doencaUseCase.AdicionarAsync(model);
 
-                _logger.LogInformation("Doença criada com sucesso: {Id}", doenca?.Id ?? 0);
-                return CreatedAtAction(nameof(GetDoencaById), new { id = doenca?.Id ?? 0 }, doenca);
-            }
-            catch (CategoriaNaoEncontradaException ex)
-            {
-                _logger.LogWarning(ex, "Validação falhou ao criar doença: {Mensagem}", ex.Message);
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+
+            _logger.LogInformation("Doença criada com sucesso: {Id}", resultado.Value?.Id ?? 0);
+            return CreatedAtAction(nameof(GetDoencaById), new { id = resultado.Value?.Id ?? 0 }, resultado.Value);
         }
 
         [HttpPut("{id}")]
@@ -317,28 +247,10 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Atualizando doença {Id}", id);
 
-            try
-            {
-                var doenca = await _doencaUseCase.EditarAsync(id, model);
+            var resultado = await _doencaUseCase.EditarAsync(id, model);
 
-                if (doenca is null)
-                {
-                    _logger.LogWarning("Doença {Id} não encontrada", id);
-                    return NotFound();
-                }
-
-                return Ok(doenca);
-            }
-            catch (CategoriaNaoEncontradaException ex)
-            {
-                _logger.LogWarning(ex, "Validação falhou ao atualizar doença: {Mensagem}", ex.Message);
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpPut("reativar/{id}")]
@@ -362,23 +274,10 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Reativando doença {Id}", id);
 
-            try
-            {
-                var doenca = await _doencaUseCase.ReativarAsync(id);
+            var resultado = await _doencaUseCase.ReativarAsync(id);
 
-                if (doenca is null)
-                {
-                    _logger.LogWarning("Doença {Id} não encontrada", id);
-                    return NotFound();
-                }
-
-                return Ok(doenca);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpDelete("{id}")]
@@ -403,23 +302,10 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Inativando doença {Id}", id);
 
-            try
-            {
-                var doenca = await _doencaUseCase.InativarAsync(id);
+            var resultado = await _doencaUseCase.InativarAsync(id);
 
-                if (doenca is null)
-                {
-                    _logger.LogWarning("Doença {Id} não encontrada", id);
-                    return NotFound();
-                }
-
-                return Ok(doenca);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
     }
 }

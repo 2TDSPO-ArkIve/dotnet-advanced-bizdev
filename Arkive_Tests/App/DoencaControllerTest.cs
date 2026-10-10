@@ -34,7 +34,8 @@ namespace Arkive_Tests.App
                 new DoencaEntity { Id = 2, Nome = "Raiva", StAtivo = "N" }
             };
             _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>()))
-                .ReturnsAsync(new PageResultModel<IEnumerable<DoencaEntity>> { Data = doencas, TotalRegistros = doencas.Count });
+                .ReturnsAsync(OperationResult<PageResultModel<IEnumerable<DoencaEntity>>>.Success(
+                    new PageResultModel<IEnumerable<DoencaEntity>> { Data = doencas, TotalRegistros = doencas.Count }));
 
             // Act
             var response = await _client.GetAsync("/api/doencas");
@@ -51,7 +52,7 @@ namespace Arkive_Tests.App
         {
             // Arrange
             _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>()))
-                .ReturnsAsync(new PageResultModel<IEnumerable<DoencaEntity>> { Data = new List<DoencaEntity>() });
+                .ReturnsAsync(OperationResult<PageResultModel<IEnumerable<DoencaEntity>>>.Failure("Nenhuma doença encontrada", 204));
 
             // Act
             var response = await _client.GetAsync("/api/doencas");
@@ -66,7 +67,7 @@ namespace Arkive_Tests.App
         {
             // Arrange
             _useCase.Setup(x => x.ObterPorIdAsync(7))
-                .ReturnsAsync(new DoencaEntity { Id = 7, Nome = "Parvovirose", StAtivo = "S" });
+                .ReturnsAsync(OperationResult<DoencaEntity?>.Success(new DoencaEntity { Id = 7, Nome = "Parvovirose", StAtivo = "S" }));
 
             // Act
             var response = await _client.GetAsync("/api/doencas/7");
@@ -82,7 +83,8 @@ namespace Arkive_Tests.App
         public async Task GetById_QuandoDoencaNaoExiste_DeveRetornar404()
         {
             // Arrange
-            _useCase.Setup(x => x.ObterPorIdAsync(It.IsAny<int>())).ReturnsAsync((DoencaEntity?)null);
+            _useCase.Setup(x => x.ObterPorIdAsync(It.IsAny<int>()))
+                .ReturnsAsync(OperationResult<DoencaEntity?>.Failure("Doença não encontrada", 404));
 
             // Act
             var response = await _client.GetAsync("/api/doencas/999");
@@ -98,7 +100,7 @@ namespace Arkive_Tests.App
             // Arrange
             var dto = new DoencaRequestDto { Nome = "Leptospirose" };
             _useCase.Setup(x => x.AdicionarAsync(It.IsAny<DoencaRequestDto>()))
-                .ReturnsAsync(new DoencaEntity { Id = 20, Nome = "Leptospirose", StAtivo = "S" });
+                .ReturnsAsync(OperationResult<DoencaEntity?>.Success(new DoencaEntity { Id = 20, Nome = "Leptospirose", StAtivo = "S" }, 201));
 
             // Act
             var response = await _client.PostAsJsonAsync("/api/doencas", dto);
@@ -113,7 +115,7 @@ namespace Arkive_Tests.App
         {
             // Arrange
             _useCase.Setup(x => x.AdicionarAsync(It.IsAny<DoencaRequestDto>()))
-                .ThrowsAsync(new CategoriaNaoEncontradaException(999));
+                .ReturnsAsync(OperationResult<DoencaEntity?>.Failure(new CategoriaNaoEncontradaException(999).Message, 404));
 
             // Act
             var response = await _client.PostAsJsonAsync("/api/doencas",
@@ -129,7 +131,7 @@ namespace Arkive_Tests.App
         {
             // Arrange
             _useCase.Setup(x => x.EditarAsync(It.IsAny<int>(), It.IsAny<DoencaRequestDto>()))
-                .ReturnsAsync((DoencaEntity?)null);
+                .ReturnsAsync(OperationResult<DoencaEntity?>.Failure("Doença não encontrada", 404));
 
             // Act
             var response = await _client.PutAsJsonAsync("/api/doencas/999", new DoencaRequestDto { Nome = "X" });
@@ -144,7 +146,7 @@ namespace Arkive_Tests.App
         {
             // Arrange
             _useCase.Setup(x => x.InativarAsync(3))
-                .ReturnsAsync(new DoencaEntity { Id = 3, Nome = "Cinomose", StAtivo = "N" });
+                .ReturnsAsync(OperationResult<DoencaEntity?>.Success(new DoencaEntity { Id = 3, Nome = "Cinomose", StAtivo = "N" }));
 
             // Act
             var response = await _client.DeleteAsync("/api/doencas/3");
