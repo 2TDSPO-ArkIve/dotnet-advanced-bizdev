@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
 using Arkive_API.Application.Dtos;
-using Arkive_API.Application.Exceptions;
 using Arkive_API.Application.Interfaces;
 using Arkive_API.Domain.Entities;
 using Arkive_API.Domain.Models;
@@ -34,7 +33,7 @@ namespace Arkive_Tests.App
                 new PredisposicaoEntity { Id = 2, IdEspecie = 1, IdRaca = 3, IdDoenca = 2 }
             };
             _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>()))
-                .ReturnsAsync(new PageResultModel<IEnumerable<PredisposicaoEntity>> { Data = predisposicoes, TotalRegistros = predisposicoes.Count });
+                .ReturnsAsync(OperationResult<PageResultModel<IEnumerable<PredisposicaoEntity>>>.Success(new PageResultModel<IEnumerable<PredisposicaoEntity>> { Data = predisposicoes, TotalRegistros = predisposicoes.Count }));
 
             // Act
             var response = await _client.GetAsync("/api/predisposicoes");
@@ -51,7 +50,7 @@ namespace Arkive_Tests.App
         {
             // Arrange
             _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>()))
-                .ReturnsAsync(new PageResultModel<IEnumerable<PredisposicaoEntity>> { Data = new List<PredisposicaoEntity>() });
+                .ReturnsAsync(OperationResult<PageResultModel<IEnumerable<PredisposicaoEntity>>>.Failure("Nenhuma predisposição encontrada", 204));
 
             // Act
             var response = await _client.GetAsync("/api/predisposicoes");
@@ -66,7 +65,7 @@ namespace Arkive_Tests.App
         {
             // Arrange
             _useCase.Setup(x => x.ObterPorIdAsync(5))
-                .ReturnsAsync(new PredisposicaoEntity { Id = 5, IdEspecie = 1, IdDoenca = 2 });
+                .ReturnsAsync(OperationResult<PredisposicaoEntity?>.Success(new PredisposicaoEntity { Id = 5, IdEspecie = 1, IdDoenca = 2 }));
 
             // Act
             var response = await _client.GetAsync("/api/predisposicoes/5");
@@ -82,7 +81,7 @@ namespace Arkive_Tests.App
         public async Task GetById_QuandoVinculoNaoExiste_DeveRetornar404()
         {
             // Arrange
-            _useCase.Setup(x => x.ObterPorIdAsync(It.IsAny<int>())).ReturnsAsync((PredisposicaoEntity?)null);
+            _useCase.Setup(x => x.ObterPorIdAsync(It.IsAny<int>())).ReturnsAsync(OperationResult<PredisposicaoEntity?>.Failure("Predisposição não encontrada", 404));
 
             // Act
             var response = await _client.GetAsync("/api/predisposicoes/999");
@@ -97,7 +96,7 @@ namespace Arkive_Tests.App
         {
             // Arrange
             _useCase.Setup(x => x.AdicionarAsync(It.IsAny<PredisposicaoRequestDto>()))
-                .ReturnsAsync(new PredisposicaoEntity { Id = 30, IdEspecie = 1, IdDoenca = 2 });
+                .ReturnsAsync(OperationResult<PredisposicaoEntity?>.Success(new PredisposicaoEntity { Id = 30, IdEspecie = 1, IdDoenca = 2 }, 201));
 
             // Act
             var response = await _client.PostAsJsonAsync("/api/predisposicoes",
@@ -113,7 +112,7 @@ namespace Arkive_Tests.App
         {
             // Arrange
             _useCase.Setup(x => x.AdicionarAsync(It.IsAny<PredisposicaoRequestDto>()))
-                .ThrowsAsync(new DoencaNaoEncontradaException(999));
+                .ReturnsAsync(OperationResult<PredisposicaoEntity?>.Failure(new Arkive_API.Application.Exceptions.DoencaNaoEncontradaException(999).Message, 404));
 
             // Act
             var response = await _client.PostAsJsonAsync("/api/predisposicoes",
@@ -129,7 +128,7 @@ namespace Arkive_Tests.App
         {
             // Arrange
             _useCase.Setup(x => x.DeletarAsync(4))
-                .ReturnsAsync(new PredisposicaoEntity { Id = 4, IdEspecie = 1, IdDoenca = 2 });
+                .ReturnsAsync(OperationResult<PredisposicaoEntity?>.Success(new PredisposicaoEntity { Id = 4, IdEspecie = 1, IdDoenca = 2 }));
 
             // Act
             var response = await _client.DeleteAsync("/api/predisposicoes/4");
@@ -143,7 +142,7 @@ namespace Arkive_Tests.App
         public async Task Delete_QuandoVinculoNaoExiste_DeveRetornar404()
         {
             // Arrange
-            _useCase.Setup(x => x.DeletarAsync(It.IsAny<int>())).ReturnsAsync((PredisposicaoEntity?)null);
+            _useCase.Setup(x => x.DeletarAsync(It.IsAny<int>())).ReturnsAsync(OperationResult<PredisposicaoEntity?>.Failure("Predisposição não encontrada", 404));
 
             // Act
             var response = await _client.DeleteAsync("/api/predisposicoes/999");

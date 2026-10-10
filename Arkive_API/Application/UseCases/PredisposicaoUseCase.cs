@@ -30,136 +30,177 @@ namespace Arkive_API.Application.UseCases
             _logger = logger;
         }
 
-        public async Task<PageResultModel<IEnumerable<PredisposicaoEntity>>> ObterTodasAsync(int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<PredisposicaoEntity>>>> ObterTodasAsync(int skip = 0, int take = 50)
         {
             _logger.LogInformation("Obtendo predisposições (skip {Skip}, take {Take})", skip, take);
 
             try
             {
                 var (s, t) = Pagination.Normalizar(skip, take);
-                return await _predisposicaoRepository.ObterTodosAsync(s, t);
+                var resultado = await _predisposicaoRepository.ObterTodosAsync(s, t);
+
+                if (!resultado.Data.Any())
+                    return OperationResult<PageResultModel<IEnumerable<PredisposicaoEntity>>>.Failure("Nenhuma predisposição encontrada", 204);
+
+                return OperationResult<PageResultModel<IEnumerable<PredisposicaoEntity>>>.Success(resultado);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter predisposições");
-                throw;
+                return OperationResult<PageResultModel<IEnumerable<PredisposicaoEntity>>>.Failure("Ocorreu um erro ao obter as predisposições");
             }
         }
 
-        public async Task<PredisposicaoEntity?> ObterPorIdAsync(int id)
+        public async Task<OperationResult<PredisposicaoEntity?>> ObterPorIdAsync(int id)
         {
             _logger.LogInformation("Obtendo predisposição {Id}", id);
 
             try
             {
-                return await _predisposicaoRepository.ObterPorIdAsync(id);
+                var predisposicao = await _predisposicaoRepository.ObterPorIdAsync(id);
+
+                if (predisposicao is null)
+                {
+                    _logger.LogWarning("Predisposição {Id} não encontrada", id);
+                    return OperationResult<PredisposicaoEntity?>.Failure("Predisposição não encontrada", 404);
+                }
+
+                return OperationResult<PredisposicaoEntity?>.Success(predisposicao);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter predisposição {Id}", id);
-                throw;
+                return OperationResult<PredisposicaoEntity?>.Failure("Ocorreu um erro ao obter a predisposição");
             }
         }
 
-        public async Task<PageResultModel<IEnumerable<PredisposicaoEntity>>> ObterPorEspecieAsync(int idEspecie, int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<PredisposicaoEntity>>>> ObterPorEspecieAsync(int idEspecie, int skip = 0, int take = 50)
         {
             _logger.LogInformation("Obtendo predisposições da espécie {IdEspecie} (skip {Skip}, take {Take})", idEspecie, skip, take);
 
             try
             {
                 var (s, t) = Pagination.Normalizar(skip, take);
-                return await _predisposicaoRepository.ObterPorEspecieAsync(idEspecie, s, t);
+                var resultado = await _predisposicaoRepository.ObterPorEspecieAsync(idEspecie, s, t);
+
+                if (!resultado.Data.Any())
+                    return OperationResult<PageResultModel<IEnumerable<PredisposicaoEntity>>>.Failure("Nenhuma predisposição encontrada para esta espécie", 204);
+
+                return OperationResult<PageResultModel<IEnumerable<PredisposicaoEntity>>>.Success(resultado);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter predisposições da espécie {IdEspecie}", idEspecie);
-                throw;
+                return OperationResult<PageResultModel<IEnumerable<PredisposicaoEntity>>>.Failure("Ocorreu um erro ao obter as predisposições da espécie");
             }
         }
 
-        public async Task<PageResultModel<IEnumerable<PredisposicaoEntity>>> ObterPorRacaAsync(int idRaca, int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<PredisposicaoEntity>>>> ObterPorRacaAsync(int idRaca, int skip = 0, int take = 50)
         {
             _logger.LogInformation("Obtendo predisposições da raça {IdRaca} (skip {Skip}, take {Take})", idRaca, skip, take);
 
             try
             {
                 var (s, t) = Pagination.Normalizar(skip, take);
-                return await _predisposicaoRepository.ObterPorRacaAsync(idRaca, s, t);
+                var resultado = await _predisposicaoRepository.ObterPorRacaAsync(idRaca, s, t);
+
+                if (!resultado.Data.Any())
+                    return OperationResult<PageResultModel<IEnumerable<PredisposicaoEntity>>>.Failure("Nenhuma predisposição encontrada para esta raça", 204);
+
+                return OperationResult<PageResultModel<IEnumerable<PredisposicaoEntity>>>.Success(resultado);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter predisposições da raça {IdRaca}", idRaca);
-                throw;
+                return OperationResult<PageResultModel<IEnumerable<PredisposicaoEntity>>>.Failure("Ocorreu um erro ao obter as predisposições da raça");
             }
         }
 
-        public async Task<PageResultModel<IEnumerable<PredisposicaoEntity>>> ObterPorDoencaAsync(int idDoenca, int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<PredisposicaoEntity>>>> ObterPorDoencaAsync(int idDoenca, int skip = 0, int take = 50)
         {
             _logger.LogInformation("Obtendo predisposições da doença {IdDoenca} (skip {Skip}, take {Take})", idDoenca, skip, take);
 
             try
             {
                 var (s, t) = Pagination.Normalizar(skip, take);
-                return await _predisposicaoRepository.ObterPorDoencaAsync(idDoenca, s, t);
+                var resultado = await _predisposicaoRepository.ObterPorDoencaAsync(idDoenca, s, t);
+
+                if (!resultado.Data.Any())
+                    return OperationResult<PageResultModel<IEnumerable<PredisposicaoEntity>>>.Failure("Nenhuma predisposição encontrada para esta doença", 204);
+
+                return OperationResult<PageResultModel<IEnumerable<PredisposicaoEntity>>>.Success(resultado);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter predisposições da doença {IdDoenca}", idDoenca);
-                throw;
+                return OperationResult<PageResultModel<IEnumerable<PredisposicaoEntity>>>.Failure("Ocorreu um erro ao obter as predisposições da doença");
             }
         }
 
-        public async Task<PredisposicaoEntity?> AdicionarAsync(PredisposicaoRequestDto dto)
+        public async Task<OperationResult<PredisposicaoEntity?>> AdicionarAsync(PredisposicaoRequestDto dto)
         {
             _logger.LogInformation("Adicionando predisposição (espécie {IdEspecie}, raça {IdRaca}, doença {IdDoenca})", dto.IdEspecie, dto.IdRaca, dto.IdDoenca);
 
-            var especie = await _especieRepository.ObterPorIdAsync(dto.IdEspecie);
-            if (especie is null || especie.StAtivo != "S")
-            {
-                _logger.LogWarning("Espécie {IdEspecie} inválida ou inativa", dto.IdEspecie);
-                throw new EspecieNaoEncontradaException(dto.IdEspecie);
-            }
-
-            if (dto.IdRaca is not null)
-            {
-                var raca = await _racaRepository.ObterPorIdAsync(dto.IdRaca.Value);
-                if (raca is null || raca.StAtivo != "S")
-                {
-                    _logger.LogWarning("Raça {IdRaca} inválida ou inativa", dto.IdRaca.Value);
-                    throw new RacaNaoEncontradaException(dto.IdRaca.Value);
-                }
-            }
-
-            var doenca = await _doencaRepository.ObterPorIdAsync(dto.IdDoenca);
-            if (doenca is null || doenca.StAtivo != "S")
-            {
-                _logger.LogWarning("Doença {IdDoenca} inválida ou inativa", dto.IdDoenca);
-                throw new DoencaNaoEncontradaException(dto.IdDoenca);
-            }
-
             try
             {
-                return await _predisposicaoRepository.AdicionarAsync(dto.ToPredisposicaoEntity());
+                var especie = await _especieRepository.ObterPorIdAsync(dto.IdEspecie);
+                if (especie is null || especie.StAtivo != "S")
+                {
+                    _logger.LogWarning("Espécie {IdEspecie} inválida ou inativa", dto.IdEspecie);
+                    throw new EspecieNaoEncontradaException(dto.IdEspecie);
+                }
+
+                if (dto.IdRaca is not null)
+                {
+                    var raca = await _racaRepository.ObterPorIdAsync(dto.IdRaca.Value);
+                    if (raca is null || raca.StAtivo != "S")
+                    {
+                        _logger.LogWarning("Raça {IdRaca} inválida ou inativa", dto.IdRaca.Value);
+                        throw new RacaNaoEncontradaException(dto.IdRaca.Value);
+                    }
+                }
+
+                var doenca = await _doencaRepository.ObterPorIdAsync(dto.IdDoenca);
+                if (doenca is null || doenca.StAtivo != "S")
+                {
+                    _logger.LogWarning("Doença {IdDoenca} inválida ou inativa", dto.IdDoenca);
+                    throw new DoencaNaoEncontradaException(dto.IdDoenca);
+                }
+
+                var predisposicao = await _predisposicaoRepository.AdicionarAsync(dto.ToPredisposicaoEntity());
+                return OperationResult<PredisposicaoEntity?>.Success(predisposicao, 201);
+            }
+            catch (Exception ex) when (ex is EspecieNaoEncontradaException or RacaNaoEncontradaException or DoencaNaoEncontradaException)
+            {
+                return OperationResult<PredisposicaoEntity?>.Failure(ex.Message, 404);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao adicionar predisposição");
-                throw;
+                return OperationResult<PredisposicaoEntity?>.Failure("Ocorreu um erro ao adicionar a predisposição");
             }
         }
 
-        public async Task<PredisposicaoEntity?> DeletarAsync(int id)
+        public async Task<OperationResult<PredisposicaoEntity?>> DeletarAsync(int id)
         {
             _logger.LogInformation("Removendo predisposição {Id}", id);
 
             try
             {
-                return await _predisposicaoRepository.DeletarAsync(id);
+                var predisposicao = await _predisposicaoRepository.DeletarAsync(id);
+
+                if (predisposicao is null)
+                {
+                    _logger.LogWarning("Predisposição {Id} não encontrada", id);
+                    return OperationResult<PredisposicaoEntity?>.Failure("Predisposição não encontrada", 404);
+                }
+
+                return OperationResult<PredisposicaoEntity?>.Success(predisposicao);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao remover predisposição {Id}", id);
-                throw;
+                return OperationResult<PredisposicaoEntity?>.Failure("Ocorreu um erro ao remover a predisposição");
             }
         }
     }

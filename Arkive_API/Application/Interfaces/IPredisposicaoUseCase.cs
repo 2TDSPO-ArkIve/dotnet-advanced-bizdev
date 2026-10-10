@@ -6,19 +6,20 @@ namespace Arkive_API.Application.Interfaces
 {
     public interface IPredisposicaoUseCase
     {
-        Task<PageResultModel<IEnumerable<PredisposicaoEntity>>> ObterTodasAsync(int skip = 0, int take = 50);
-        Task<PredisposicaoEntity?> ObterPorIdAsync(int id);
-        Task<PageResultModel<IEnumerable<PredisposicaoEntity>>> ObterPorEspecieAsync(int idEspecie, int skip = 0, int take = 50);
-        Task<PageResultModel<IEnumerable<PredisposicaoEntity>>> ObterPorRacaAsync(int idRaca, int skip = 0, int take = 50);
-        Task<PageResultModel<IEnumerable<PredisposicaoEntity>>> ObterPorDoencaAsync(int idDoenca, int skip = 0, int take = 50);
+        Task<OperationResult<PageResultModel<IEnumerable<PredisposicaoEntity>>>> ObterTodasAsync(int skip = 0, int take = 50);
+        Task<OperationResult<PredisposicaoEntity?>> ObterPorIdAsync(int id);
+        Task<OperationResult<PageResultModel<IEnumerable<PredisposicaoEntity>>>> ObterPorEspecieAsync(int idEspecie, int skip = 0, int take = 50);
+        Task<OperationResult<PageResultModel<IEnumerable<PredisposicaoEntity>>>> ObterPorRacaAsync(int idRaca, int skip = 0, int take = 50);
+        Task<OperationResult<PageResultModel<IEnumerable<PredisposicaoEntity>>>> ObterPorDoencaAsync(int idDoenca, int skip = 0, int take = 50);
 
-        /// <exception cref="Arkive_API.Application.Exceptions.EspecieNaoEncontradaException" />
-        /// <exception cref="Arkive_API.Application.Exceptions.RacaNaoEncontradaException" />
-        /// <exception cref="Arkive_API.Application.Exceptions.DoencaNaoEncontradaException" />
-        Task<PredisposicaoEntity?> AdicionarAsync(PredisposicaoRequestDto dto);
+        /// <summary>
+        /// Retorna Failure 404 quando dto.IdEspecie, dto.IdRaca (se informado) ou dto.IdDoenca
+        /// não existe ou está inativo.
+        /// </summary>
+        Task<OperationResult<PredisposicaoEntity?>> AdicionarAsync(PredisposicaoRequestDto dto);
 
         // Sem EditarAsync — conforme PRD §16.3.5, o PUT foi substituído por remover e recriar o vínculo.
 
-        Task<PredisposicaoEntity?> DeletarAsync(int id);
+        Task<OperationResult<PredisposicaoEntity?>> DeletarAsync(int id);
     }
 }
