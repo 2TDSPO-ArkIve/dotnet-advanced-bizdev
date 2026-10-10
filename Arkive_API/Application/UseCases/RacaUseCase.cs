@@ -4,6 +4,7 @@ using Arkive_API.Application.Interfaces;
 using Arkive_API.Application.Mappers;
 using Arkive_API.Domain.Entities;
 using Arkive_API.Domain.Interfaces;
+using Arkive_API.Domain.Models;
 
 namespace Arkive_API.Application.UseCases
 {
@@ -20,142 +21,203 @@ namespace Arkive_API.Application.UseCases
             _logger = logger;
         }
 
-        public async Task<IEnumerable<RacaEntity>> ObterTodasAsync()
+        public async Task<OperationResult<IEnumerable<RacaEntity>>> ObterTodasAsync()
         {
             _logger.LogInformation("Obtendo todas as raças");
 
             try
             {
-                return await _racaRepository.ObterTodosAsync();
+                var resultado = await _racaRepository.ObterTodosAsync();
+
+                if (!resultado.Any())
+                    return OperationResult<IEnumerable<RacaEntity>>.Failure("Nenhuma raça encontrada", 204);
+
+                return OperationResult<IEnumerable<RacaEntity>>.Success(resultado);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter todas as raças");
-                throw;
+                return OperationResult<IEnumerable<RacaEntity>>.Failure("Ocorreu um erro ao obter as raças");
             }
         }
 
-        public async Task<IEnumerable<RacaEntity>> ObterAtivasAsync()
+        public async Task<OperationResult<IEnumerable<RacaEntity>>> ObterAtivasAsync()
         {
             _logger.LogInformation("Obtendo raças ativas");
 
             try
             {
-                return await _racaRepository.ObterAtivosAsync();
+                var resultado = await _racaRepository.ObterAtivosAsync();
+
+                if (!resultado.Any())
+                    return OperationResult<IEnumerable<RacaEntity>>.Failure("Nenhuma raça ativa encontrada", 204);
+
+                return OperationResult<IEnumerable<RacaEntity>>.Success(resultado);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter raças ativas");
-                throw;
+                return OperationResult<IEnumerable<RacaEntity>>.Failure("Ocorreu um erro ao obter as raças ativas");
             }
         }
 
-        public async Task<IEnumerable<RacaEntity>> ObterInativasAsync()
+        public async Task<OperationResult<IEnumerable<RacaEntity>>> ObterInativasAsync()
         {
             _logger.LogInformation("Obtendo raças inativas");
 
             try
             {
-                return await _racaRepository.ObterInativosAsync();
+                var resultado = await _racaRepository.ObterInativosAsync();
+
+                if (!resultado.Any())
+                    return OperationResult<IEnumerable<RacaEntity>>.Failure("Nenhuma raça inativa encontrada", 204);
+
+                return OperationResult<IEnumerable<RacaEntity>>.Success(resultado);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter raças inativas");
-                throw;
+                return OperationResult<IEnumerable<RacaEntity>>.Failure("Ocorreu um erro ao obter as raças inativas");
             }
         }
 
-        public async Task<RacaEntity?> ObterPorIdAsync(int id)
+        public async Task<OperationResult<RacaEntity?>> ObterPorIdAsync(int id)
         {
             _logger.LogInformation("Obtendo raça {Id}", id);
 
             try
             {
-                return await _racaRepository.ObterPorIdAsync(id);
+                var raca = await _racaRepository.ObterPorIdAsync(id);
+
+                if (raca is null)
+                {
+                    _logger.LogWarning("Raça {Id} não encontrada", id);
+                    return OperationResult<RacaEntity?>.Failure("Raça não encontrada", 404);
+                }
+
+                return OperationResult<RacaEntity?>.Success(raca);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter raça {Id}", id);
-                throw;
+                return OperationResult<RacaEntity?>.Failure("Ocorreu um erro ao obter a raça");
             }
         }
 
-        public async Task<IEnumerable<RacaEntity>> ObterPorEspecieAsync(int idEspecie)
+        public async Task<OperationResult<IEnumerable<RacaEntity>>> ObterPorEspecieAsync(int idEspecie)
         {
             _logger.LogInformation("Obtendo raças da espécie {IdEspecie}", idEspecie);
 
             try
             {
-                return await _racaRepository.ObterPorEspecieAsync(idEspecie);
+                var resultado = await _racaRepository.ObterPorEspecieAsync(idEspecie);
+
+                if (!resultado.Any())
+                    return OperationResult<IEnumerable<RacaEntity>>.Failure("Nenhuma raça encontrada para esta espécie", 204);
+
+                return OperationResult<IEnumerable<RacaEntity>>.Success(resultado);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter raças da espécie {IdEspecie}", idEspecie);
-                throw;
+                return OperationResult<IEnumerable<RacaEntity>>.Failure("Ocorreu um erro ao obter as raças da espécie");
             }
         }
 
-        public async Task<RacaEntity?> AdicionarAsync(RacaRequestDto dto)
+        public async Task<OperationResult<RacaEntity?>> AdicionarAsync(RacaRequestDto dto)
         {
             _logger.LogInformation("Adicionando raça {Nome} para espécie {IdEspecie}", dto.Raca, dto.IdEspecie);
 
-            await ValidarEspecieAsync(dto.IdEspecie);
-
             try
             {
-                return await _racaRepository.AdicionarAsync(dto.ToRacaEntity());
+                await ValidarEspecieAsync(dto.IdEspecie);
+
+                var raca = await _racaRepository.AdicionarAsync(dto.ToRacaEntity());
+                return OperationResult<RacaEntity?>.Success(raca, 201);
+            }
+            catch (EspecieNaoEncontradaException ex)
+            {
+                return OperationResult<RacaEntity?>.Failure(ex.Message, 404);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao adicionar raça {Nome}", dto.Raca);
-                throw;
+                return OperationResult<RacaEntity?>.Failure("Ocorreu um erro ao adicionar a raça");
             }
         }
 
-        public async Task<RacaEntity?> EditarAsync(int id, RacaRequestDto dto)
+        public async Task<OperationResult<RacaEntity?>> EditarAsync(int id, RacaRequestDto dto)
         {
             _logger.LogInformation("Editando raça {Id}", id);
 
-            await ValidarEspecieAsync(dto.IdEspecie);
-
             try
             {
-                return await _racaRepository.EditarAsync(id, dto.ToRacaEntity());
+                await ValidarEspecieAsync(dto.IdEspecie);
+
+                var raca = await _racaRepository.EditarAsync(id, dto.ToRacaEntity());
+
+                if (raca is null)
+                {
+                    _logger.LogWarning("Raça {Id} não encontrada", id);
+                    return OperationResult<RacaEntity?>.Failure("Raça não encontrada", 404);
+                }
+
+                return OperationResult<RacaEntity?>.Success(raca);
+            }
+            catch (EspecieNaoEncontradaException ex)
+            {
+                return OperationResult<RacaEntity?>.Failure(ex.Message, 404);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao editar raça {Id}", id);
-                throw;
+                return OperationResult<RacaEntity?>.Failure("Ocorreu um erro ao editar a raça");
             }
         }
 
-        public async Task<RacaEntity?> ReativarAsync(int id)
+        public async Task<OperationResult<RacaEntity?>> ReativarAsync(int id)
         {
             _logger.LogInformation("Reativando raça {Id}", id);
 
             try
             {
-                return await _racaRepository.ReativarAsync(id);
+                var raca = await _racaRepository.ReativarAsync(id);
+
+                if (raca is null)
+                {
+                    _logger.LogWarning("Raça {Id} não encontrada", id);
+                    return OperationResult<RacaEntity?>.Failure("Raça não encontrada", 404);
+                }
+
+                return OperationResult<RacaEntity?>.Success(raca);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao reativar raça {Id}", id);
-                throw;
+                return OperationResult<RacaEntity?>.Failure("Ocorreu um erro ao reativar a raça");
             }
         }
 
-        public async Task<RacaEntity?> InativarAsync(int id)
+        public async Task<OperationResult<RacaEntity?>> InativarAsync(int id)
         {
             _logger.LogInformation("Inativando raça {Id}", id);
 
             try
             {
-                return await _racaRepository.InativarAsync(id);
+                var raca = await _racaRepository.InativarAsync(id);
+
+                if (raca is null)
+                {
+                    _logger.LogWarning("Raça {Id} não encontrada", id);
+                    return OperationResult<RacaEntity?>.Failure("Raça não encontrada", 404);
+                }
+
+                return OperationResult<RacaEntity?>.Success(raca);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao inativar raça {Id}", id);
-                throw;
+                return OperationResult<RacaEntity?>.Failure("Ocorreu um erro ao inativar a raça");
             }
         }
 

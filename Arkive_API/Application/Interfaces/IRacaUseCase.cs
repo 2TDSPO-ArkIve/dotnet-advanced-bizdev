@@ -1,27 +1,29 @@
 using Arkive_API.Application.Dtos;
 using Arkive_API.Domain.Entities;
+using Arkive_API.Domain.Models;
 
 namespace Arkive_API.Application.Interfaces
 {
     public interface IRacaUseCase
     {
-        Task<IEnumerable<RacaEntity>> ObterTodasAsync();
-        Task<IEnumerable<RacaEntity>> ObterAtivasAsync();
-        Task<IEnumerable<RacaEntity>> ObterInativasAsync();
-        Task<RacaEntity?> ObterPorIdAsync(int id);
-        Task<IEnumerable<RacaEntity>> ObterPorEspecieAsync(int idEspecie);
+        Task<OperationResult<IEnumerable<RacaEntity>>> ObterTodasAsync();
+        Task<OperationResult<IEnumerable<RacaEntity>>> ObterAtivasAsync();
+        Task<OperationResult<IEnumerable<RacaEntity>>> ObterInativasAsync();
+        Task<OperationResult<RacaEntity?>> ObterPorIdAsync(int id);
+        Task<OperationResult<IEnumerable<RacaEntity>>> ObterPorEspecieAsync(int idEspecie);
 
-        /// <exception cref="Arkive_API.Application.Exceptions.EspecieNaoEncontradaException">
-        /// Lançada quando dto.IdEspecie não existe ou está inativo.
-        /// </exception>
-        Task<RacaEntity?> AdicionarAsync(RacaRequestDto dto);
+        /// <summary>
+        /// Retorna Failure 404 quando dto.IdEspecie não existe ou está inativo.
+        /// </summary>
+        Task<OperationResult<RacaEntity?>> AdicionarAsync(RacaRequestDto dto);
 
-        /// <exception cref="Arkive_API.Application.Exceptions.EspecieNaoEncontradaException">
-        /// Lançada quando dto.IdEspecie não existe ou está inativo.
-        /// </exception>
-        Task<RacaEntity?> EditarAsync(int id, RacaRequestDto dto);
+        /// <summary>
+        /// Retorna Failure 404 quando a raça não existe/está inativa ou quando dto.IdEspecie
+        /// não existe ou está inativo.
+        /// </summary>
+        Task<OperationResult<RacaEntity?>> EditarAsync(int id, RacaRequestDto dto);
 
-        Task<RacaEntity?> ReativarAsync(int id);
-        Task<RacaEntity?> InativarAsync(int id);
+        Task<OperationResult<RacaEntity?>> ReativarAsync(int id);
+        Task<OperationResult<RacaEntity?>> InativarAsync(int id);
     }
 }

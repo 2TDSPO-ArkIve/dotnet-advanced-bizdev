@@ -1,5 +1,4 @@
 using Arkive_API.Application.Dtos;
-using Arkive_API.Application.Exceptions;
 using Arkive_API.Application.Interfaces;
 using Arkive_API.Doc.Samples;
 using Arkive_API.Domain.Entities;
@@ -46,20 +45,11 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Listando todas as raças");
 
-            try
-            {
-                var resultado = await _racaUseCase.ObterTodasAsync();
+            var resultado = await _racaUseCase.ObterTodasAsync();
 
-                if (!resultado.Any())
-                    return NoContent();
-
-                return Ok(resultado);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (resultado.StatusCode == 204) return NoContent();
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpGet("ativos")]
@@ -83,20 +73,11 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Listando raças ativas");
 
-            try
-            {
-                var resultado = await _racaUseCase.ObterAtivasAsync();
+            var resultado = await _racaUseCase.ObterAtivasAsync();
 
-                if (!resultado.Any())
-                    return NoContent();
-
-                return Ok(resultado);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (resultado.StatusCode == 204) return NoContent();
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpGet("inativos")]
@@ -120,20 +101,11 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Listando raças inativas");
 
-            try
-            {
-                var resultado = await _racaUseCase.ObterInativasAsync();
+            var resultado = await _racaUseCase.ObterInativasAsync();
 
-                if (!resultado.Any())
-                    return NoContent();
-
-                return Ok(resultado);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (resultado.StatusCode == 204) return NoContent();
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpGet("{id}")]
@@ -158,23 +130,10 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Buscando raça {Id}", id);
 
-            try
-            {
-                var raca = await _racaUseCase.ObterPorIdAsync(id);
+            var resultado = await _racaUseCase.ObterPorIdAsync(id);
 
-                if (raca is null)
-                {
-                    _logger.LogWarning("Raça {Id} não encontrada", id);
-                    return NotFound();
-                }
-
-                return Ok(raca);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpGet("especie/{idEspecie}")]
@@ -197,20 +156,11 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Listando raças da espécie {IdEspecie}", idEspecie);
 
-            try
-            {
-                var resultado = await _racaUseCase.ObterPorEspecieAsync(idEspecie);
+            var resultado = await _racaUseCase.ObterPorEspecieAsync(idEspecie);
 
-                if (!resultado.Any())
-                    return NoContent();
-
-                return Ok(resultado);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (resultado.StatusCode == 204) return NoContent();
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpPost]
@@ -238,23 +188,12 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Criando raça {Nome} para espécie {IdEspecie}", model.Raca, model.IdEspecie);
 
-            try
-            {
-                var raca = await _racaUseCase.AdicionarAsync(model);
+            var resultado = await _racaUseCase.AdicionarAsync(model);
 
-                _logger.LogInformation("Raça criada com sucesso: {Id}", raca?.Id ?? 0);
-                return CreatedAtAction(nameof(GetRacaById), new { id = raca?.Id ?? 0 }, raca);
-            }
-            catch (EspecieNaoEncontradaException ex)
-            {
-                _logger.LogWarning(ex, "Validação falhou ao criar raça: {Mensagem}", ex.Message);
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+
+            _logger.LogInformation("Raça criada com sucesso: {Id}", resultado.Value?.Id ?? 0);
+            return CreatedAtAction(nameof(GetRacaById), new { id = resultado.Value?.Id ?? 0 }, resultado.Value);
         }
 
         [HttpPut("{id}")]
@@ -279,28 +218,10 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Atualizando raça {Id}", id);
 
-            try
-            {
-                var raca = await _racaUseCase.EditarAsync(id, model);
+            var resultado = await _racaUseCase.EditarAsync(id, model);
 
-                if (raca is null)
-                {
-                    _logger.LogWarning("Raça {Id} não encontrada", id);
-                    return NotFound();
-                }
-
-                return Ok(raca);
-            }
-            catch (EspecieNaoEncontradaException ex)
-            {
-                _logger.LogWarning(ex, "Validação falhou ao atualizar raça: {Mensagem}", ex.Message);
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpPut("reativar/{id}")]
@@ -324,23 +245,10 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Reativando raça {Id}", id);
 
-            try
-            {
-                var raca = await _racaUseCase.ReativarAsync(id);
+            var resultado = await _racaUseCase.ReativarAsync(id);
 
-                if (raca is null)
-                {
-                    _logger.LogWarning("Raça {Id} não encontrada", id);
-                    return NotFound();
-                }
-
-                return Ok(raca);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpDelete("{id}")]
@@ -365,23 +273,10 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Inativando raça {Id}", id);
 
-            try
-            {
-                var raca = await _racaUseCase.InativarAsync(id);
+            var resultado = await _racaUseCase.InativarAsync(id);
 
-                if (raca is null)
-                {
-                    _logger.LogWarning("Raça {Id} não encontrada", id);
-                    return NotFound();
-                }
-
-                return Ok(raca);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
     }
 }
