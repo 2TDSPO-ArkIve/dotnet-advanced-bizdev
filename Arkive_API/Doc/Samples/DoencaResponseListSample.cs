@@ -1,15 +1,17 @@
+using Arkive_API.Application;
 using Arkive_API.Domain.Entities;
+using Arkive_API.Domain.Models;
 using Swashbuckle.AspNetCore.Filters;
 
 namespace Arkive_API.Doc.Samples
 {
-    public class DoencaResponseListSample : IExamplesProvider<IEnumerable<DoencaEntity>>
+    public class DoencaResponseListSample : IExamplesProvider<PageResultModel<IEnumerable<DoencaEntity>>>
     {
-        public IEnumerable<DoencaEntity> GetExamples()
+        public PageResultModel<IEnumerable<DoencaEntity>> GetExamples()
         {
             var categoria = new CategoriaDoencaEntity { Id = 1, Nome = "Doenças Ortopédicas", StAtivo = "S" };
 
-            return new List<DoencaEntity>
+            var data = new List<DoencaEntity>
             {
                 new DoencaEntity
                 {
@@ -33,6 +35,18 @@ namespace Arkive_API.Doc.Samples
                     Sintomas = "Claudicação intermitente, pata suspensa durante a corrida, dificuldade de estender o joelho.",
                     StAtivo = "S"
                 },
+            };
+
+            var links = Pagination.Links("/api/doencas", 0, 2, 10);
+            links.Add(new("/api/doencas", "create", "POST"));
+
+            return new PageResultModel<IEnumerable<DoencaEntity>>
+            {
+                Data = data,
+                Deslocamento = 0,
+                RegistroRetornado = 2,
+                TotalRegistros = 10,
+                Links = links
             };
         }
     }

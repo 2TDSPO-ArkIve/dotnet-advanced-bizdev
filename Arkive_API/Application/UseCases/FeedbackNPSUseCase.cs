@@ -31,6 +31,8 @@ namespace Arkive_API.Application.UseCases
                 if (!resultado.Data.Any())
                     return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Failure("Nenhum feedback NPS encontrado", 204);
 
+                resultado.Links = Pagination.Links("/api/feedbacks-nps", s, t, resultado.TotalRegistros);
+                resultado.Links.Add(new("/api/feedbacks-nps", "create", "POST"));
                 return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Success(resultado);
             }
             catch (Exception ex)
@@ -81,6 +83,7 @@ namespace Arkive_API.Application.UseCases
                 if (!resultado.Data.Any())
                     return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Failure("Nenhum feedback NPS encontrado para esta nota", 204);
 
+                resultado.Links = Pagination.Links($"/api/feedbacks-nps/nota/{nota}", s, t, resultado.TotalRegistros);
                 return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Success(resultado);
             }
             catch (ArgumentOutOfRangeException ex)
@@ -106,6 +109,7 @@ namespace Arkive_API.Application.UseCases
                 if (!resultado.Data.Any())
                     return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Failure("Nenhum feedback NPS encontrado para este responsável", 204);
 
+                resultado.Links = Pagination.Links($"/api/feedbacks-nps/responsavel/{idResponsavel}", s, t, resultado.TotalRegistros);
                 return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Success(resultado);
             }
             catch (Exception ex)
@@ -127,6 +131,7 @@ namespace Arkive_API.Application.UseCases
                 if (!resultado.Data.Any())
                     return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Failure("Nenhum feedback NPS encontrado para este animal", 204);
 
+                resultado.Links = Pagination.Links($"/api/feedbacks-nps/animal/{idAnimal}", s, t, resultado.TotalRegistros);
                 return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Success(resultado);
             }
             catch (Exception ex)
@@ -148,6 +153,7 @@ namespace Arkive_API.Application.UseCases
                 if (!resultado.Data.Any())
                     return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Failure("Nenhum feedback NPS encontrado para esta clínica", 204);
 
+                resultado.Links = Pagination.Links($"/api/feedbacks-nps/clinica/{idClinica}", s, t, resultado.TotalRegistros);
                 return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Success(resultado);
             }
             catch (Exception ex)
@@ -169,6 +175,7 @@ namespace Arkive_API.Application.UseCases
                 if (!resultado.Data.Any())
                     return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Failure("Nenhum feedback NPS encontrado para este veterinário", 204);
 
+                resultado.Links = Pagination.Links($"/api/feedbacks-nps/veterinario/{idVeterinario}", s, t, resultado.TotalRegistros);
                 return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Success(resultado);
             }
             catch (Exception ex)
@@ -190,6 +197,7 @@ namespace Arkive_API.Application.UseCases
                 if (!resultado.Data.Any())
                     return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Failure("Nenhum feedback NPS encontrado para esta data", 204);
 
+                resultado.Links = Pagination.Links($"/api/feedbacks-nps/data/{data:yyyy-MM-dd}", s, t, resultado.TotalRegistros);
                 return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Success(resultado);
             }
             catch (Exception ex)

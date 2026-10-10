@@ -1,13 +1,15 @@
+using Arkive_API.Application;
 using Arkive_API.Domain.Entities;
+using Arkive_API.Domain.Models;
 using Swashbuckle.AspNetCore.Filters;
 
 namespace Arkive_API.Doc.Samples
 {
-    public class FeedbackNPSResponseListSample : IExamplesProvider<IEnumerable<FeedbackNPSEntity>>
+    public class FeedbackNPSResponseListSample : IExamplesProvider<PageResultModel<IEnumerable<FeedbackNPSEntity>>>
     {
-        public IEnumerable<FeedbackNPSEntity> GetExamples()
+        public PageResultModel<IEnumerable<FeedbackNPSEntity>> GetExamples()
         {
-            return new List<FeedbackNPSEntity>
+            var data = new List<FeedbackNPSEntity>
             {
                 new FeedbackNPSEntity
                 {
@@ -33,6 +35,18 @@ namespace Arkive_API.Doc.Samples
                     Comentario = "Tempo de espera um pouco longo.",
                     DataFeedback = new DateTime(2026, 8, 22, 9, 15, 0)
                 },
+            };
+
+            var links = Pagination.Links("/api/feedbacks-nps", 0, 2, 10);
+            links.Add(new("/api/feedbacks-nps", "create", "POST"));
+
+            return new PageResultModel<IEnumerable<FeedbackNPSEntity>>
+            {
+                Data = data,
+                Deslocamento = 0,
+                RegistroRetornado = 2,
+                TotalRegistros = 10,
+                Links = links
             };
         }
     }

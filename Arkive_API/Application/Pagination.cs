@@ -1,3 +1,5 @@
+using Arkive_API.Domain.Models;
+
 namespace Arkive_API.Application
 {
     /// <summary>
@@ -12,5 +14,16 @@ namespace Arkive_API.Application
         /// </summary>
         public static (int Skip, int Take) Normalizar(int skip, int take)
             => (Math.Max(skip, 0), take <= 0 ? TakePadrao : take);
+
+        /// <summary>
+        /// Monta os links HATEOAS da página: self sempre, next se houver mais registros, prev se skip &gt; 0.
+        /// </summary>
+        public static List<LinkDto> Links(string path, int skip, int take, int total)
+        {
+            var links = new List<LinkDto> { new($"{path}?skip={skip}&take={take}", "self") };
+            if (skip + take < total) links.Add(new($"{path}?skip={skip + take}&take={take}", "next"));
+            if (skip > 0) links.Add(new($"{path}?skip={Math.Max(skip - take, 0)}&take={take}", "prev"));
+            return links;
+        }
     }
 }

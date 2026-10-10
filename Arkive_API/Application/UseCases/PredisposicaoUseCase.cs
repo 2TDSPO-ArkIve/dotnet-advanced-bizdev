@@ -42,6 +42,8 @@ namespace Arkive_API.Application.UseCases
                 if (!resultado.Data.Any())
                     return OperationResult<PageResultModel<IEnumerable<PredisposicaoEntity>>>.Failure("Nenhuma predisposição encontrada", 204);
 
+                resultado.Links = Pagination.Links("/api/predisposicoes", s, t, resultado.TotalRegistros);
+                resultado.Links.Add(new("/api/predisposicoes", "create", "POST"));
                 return OperationResult<PageResultModel<IEnumerable<PredisposicaoEntity>>>.Success(resultado);
             }
             catch (Exception ex)
@@ -86,6 +88,7 @@ namespace Arkive_API.Application.UseCases
                 if (!resultado.Data.Any())
                     return OperationResult<PageResultModel<IEnumerable<PredisposicaoEntity>>>.Failure("Nenhuma predisposição encontrada para esta espécie", 204);
 
+                resultado.Links = Pagination.Links($"/api/predisposicoes/especie/{idEspecie}", s, t, resultado.TotalRegistros);
                 return OperationResult<PageResultModel<IEnumerable<PredisposicaoEntity>>>.Success(resultado);
             }
             catch (Exception ex)
@@ -107,6 +110,7 @@ namespace Arkive_API.Application.UseCases
                 if (!resultado.Data.Any())
                     return OperationResult<PageResultModel<IEnumerable<PredisposicaoEntity>>>.Failure("Nenhuma predisposição encontrada para esta raça", 204);
 
+                resultado.Links = Pagination.Links($"/api/predisposicoes/raca/{idRaca}", s, t, resultado.TotalRegistros);
                 return OperationResult<PageResultModel<IEnumerable<PredisposicaoEntity>>>.Success(resultado);
             }
             catch (Exception ex)
@@ -128,6 +132,7 @@ namespace Arkive_API.Application.UseCases
                 if (!resultado.Data.Any())
                     return OperationResult<PageResultModel<IEnumerable<PredisposicaoEntity>>>.Failure("Nenhuma predisposição encontrada para esta doença", 204);
 
+                resultado.Links = Pagination.Links($"/api/predisposicoes/doenca/{idDoenca}", s, t, resultado.TotalRegistros);
                 return OperationResult<PageResultModel<IEnumerable<PredisposicaoEntity>>>.Success(resultado);
             }
             catch (Exception ex)

@@ -33,6 +33,8 @@ namespace Arkive_API.Application.UseCases
                 if (!resultado.Data.Any())
                     return OperationResult<PageResultModel<IEnumerable<DoencaEntity>>>.Failure("Nenhuma doença encontrada", 204);
 
+                resultado.Links = Pagination.Links("/api/doencas", s, t, resultado.TotalRegistros);
+                resultado.Links.Add(new("/api/doencas", "create", "POST"));
                 return OperationResult<PageResultModel<IEnumerable<DoencaEntity>>>.Success(resultado);
             }
             catch (Exception ex)
@@ -54,6 +56,7 @@ namespace Arkive_API.Application.UseCases
                 if (!resultado.Data.Any())
                     return OperationResult<PageResultModel<IEnumerable<DoencaEntity>>>.Failure("Nenhuma doença ativa encontrada", 204);
 
+                resultado.Links = Pagination.Links("/api/doencas/ativos", s, t, resultado.TotalRegistros);
                 return OperationResult<PageResultModel<IEnumerable<DoencaEntity>>>.Success(resultado);
             }
             catch (Exception ex)
@@ -75,6 +78,7 @@ namespace Arkive_API.Application.UseCases
                 if (!resultado.Data.Any())
                     return OperationResult<PageResultModel<IEnumerable<DoencaEntity>>>.Failure("Nenhuma doença inativa encontrada", 204);
 
+                resultado.Links = Pagination.Links("/api/doencas/inativos", s, t, resultado.TotalRegistros);
                 return OperationResult<PageResultModel<IEnumerable<DoencaEntity>>>.Success(resultado);
             }
             catch (Exception ex)
