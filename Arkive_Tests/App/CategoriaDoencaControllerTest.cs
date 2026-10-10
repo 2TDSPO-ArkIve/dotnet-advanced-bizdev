@@ -2,6 +2,7 @@
 using System.Net.Http.Json;
 using Arkive_API.Application.Dtos;
 using Arkive_API.Domain.Entities;
+using Arkive_API.Domain.Models;
 using Moq;
 
 namespace Arkive_Tests.App
@@ -34,7 +35,7 @@ namespace Arkive_Tests.App
                 new CategoriaDoencaEntity { Id = 1, Nome = "Viral", StAtivo = "S" },
                 new CategoriaDoencaEntity { Id = 2, Nome = "Bacteriana", StAtivo = "S" }
             };
-            _useCase.Setup(x => x.ObterTodasAsync()).ReturnsAsync(categorias);
+            _useCase.Setup(x => x.ObterTodasAsync()).ReturnsAsync(OperationResult<IEnumerable<CategoriaDoencaEntity>>.Success(categorias));
 
             // Act
             var response = await _client.GetAsync("/api/categorias-doenca");
@@ -51,7 +52,7 @@ namespace Arkive_Tests.App
         public async Task GetAll_QuandoNaoHaCategorias_DeveRetornar204()
         {
             // Arrange
-            _useCase.Setup(x => x.ObterTodasAsync()).ReturnsAsync(new List<CategoriaDoencaEntity>());
+            _useCase.Setup(x => x.ObterTodasAsync()).ReturnsAsync(OperationResult<IEnumerable<CategoriaDoencaEntity>>.Failure("Nenhuma categoria de doença encontrada", 204));
 
             // Act
             var response = await _client.GetAsync("/api/categorias-doenca");
@@ -66,7 +67,7 @@ namespace Arkive_Tests.App
         {
             // Arrange
             var categoria = new CategoriaDoencaEntity { Id = 5, Nome = "Viral", StAtivo = "S" };
-            _useCase.Setup(x => x.ObterPorIdAsync(5)).ReturnsAsync(categoria);
+            _useCase.Setup(x => x.ObterPorIdAsync(5)).ReturnsAsync(OperationResult<CategoriaDoencaEntity?>.Success(categoria));
 
             // Act
             var response = await _client.GetAsync("/api/categorias-doenca/5");
@@ -83,7 +84,7 @@ namespace Arkive_Tests.App
         public async Task GetById_QuandoCategoriaNaoExiste_DeveRetornar404()
         {
             // Arrange
-            _useCase.Setup(x => x.ObterPorIdAsync(It.IsAny<int>())).ReturnsAsync((CategoriaDoencaEntity?)null);
+            _useCase.Setup(x => x.ObterPorIdAsync(It.IsAny<int>())).ReturnsAsync(OperationResult<CategoriaDoencaEntity?>.Failure("Categoria de doença não encontrada", 404));
 
             // Act
             var response = await _client.GetAsync("/api/categorias-doenca/999");
@@ -99,7 +100,7 @@ namespace Arkive_Tests.App
             // Arrange
             var dto = new CategoriaDoencaRequestDto { Nome = "Parasitária" };
             var criada = new CategoriaDoencaEntity { Id = 10, Nome = "Parasitária", StAtivo = "S" };
-            _useCase.Setup(x => x.AdicionarAsync(It.IsAny<CategoriaDoencaRequestDto>())).ReturnsAsync(criada);
+            _useCase.Setup(x => x.AdicionarAsync(It.IsAny<CategoriaDoencaRequestDto>())).ReturnsAsync(OperationResult<CategoriaDoencaEntity?>.Success(criada, 201));
 
             // Act
             var response = await _client.PostAsJsonAsync("/api/categorias-doenca", dto);
@@ -116,7 +117,7 @@ namespace Arkive_Tests.App
         {
             // Arrange
             _useCase.Setup(x => x.EditarAsync(It.IsAny<int>(), It.IsAny<CategoriaDoencaRequestDto>()))
-                .ReturnsAsync((CategoriaDoencaEntity?)null);
+                .ReturnsAsync(OperationResult<CategoriaDoencaEntity?>.Failure("Categoria de doença não encontrada", 404));
 
             // Act
             var response = await _client.PutAsJsonAsync("/api/categorias-doenca/999",
@@ -132,7 +133,7 @@ namespace Arkive_Tests.App
         {
             // Arrange
             var inativada = new CategoriaDoencaEntity { Id = 3, Nome = "Viral", StAtivo = "N" };
-            _useCase.Setup(x => x.InativarAsync(3)).ReturnsAsync(inativada);
+            _useCase.Setup(x => x.InativarAsync(3)).ReturnsAsync(OperationResult<CategoriaDoencaEntity?>.Success(inativada));
 
             // Act
             var response = await _client.DeleteAsync("/api/categorias-doenca/3");

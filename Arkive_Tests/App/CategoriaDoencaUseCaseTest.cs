@@ -1,4 +1,4 @@
-﻿using Arkive_API.Application.Dtos;
+using Arkive_API.Application.Dtos;
 using Arkive_API.Application.Mappers;
 using Arkive_API.Application.UseCases;
 using Arkive_API.Domain.Entities;
@@ -38,8 +38,8 @@ namespace Arkive_Tests.App
             var resultado = await _categoriaDoencaUseCase.ObterTodasAsync();
 
             // Assert
-            Assert.NotNull(resultado);
-            Assert.Collection(resultado,
+            Assert.True(resultado.IsSuccess);
+            Assert.Collection(resultado.Value!,
                 item => { Assert.Equal(1, item.Id); Assert.Equal("Viral", item.Nome); Assert.Equal("S", item.StAtivo); },
                 item => { Assert.Equal(2, item.Id); Assert.Equal("Bacteriana", item.Nome); Assert.Equal("N", item.StAtivo); });
         }
@@ -57,8 +57,8 @@ namespace Arkive_Tests.App
             var resultado = await _categoriaDoencaUseCase.ObterAtivasAsync();
 
             // Assert
-            Assert.NotNull(resultado);
-            Assert.Collection(resultado,
+            Assert.True(resultado.IsSuccess);
+            Assert.Collection(resultado.Value!,
                 item => { Assert.Equal(1, item.Id); Assert.Equal("Viral", item.Nome); Assert.Equal("S", item.StAtivo); });
         }
 
@@ -75,8 +75,8 @@ namespace Arkive_Tests.App
             var resultado = await _categoriaDoencaUseCase.ObterInativasAsync();
 
             // Assert
-            Assert.NotNull(resultado);
-            Assert.Collection(resultado,
+            Assert.True(resultado.IsSuccess);
+            Assert.Collection(resultado.Value!,
                 item => { Assert.Equal(2, item.Id); Assert.Equal("Bacteriana", item.Nome); Assert.Equal("N", item.StAtivo); });
         }
 
@@ -94,15 +94,15 @@ namespace Arkive_Tests.App
             var resultado = await _categoriaDoencaUseCase.ObterPorIdAsync(idCategoria);
 
             // Assert
-            Assert.NotNull(resultado);
-            Assert.Equal(idCategoria, resultado!.Id);
-            Assert.Equal(categoria.Nome, resultado.Nome);
-            Assert.Equal(categoria.StAtivo, resultado.StAtivo);
+            Assert.True(resultado.IsSuccess);
+            Assert.Equal(idCategoria, resultado.Value!.Id);
+            Assert.Equal(categoria.Nome, resultado.Value.Nome);
+            Assert.Equal(categoria.StAtivo, resultado.Value.StAtivo);
         }
 
         [Fact]
         [Trait("UseCase", "CategoriaDoencas")]
-        public async Task ObterPorIdAsync_QuandoNaoExiste_DeveRetornarNull()
+        public async Task ObterPorIdAsync_QuandoNaoExiste_DeveRetornar404()
         {
             // Arrange
             _categoriaDoencaRepository.Setup(obj => obj.ObterPorIdAsync(It.IsAny<int>())).ReturnsAsync((CategoriaDoencaEntity?)null);
@@ -111,7 +111,8 @@ namespace Arkive_Tests.App
             var resultado = await _categoriaDoencaUseCase.ObterPorIdAsync(999);
 
             // Assert
-            Assert.Null(resultado);
+            Assert.False(resultado.IsSuccess);
+            Assert.Equal(404, resultado.StatusCode);
         }
 
         [Fact]
@@ -128,9 +129,10 @@ namespace Arkive_Tests.App
             var resultado = await _categoriaDoencaUseCase.AdicionarAsync(dto);
 
             // Assert
-            Assert.NotNull(resultado);
-            Assert.Equal(dto.Nome, resultado!.Nome);
-            Assert.Equal(entity.StAtivo, resultado.StAtivo);
+            Assert.True(resultado.IsSuccess);
+            Assert.Equal(201, resultado.StatusCode);
+            Assert.Equal(dto.Nome, resultado.Value!.Nome);
+            Assert.Equal(entity.StAtivo, resultado.Value.StAtivo);
         }
 
         [Fact]
@@ -149,14 +151,14 @@ namespace Arkive_Tests.App
             var resultado = await _categoriaDoencaUseCase.EditarAsync(idCategoria, dto);
 
             // Assert
-            Assert.NotNull(resultado);
-            Assert.Equal(idCategoria, resultado!.Id);
-            Assert.Equal(dto.Nome, resultado.Nome);
+            Assert.True(resultado.IsSuccess);
+            Assert.Equal(idCategoria, resultado.Value!.Id);
+            Assert.Equal(dto.Nome, resultado.Value.Nome);
         }
 
         [Fact]
         [Trait("UseCase", "CategoriaDoencas")]
-        public async Task EditarAsync_QuandoCategoriaNaoExiste_DeveRetornarNull()
+        public async Task EditarAsync_QuandoCategoriaNaoExiste_DeveRetornar404()
         {
             // Arrange
             var dto = new CategoriaDoencaRequestDto { Nome = "Viral Respiratória" };
@@ -167,7 +169,8 @@ namespace Arkive_Tests.App
             var resultado = await _categoriaDoencaUseCase.EditarAsync(999, dto);
 
             // Assert
-            Assert.Null(resultado);
+            Assert.False(resultado.IsSuccess);
+            Assert.Equal(404, resultado.StatusCode);
         }
 
         [Fact]
@@ -184,10 +187,10 @@ namespace Arkive_Tests.App
             var resultado = await _categoriaDoencaUseCase.ReativarAsync(idCategoria);
 
             // Assert
-            Assert.NotNull(resultado);
-            Assert.Equal(idCategoria, resultado!.Id);
-            Assert.Equal(categoria.Nome, resultado.Nome);
-            Assert.Equal("S", resultado.StAtivo);
+            Assert.True(resultado.IsSuccess);
+            Assert.Equal(idCategoria, resultado.Value!.Id);
+            Assert.Equal(categoria.Nome, resultado.Value.Nome);
+            Assert.Equal("S", resultado.Value.StAtivo);
         }
 
         [Fact]
@@ -204,10 +207,42 @@ namespace Arkive_Tests.App
             var resultado = await _categoriaDoencaUseCase.InativarAsync(idCategoria);
 
             // Assert
-            Assert.NotNull(resultado);
-            Assert.Equal(idCategoria, resultado!.Id);
-            Assert.Equal(categoria.Nome, resultado.Nome);
-            Assert.Equal("N", resultado.StAtivo);
+            Assert.True(resultado.IsSuccess);
+            Assert.Equal(idCategoria, resultado.Value!.Id);
+            Assert.Equal(categoria.Nome, resultado.Value.Nome);
+            Assert.Equal("N", resultado.Value.StAtivo);
+        }
+
+        [Fact]
+        [Trait("UseCase", "CategoriaDoencas")]
+        public async Task ObterTodasAsync_QuandoListaVazia_DeveRetornar204()
+        {
+            // Arrange
+            _categoriaDoencaRepository.Setup(obj => obj.ObterTodosAsync()).ReturnsAsync(new List<CategoriaDoencaEntity>());
+
+            // Act
+            var resultado = await _categoriaDoencaUseCase.ObterTodasAsync();
+
+            // Assert
+            Assert.False(resultado.IsSuccess);
+            Assert.Equal(204, resultado.StatusCode);
+        }
+
+        [Fact]
+        [Trait("UseCase", "CategoriaDoencas")]
+        public async Task ObterTodasAsync_QuandoRepositorioFalha_DeveRetornar400SemVazarMensagem()
+        {
+            // Arrange
+            _categoriaDoencaRepository.Setup(obj => obj.ObterTodosAsync())
+                .ThrowsAsync(new Exception("ORA-12541: detalhe interno"));
+
+            // Act
+            var resultado = await _categoriaDoencaUseCase.ObterTodasAsync();
+
+            // Assert
+            Assert.False(resultado.IsSuccess);
+            Assert.Equal(400, resultado.StatusCode);
+            Assert.DoesNotContain("ORA-12541", resultado.Error);
         }
     }
 }
