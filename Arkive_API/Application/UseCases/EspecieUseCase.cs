@@ -3,6 +3,7 @@ using Arkive_API.Application.Interfaces;
 using Arkive_API.Application.Mappers;
 using Arkive_API.Domain.Entities;
 using Arkive_API.Domain.Interfaces;
+using Arkive_API.Domain.Models;
 
 namespace Arkive_API.Application.UseCases
 {
@@ -17,123 +18,171 @@ namespace Arkive_API.Application.UseCases
             _logger = logger;
         }
 
-        public async Task<IEnumerable<EspecieEntity>> ObterTodasAsync()
+        public async Task<OperationResult<IEnumerable<EspecieEntity>>> ObterTodasAsync()
         {
             _logger.LogInformation("Obtendo todas as espécies");
 
             try
             {
-                return await _especieRepository.ObterTodosAsync();
+                var resultado = await _especieRepository.ObterTodosAsync();
+
+                if (!resultado.Any())
+                    return OperationResult<IEnumerable<EspecieEntity>>.Failure("Nenhuma espécie encontrada", 204);
+
+                return OperationResult<IEnumerable<EspecieEntity>>.Success(resultado);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter todas as espécies");
-                throw;
+                return OperationResult<IEnumerable<EspecieEntity>>.Failure("Ocorreu um erro ao obter as espécies");
             }
         }
 
-        public async Task<IEnumerable<EspecieEntity>> ObterAtivasAsync()
+        public async Task<OperationResult<IEnumerable<EspecieEntity>>> ObterAtivasAsync()
         {
             _logger.LogInformation("Obtendo espécies ativas");
 
             try
             {
-                return await _especieRepository.ObterAtivosAsync();
+                var resultado = await _especieRepository.ObterAtivosAsync();
+
+                if (!resultado.Any())
+                    return OperationResult<IEnumerable<EspecieEntity>>.Failure("Nenhuma espécie ativa encontrada", 204);
+
+                return OperationResult<IEnumerable<EspecieEntity>>.Success(resultado);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter espécies ativas");
-                throw;
+                return OperationResult<IEnumerable<EspecieEntity>>.Failure("Ocorreu um erro ao obter as espécies ativas");
             }
         }
 
-        public async Task<IEnumerable<EspecieEntity>> ObterInativasAsync()
+        public async Task<OperationResult<IEnumerable<EspecieEntity>>> ObterInativasAsync()
         {
             _logger.LogInformation("Obtendo espécies inativas");
 
             try
             {
-                return await _especieRepository.ObterInativosAsync();
+                var resultado = await _especieRepository.ObterInativosAsync();
+
+                if (!resultado.Any())
+                    return OperationResult<IEnumerable<EspecieEntity>>.Failure("Nenhuma espécie inativa encontrada", 204);
+
+                return OperationResult<IEnumerable<EspecieEntity>>.Success(resultado);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter espécies inativas");
-                throw;
+                return OperationResult<IEnumerable<EspecieEntity>>.Failure("Ocorreu um erro ao obter as espécies inativas");
             }
         }
 
-        public async Task<EspecieEntity?> ObterPorIdAsync(int id)
+        public async Task<OperationResult<EspecieEntity?>> ObterPorIdAsync(int id)
         {
             _logger.LogInformation("Obtendo espécie {Id}", id);
 
             try
             {
-                return await _especieRepository.ObterPorIdAsync(id);
+                var especie = await _especieRepository.ObterPorIdAsync(id);
+
+                if (especie is null)
+                {
+                    _logger.LogWarning("Espécie {Id} não encontrada", id);
+                    return OperationResult<EspecieEntity?>.Failure("Espécie não encontrada", 404);
+                }
+
+                return OperationResult<EspecieEntity?>.Success(especie);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter espécie {Id}", id);
-                throw;
+                return OperationResult<EspecieEntity?>.Failure("Ocorreu um erro ao obter a espécie");
             }
         }
 
-        public async Task<EspecieEntity?> AdicionarAsync(EspecieRequestDto dto)
+        public async Task<OperationResult<EspecieEntity?>> AdicionarAsync(EspecieRequestDto dto)
         {
             _logger.LogInformation("Adicionando espécie {Nome}", dto.Especie);
 
             try
             {
-                return await _especieRepository.AdicionarAsync(dto.ToEspecieEntity());
+                var especie = await _especieRepository.AdicionarAsync(dto.ToEspecieEntity());
+                return OperationResult<EspecieEntity?>.Success(especie, 201);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao adicionar espécie {Nome}", dto.Especie);
-                throw;
+                return OperationResult<EspecieEntity?>.Failure("Ocorreu um erro ao adicionar a espécie");
             }
         }
 
-        public async Task<EspecieEntity?> EditarAsync(int id, EspecieRequestDto dto)
+        public async Task<OperationResult<EspecieEntity?>> EditarAsync(int id, EspecieRequestDto dto)
         {
             _logger.LogInformation("Editando espécie {Id}", id);
 
             try
             {
-                return await _especieRepository.EditarAsync(id, dto.ToEspecieEntity());
+                var especie = await _especieRepository.EditarAsync(id, dto.ToEspecieEntity());
+
+                if (especie is null)
+                {
+                    _logger.LogWarning("Espécie {Id} não encontrada", id);
+                    return OperationResult<EspecieEntity?>.Failure("Espécie não encontrada", 404);
+                }
+
+                return OperationResult<EspecieEntity?>.Success(especie);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao editar espécie {Id}", id);
-                throw;
+                return OperationResult<EspecieEntity?>.Failure("Ocorreu um erro ao editar a espécie");
             }
         }
 
-        public async Task<EspecieEntity?> ReativarAsync(int id)
+        public async Task<OperationResult<EspecieEntity?>> ReativarAsync(int id)
         {
             _logger.LogInformation("Reativando espécie {Id}", id);
 
             try
             {
-                return await _especieRepository.ReativarAsync(id);
+                var especie = await _especieRepository.ReativarAsync(id);
+
+                if (especie is null)
+                {
+                    _logger.LogWarning("Espécie {Id} não encontrada", id);
+                    return OperationResult<EspecieEntity?>.Failure("Espécie não encontrada", 404);
+                }
+
+                return OperationResult<EspecieEntity?>.Success(especie);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao reativar espécie {Id}", id);
-                throw;
+                return OperationResult<EspecieEntity?>.Failure("Ocorreu um erro ao reativar a espécie");
             }
         }
 
-        public async Task<EspecieEntity?> InativarAsync(int id)
+        public async Task<OperationResult<EspecieEntity?>> InativarAsync(int id)
         {
             _logger.LogInformation("Inativando espécie {Id}", id);
 
             try
             {
-                return await _especieRepository.InativarAsync(id);
+                var especie = await _especieRepository.InativarAsync(id);
+
+                if (especie is null)
+                {
+                    _logger.LogWarning("Espécie {Id} não encontrada", id);
+                    return OperationResult<EspecieEntity?>.Failure("Espécie não encontrada", 404);
+                }
+
+                return OperationResult<EspecieEntity?>.Success(especie);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao inativar espécie {Id}", id);
-                throw;
+                return OperationResult<EspecieEntity?>.Failure("Ocorreu um erro ao inativar a espécie");
             }
         }
     }

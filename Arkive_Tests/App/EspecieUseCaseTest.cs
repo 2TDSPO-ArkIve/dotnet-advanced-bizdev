@@ -38,8 +38,8 @@ namespace Arkive_Tests.App
             var resultado = await _especieUseCase.ObterTodasAsync();
 
             // Assert
-            Assert.NotNull(resultado);
-            Assert.Collection(resultado,
+            Assert.True(resultado.IsSuccess);
+            Assert.Collection(resultado.Value!,
                 item => { Assert.Equal(1, item.Id); Assert.Equal("Canina", item.Especie); Assert.Equal("S", item.StAtivo); },
                 item => { Assert.Equal(2, item.Id); Assert.Equal("Felina", item.Especie); Assert.Equal("N", item.StAtivo); });
         }
@@ -57,8 +57,8 @@ namespace Arkive_Tests.App
             var resultado = await _especieUseCase.ObterAtivasAsync();
 
             // Assert
-            Assert.NotNull(resultado);
-            Assert.Collection(resultado,
+            Assert.True(resultado.IsSuccess);
+            Assert.Collection(resultado.Value!,
                 item => { Assert.Equal(1, item.Id); Assert.Equal("Canina", item.Especie); Assert.Equal("S", item.StAtivo); });
         }
 
@@ -75,8 +75,8 @@ namespace Arkive_Tests.App
             var resultado = await _especieUseCase.ObterInativasAsync();
 
             // Assert
-            Assert.NotNull(resultado);
-            Assert.Collection(resultado,
+            Assert.True(resultado.IsSuccess);
+            Assert.Collection(resultado.Value!,
                 item => { Assert.Equal(2, item.Id); Assert.Equal("Felina", item.Especie); Assert.Equal("N", item.StAtivo); });
         }
 
@@ -94,15 +94,15 @@ namespace Arkive_Tests.App
             var resultado = await _especieUseCase.ObterPorIdAsync(idEspecie);
 
             // Assert
-            Assert.NotNull(resultado);
-            Assert.Equal(idEspecie, resultado!.Id);
-            Assert.Equal(especie.Especie, resultado.Especie);
-            Assert.Equal(especie.StAtivo, resultado.StAtivo);
+            Assert.True(resultado.IsSuccess);
+            Assert.Equal(idEspecie, resultado.Value!.Id);
+            Assert.Equal(especie.Especie, resultado.Value.Especie);
+            Assert.Equal(especie.StAtivo, resultado.Value.StAtivo);
         }
 
         [Fact]
         [Trait("UseCase", "Especies")]
-        public async Task ObterPorIdAsync_QuandoNaoExiste_DeveRetornarNull()
+        public async Task ObterPorIdAsync_QuandoNaoExiste_DeveRetornar404()
         {
             // Arrange
             _especieRepository.Setup(obj => obj.ObterPorIdAsync(It.IsAny<int>())).ReturnsAsync((EspecieEntity?)null);
@@ -111,7 +111,8 @@ namespace Arkive_Tests.App
             var resultado = await _especieUseCase.ObterPorIdAsync(999);
 
             // Assert
-            Assert.Null(resultado);
+            Assert.False(resultado.IsSuccess);
+            Assert.Equal(404, resultado.StatusCode);
         }
 
         [Fact]
@@ -128,9 +129,10 @@ namespace Arkive_Tests.App
             var resultado = await _especieUseCase.AdicionarAsync(dto);
 
             // Assert
-            Assert.NotNull(resultado);
-            Assert.Equal(dto.Especie, resultado!.Especie);
-            Assert.Equal(entity.StAtivo, resultado.StAtivo);
+            Assert.True(resultado.IsSuccess);
+            Assert.Equal(201, resultado.StatusCode);
+            Assert.Equal(dto.Especie, resultado.Value!.Especie);
+            Assert.Equal(entity.StAtivo, resultado.Value.StAtivo);
         }
 
         [Fact]
@@ -149,14 +151,14 @@ namespace Arkive_Tests.App
             var resultado = await _especieUseCase.EditarAsync(idEspecie, dto);
 
             // Assert
-            Assert.NotNull(resultado);
-            Assert.Equal(idEspecie, resultado!.Id);
-            Assert.Equal(dto.Especie, resultado.Especie);
+            Assert.True(resultado.IsSuccess);
+            Assert.Equal(idEspecie, resultado.Value!.Id);
+            Assert.Equal(dto.Especie, resultado.Value.Especie);
         }
 
         [Fact]
         [Trait("UseCase", "Especies")]
-        public async Task EditarAsync_QuandoEspecieNaoExiste_DeveRetornarNull()
+        public async Task EditarAsync_QuandoEspecieNaoExiste_DeveRetornar404()
         {
             // Arrange
             var dto = new EspecieRequestDto { Especie = "Canina Doméstica" };
@@ -167,7 +169,8 @@ namespace Arkive_Tests.App
             var resultado = await _especieUseCase.EditarAsync(999, dto);
 
             // Assert
-            Assert.Null(resultado);
+            Assert.False(resultado.IsSuccess);
+            Assert.Equal(404, resultado.StatusCode);
         }
 
         [Fact]
@@ -184,10 +187,10 @@ namespace Arkive_Tests.App
             var resultado = await _especieUseCase.ReativarAsync(idEspecie);
 
             // Assert
-            Assert.NotNull(resultado);
-            Assert.Equal(idEspecie, resultado!.Id);
-            Assert.Equal(especie.Especie, resultado.Especie);
-            Assert.Equal("S", resultado.StAtivo);
+            Assert.True(resultado.IsSuccess);
+            Assert.Equal(idEspecie, resultado.Value!.Id);
+            Assert.Equal(especie.Especie, resultado.Value.Especie);
+            Assert.Equal("S", resultado.Value.StAtivo);
         }
 
         [Fact]
@@ -204,10 +207,42 @@ namespace Arkive_Tests.App
             var resultado = await _especieUseCase.InativarAsync(idEspecie);
 
             // Assert
-            Assert.NotNull(resultado);
-            Assert.Equal(idEspecie, resultado!.Id);
-            Assert.Equal(especie.Especie, resultado.Especie);
-            Assert.Equal("N", resultado.StAtivo);
+            Assert.True(resultado.IsSuccess);
+            Assert.Equal(idEspecie, resultado.Value!.Id);
+            Assert.Equal(especie.Especie, resultado.Value.Especie);
+            Assert.Equal("N", resultado.Value.StAtivo);
+        }
+
+        [Fact]
+        [Trait("UseCase", "Especies")]
+        public async Task ObterTodasAsync_QuandoListaVazia_DeveRetornar204()
+        {
+            // Arrange
+            _especieRepository.Setup(obj => obj.ObterTodosAsync()).ReturnsAsync(new List<EspecieEntity>());
+
+            // Act
+            var resultado = await _especieUseCase.ObterTodasAsync();
+
+            // Assert
+            Assert.False(resultado.IsSuccess);
+            Assert.Equal(204, resultado.StatusCode);
+        }
+
+        [Fact]
+        [Trait("UseCase", "Especies")]
+        public async Task ObterTodasAsync_QuandoRepositorioFalha_DeveRetornar400SemVazarMensagem()
+        {
+            // Arrange
+            _especieRepository.Setup(obj => obj.ObterTodosAsync())
+                .ThrowsAsync(new Exception("ORA-12541: detalhe interno"));
+
+            // Act
+            var resultado = await _especieUseCase.ObterTodasAsync();
+
+            // Assert
+            Assert.False(resultado.IsSuccess);
+            Assert.Equal(400, resultado.StatusCode);
+            Assert.DoesNotContain("ORA-12541", resultado.Error);
         }
     }
 }

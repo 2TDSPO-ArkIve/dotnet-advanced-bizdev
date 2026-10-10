@@ -44,20 +44,11 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Listando todas as espécies");
 
-            try
-            {
-                var resultado = await _especieUseCase.ObterTodasAsync();
+            var resultado = await _especieUseCase.ObterTodasAsync();
 
-                if (!resultado.Any())
-                    return NoContent();
-
-                return Ok(resultado);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (resultado.StatusCode == 204) return NoContent();
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpGet("ativos")]
@@ -80,20 +71,11 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Listando espécies ativas");
 
-            try
-            {
-                var resultado = await _especieUseCase.ObterAtivasAsync();
+            var resultado = await _especieUseCase.ObterAtivasAsync();
 
-                if (!resultado.Any())
-                    return NoContent();
-
-                return Ok(resultado);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (resultado.StatusCode == 204) return NoContent();
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpGet("inativos")]
@@ -116,20 +98,11 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Listando espécies inativas");
 
-            try
-            {
-                var resultado = await _especieUseCase.ObterInativasAsync();
+            var resultado = await _especieUseCase.ObterInativasAsync();
 
-                if (!resultado.Any())
-                    return NoContent();
-
-                return Ok(resultado);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (resultado.StatusCode == 204) return NoContent();
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpGet("{id}")]
@@ -153,23 +126,10 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Buscando espécie {Id}", id);
 
-            try
-            {
-                var especie = await _especieUseCase.ObterPorIdAsync(id);
+            var resultado = await _especieUseCase.ObterPorIdAsync(id);
 
-                if (especie is null)
-                {
-                    _logger.LogWarning("Espécie {Id} não encontrada", id);
-                    return NotFound();
-                }
-
-                return Ok(especie);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpPost]
@@ -194,18 +154,12 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Criando espécie {Nome}", model.Especie);
 
-            try
-            {
-                var especie = await _especieUseCase.AdicionarAsync(model);
+            var resultado = await _especieUseCase.AdicionarAsync(model);
 
-                _logger.LogInformation("Espécie criada com sucesso: {Id}", especie?.Id ?? 0);
-                return CreatedAtAction(nameof(GetEspecieById), new { id = especie?.Id ?? 0 }, especie);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+
+            _logger.LogInformation("Espécie criada com sucesso: {Id}", resultado.Value?.Id ?? 0);
+            return CreatedAtAction(nameof(GetEspecieById), new { id = resultado.Value?.Id ?? 0 }, resultado.Value);
         }
 
         [HttpPut("{id}")]
@@ -230,23 +184,10 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Atualizando espécie {Id}", id);
 
-            try
-            {
-                var especie = await _especieUseCase.EditarAsync(id, model);
+            var resultado = await _especieUseCase.EditarAsync(id, model);
 
-                if (especie is null)
-                {
-                    _logger.LogWarning("Espécie {Id} não encontrada", id);
-                    return NotFound();
-                }
-
-                return Ok(especie);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpPut("reativar/{id}")]
@@ -270,23 +211,10 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Reativando espécie {Id}", id);
 
-            try
-            {
-                var especie = await _especieUseCase.ReativarAsync(id);
+            var resultado = await _especieUseCase.ReativarAsync(id);
 
-                if (especie is null)
-                {
-                    _logger.LogWarning("Espécie {Id} não encontrada", id);
-                    return NotFound();
-                }
-
-                return Ok(especie);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpDelete("{id}")]
@@ -311,23 +239,10 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Inativando espécie {Id}", id);
 
-            try
-            {
-                var especie = await _especieUseCase.InativarAsync(id);
+            var resultado = await _especieUseCase.InativarAsync(id);
 
-                if (especie is null)
-                {
-                    _logger.LogWarning("Espécie {Id} não encontrada", id);
-                    return NotFound();
-                }
-
-                return Ok(especie);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
     }
 }

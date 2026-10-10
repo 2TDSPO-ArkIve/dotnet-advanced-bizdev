@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using Arkive_API.Application.Dtos;
 using Arkive_API.Application.Interfaces;
 using Arkive_API.Domain.Entities;
+using Arkive_API.Domain.Models;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Moq;
 
@@ -26,11 +27,11 @@ namespace Arkive_Tests.App
         public async Task GetAll_ComListaDeEspecies_DeveRetornar200()
         {
             // Arrange
-            _useCase.Setup(x => x.ObterTodasAsync()).ReturnsAsync(new List<EspecieEntity>
+            _useCase.Setup(x => x.ObterTodasAsync()).ReturnsAsync(OperationResult<IEnumerable<EspecieEntity>>.Success(new List<EspecieEntity>
             {
                 new EspecieEntity { Id = 1, Especie = "Canina", StAtivo = "S" },
                 new EspecieEntity { Id = 2, Especie = "Felina", StAtivo = "S" }
-            });
+            }));
 
             // Act
             var response = await _client.GetAsync("/api/especies");
@@ -46,7 +47,7 @@ namespace Arkive_Tests.App
         public async Task GetAll_QuandoNaoHaEspecies_DeveRetornar204()
         {
             // Arrange
-            _useCase.Setup(x => x.ObterTodasAsync()).ReturnsAsync(new List<EspecieEntity>());
+            _useCase.Setup(x => x.ObterTodasAsync()).ReturnsAsync(OperationResult<IEnumerable<EspecieEntity>>.Failure("Nenhuma espécie encontrada", 204));
 
             // Act
             var response = await _client.GetAsync("/api/especies");
@@ -61,7 +62,7 @@ namespace Arkive_Tests.App
         {
             // Arrange
             _useCase.Setup(x => x.ObterPorIdAsync(4))
-                .ReturnsAsync(new EspecieEntity { Id = 4, Especie = "Equina", StAtivo = "S" });
+                .ReturnsAsync(OperationResult<EspecieEntity?>.Success(new EspecieEntity { Id = 4, Especie = "Equina", StAtivo = "S" }));
 
             // Act
             var response = await _client.GetAsync("/api/especies/4");
@@ -77,7 +78,7 @@ namespace Arkive_Tests.App
         public async Task GetById_QuandoEspecieNaoExiste_DeveRetornar404()
         {
             // Arrange
-            _useCase.Setup(x => x.ObterPorIdAsync(It.IsAny<int>())).ReturnsAsync((EspecieEntity?)null);
+            _useCase.Setup(x => x.ObterPorIdAsync(It.IsAny<int>())).ReturnsAsync(OperationResult<EspecieEntity?>.Failure("Espécie não encontrada", 404));
 
             // Act
             var response = await _client.GetAsync("/api/especies/999");
@@ -92,7 +93,7 @@ namespace Arkive_Tests.App
         {
             // Arrange
             _useCase.Setup(x => x.AdicionarAsync(It.IsAny<EspecieRequestDto>()))
-                .ReturnsAsync(new EspecieEntity { Id = 9, Especie = "Suína", StAtivo = "S" });
+                .ReturnsAsync(OperationResult<EspecieEntity?>.Success(new EspecieEntity { Id = 9, Especie = "Suína", StAtivo = "S" }, 201));
 
             // Act
             var response = await _client.PostAsJsonAsync("/api/especies", new EspecieRequestDto { Especie = "Suína" });
@@ -107,7 +108,7 @@ namespace Arkive_Tests.App
         {
             // Arrange
             _useCase.Setup(x => x.EditarAsync(It.IsAny<int>(), It.IsAny<EspecieRequestDto>()))
-                .ReturnsAsync((EspecieEntity?)null);
+                .ReturnsAsync(OperationResult<EspecieEntity?>.Failure("Espécie não encontrada", 404));
 
             // Act
             var response = await _client.PutAsJsonAsync("/api/especies/999", new EspecieRequestDto { Especie = "X" });
@@ -122,7 +123,7 @@ namespace Arkive_Tests.App
         {
             // Arrange
             _useCase.Setup(x => x.InativarAsync(2))
-                .ReturnsAsync(new EspecieEntity { Id = 2, Especie = "Felina", StAtivo = "N" });
+                .ReturnsAsync(OperationResult<EspecieEntity?>.Success(new EspecieEntity { Id = 2, Especie = "Felina", StAtivo = "N" }));
 
             // Act
             var response = await _client.DeleteAsync("/api/especies/2");
