@@ -241,6 +241,16 @@ namespace Arkive_API.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex(new[] { "IdAnimal" }, "IX_ARKIVE_NPS_ANIMAL");
+
+                    b.HasIndex(new[] { "IdClinica" }, "IX_ARKIVE_NPS_CLINICA");
+
+                    b.HasIndex(new[] { "Nota", "DataFeedback" }, "IX_ARKIVE_NPS_NOTA_DATA");
+
+                    b.HasIndex(new[] { "IdResponsavel" }, "IX_ARKIVE_NPS_RESPONSAVEL");
+
+                    b.HasIndex(new[] { "IdVeterinario" }, "IX_ARKIVE_NPS_VETERINARIO");
+
                     b.ToTable("TB_ARKIVE_FEEDBACK_NPS");
                 });
 

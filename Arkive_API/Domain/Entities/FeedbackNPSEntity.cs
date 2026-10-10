@@ -1,9 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Arkive_API.Domain.Entities
 {
     [Table("TB_ARKIVE_FEEDBACK_NPS")]
+    [Index(nameof(Nota), nameof(DataFeedback), Name = "IX_ARKIVE_NPS_NOTA_DATA")]
+    [Index(nameof(IdResponsavel), Name = "IX_ARKIVE_NPS_RESPONSAVEL")]
+    [Index(nameof(IdAnimal), Name = "IX_ARKIVE_NPS_ANIMAL")]
+    [Index(nameof(IdClinica), Name = "IX_ARKIVE_NPS_CLINICA")]
+    [Index(nameof(IdVeterinario), Name = "IX_ARKIVE_NPS_VETERINARIO")]
     public class FeedbackNPSEntity
     {
         [Key]

@@ -193,7 +193,10 @@ namespace Arkive_API.Infrastructure.Data.Repositories
         {
             try
             {
-                var query = _context.FeedbackNPS.Where(x => x.DataFeedback.Date == data.Date);
+                // Faixa [dia, dia+1) em vez de .Date na coluna: permite usar índice em DT_FEEDBACK
+                var inicio = data.Date;
+                var fim = inicio.AddDays(1);
+                var query = _context.FeedbackNPS.Where(x => x.DataFeedback >= inicio && x.DataFeedback < fim);
 
                 var total = await query.CountAsync();
                 var dados = await query
