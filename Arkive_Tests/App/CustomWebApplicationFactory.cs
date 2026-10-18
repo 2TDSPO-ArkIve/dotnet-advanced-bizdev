@@ -14,6 +14,8 @@ namespace Arkive_Tests.App
     /// </summary>
     public class CustomWebApplicationFactory : WebApplicationFactory<Program>
     {
+        public const string SecretkeyTeste = "chave-de-teste-arkive-com-mais-de-32-caracteres";
+
         public Mock<ICategoriaDoencaUseCase> CategoriaDoencaUseCaseMock { get; } = new();
         public Mock<IEspecieUseCase> EspecieUseCaseMock { get; } = new();
         public Mock<IDoencaUseCase> DoencaUseCaseMock { get; } = new();
@@ -24,6 +26,8 @@ namespace Arkive_Tests.App
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             builder.UseEnvironment("Testing");
+            // appsettings.Development.json não carrega em "Testing"; sem a chave a API não sobe
+            builder.UseSetting("Secretkey", SecretkeyTeste);
 
             builder.ConfigureServices(services =>
             {

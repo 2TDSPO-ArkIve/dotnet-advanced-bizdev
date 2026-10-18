@@ -4,9 +4,12 @@ using Arkive_API.Domain.Interfaces;
 using Arkive_API.Infrastructure.Data;
 using Arkive_API.Infrastructure.Data.Repositories;
 using Azure.Monitor.OpenTelemetry.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Serilog.Events;
+using System.Text;
 
 namespace Arkive_API.Infrastructure.IoC
 {
@@ -59,6 +62,32 @@ namespace Arkive_API.Infrastructure.IoC
             services.AddScoped<IPredisposicaoUseCase, PredisposicaoUseCase>();
             services.AddScoped<IFeedbackNPSRepository, FeedbackNPSRepository>();
             services.AddScoped<IFeedbackNPSUseCase, FeedbackNPSUseCase>();
+            services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+            services.AddScoped<IAuthUseCase, AuthUseCase>();
+        }
+
+        public static void AddAutenticacao(this IServiceCollection services, IConfiguration configuration)
+        {
+            // Sem chave a API não sobe: melhor falhar no boot do que aceitar/emitir token inválido
+            var secret = configuration["Secretkey"]
+                ?? throw new InvalidOperationException("Configuração 'Secretkey' ausente.");
+            var key = Encoding.ASCII.GetBytes(secret);
+
+            services.AddAuthentication(options => {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(x => {
+                x.RequireHttpsMetadata = false; // Em produção deve ser true
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                };
+            });
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Arkive_API.Domain.Entities.External
 {
@@ -41,5 +42,30 @@ namespace Arkive_API.Domain.Entities.External
         [Key]
         [Column("ID_VETERINARIO")]
         public int Id { get; set; }
+    }
+
+    // Usuários são cadastrados pela API Java; aqui só lemos para autenticar (senha em BCrypt).
+    [Table("TB_ARKIVE_USUARIO")]
+    public class UsuarioExternal
+    {
+        [Key]
+        [Column("ID_USUARIO")]
+        public int Id { get; set; }
+
+        [Column("NM_USUARIO")]
+        public string Nome { get; set; } = string.Empty;
+
+        [Column("DS_LOGIN")]
+        public string Login { get; set; } = string.Empty;
+
+        [JsonIgnore]
+        [Column("DS_SENHA_HASH")]
+        public string SenhaHash { get; set; } = string.Empty;
+
+        [Column("TP_USUARIO")]
+        public string TipoUsuario { get; set; } = string.Empty;
+
+        [Column("ST_ATIVO")]
+        public string StAtivo { get; set; } = "S";
     }
 }

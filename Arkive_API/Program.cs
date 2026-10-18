@@ -13,6 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddLogApi();
 builder.Services.AddTelemetria(builder.Configuration);
 builder.Services.AddIoC(builder.Configuration);
+builder.Services.AddAutenticacao(builder.Configuration);
 
 builder.Services.AddHealthChecks()
     // Liveness: o processo está de pé? (auto-contido, sem I/O externo)
@@ -83,6 +84,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseRateLimiter();

@@ -24,5 +24,13 @@ namespace Arkive_API.Infrastructure.Data
         public DbSet<ClinicaExternal> Clinica { get; set; }
         public DbSet<ConsultaExternal> Consulta { get; set; }
         public DbSet<VeterinarioExternal> Veterinario { get; set; }
+        public DbSet<UsuarioExternal> Usuario { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            // TB_ARKIVE_USUARIO já existe no Oracle (criada pela API Java): migrations não devem criá-la
+            modelBuilder.Entity<UsuarioExternal>()
+                .ToTable("TB_ARKIVE_USUARIO", t => t.ExcludeFromMigrations());
+        }
     }
 }
