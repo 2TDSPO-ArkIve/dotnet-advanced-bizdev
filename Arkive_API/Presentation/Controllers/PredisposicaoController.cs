@@ -1,8 +1,10 @@
+using Arkive_API.Application;
 using Arkive_API.Application.Dtos;
 using Arkive_API.Application.Interfaces;
 using Arkive_API.Doc.Samples;
 using Arkive_API.Domain.Entities;
 using Arkive_API.Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Swashbuckle.AspNetCore.Annotations;
@@ -12,6 +14,8 @@ namespace Arkive_API.Presentation.Controllers
 {
     [Route("api/predisposicoes")]
     [ApiController]
+    [Authorize]
+    [SwaggerResponse(statusCode: 401, description: "Token ausente, inválido ou expirado")]
     [EnableRateLimiting("leitura")]
     public class PredisposicaoController : ControllerBase
     {
@@ -162,6 +166,8 @@ namespace Arkive_API.Presentation.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = Roles.SysAdmin)]
+        [SwaggerResponse(statusCode: 403, description: "Perfil sem permissão para esta operação")]
         [EnableRateLimiting("escrita")]
         [SwaggerOperation(
             Summary = "Cria vínculo de predisposição",
@@ -198,6 +204,8 @@ namespace Arkive_API.Presentation.Controllers
         // "o PUT pode ser substituído por remover o vínculo antigo e criar um novo"
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = Roles.SysAdmin)]
+        [SwaggerResponse(statusCode: 403, description: "Perfil sem permissão para esta operação")]
         [EnableRateLimiting("escrita")]
         [SwaggerOperation(
             Summary = "Remove vínculo de predisposição",

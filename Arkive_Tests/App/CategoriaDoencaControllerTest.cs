@@ -19,10 +19,7 @@ namespace Arkive_Tests.App
             _factory = factory;
             _useCase = factory.CategoriaDoencaUseCaseMock;
             _useCase.Reset();
-            _client = factory.CreateClient(new Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactoryClientOptions
-            {
-                AllowAutoRedirect = false
-            });
+            _client = factory.CreateAuthenticatedClient();
         }
 
         [Fact]
@@ -140,6 +137,20 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+
+        [Fact]
+        [Trait("Controller", "CategoriaDoenca")]
+        public async Task Create_PerfilVeterinario_DeveRetornar403()
+        {
+            // Arrange
+            using var client = _factory.CreateAuthenticatedClient("VETERINARIO");
+
+            // Act
+            var response = await client.PostAsJsonAsync("/api/categorias-doenca", new CategoriaDoencaRequestDto { Nome = "Parasitária" });
+
+            // Assert
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
         }
     }
 }

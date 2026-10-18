@@ -13,14 +13,16 @@ namespace Arkive_Tests.App
     [Collection("Controller Collection")]
     public class DoencaControllerTest
     {
+        private readonly CustomWebApplicationFactory _factory;
         private readonly Mock<IDoencaUseCase> _useCase;
         private readonly HttpClient _client;
 
         public DoencaControllerTest(CustomWebApplicationFactory factory)
         {
+            _factory = factory;
             _useCase = factory.DoencaUseCaseMock;
             _useCase.Reset();
-            _client = factory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
+            _client = factory.CreateAuthenticatedClient();
         }
 
         [Fact]
@@ -153,6 +155,50 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+
+        [Fact]
+        [Trait("Controller", "Doencas")]
+        public async Task GetAll_SemToken_DeveRetornar401()
+        {
+            // Arrange
+            using var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
+
+            // Act
+            var response = await client.GetAsync("/api/doencas");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        }
+
+        [Fact]
+        [Trait("Controller", "Doencas")]
+        public async Task Create_PerfilResponsavel_DeveRetornar403()
+        {
+            // Arrange
+            using var client = _factory.CreateAuthenticatedClient("RESPONSAVEL");
+
+            // Act
+            var response = await client.PostAsJsonAsync("/api/doencas", new DoencaRequestDto { Nome = "Leptospirose" });
+
+            // Assert
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        }
+
+        [Fact]
+        [Trait("Controller", "Doencas")]
+        public async Task Create_PerfilVeterinario_DeveRetornar201()
+        {
+            // Arrange
+            _useCase.Setup(x => x.AdicionarAsync(It.IsAny<DoencaRequestDto>()))
+                .ReturnsAsync(OperationResult<DoencaEntity?>.Success(new DoencaEntity { Id = 21, Nome = "Leptospirose", StAtivo = "S" }, 201));
+            using var client = _factory.CreateAuthenticatedClient("VETERINARIO");
+
+            // Act
+            var response = await client.PostAsJsonAsync("/api/doencas", new DoencaRequestDto { Nome = "Leptospirose" });
+
+            // Assert
+            Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         }
     }
 }

@@ -19,7 +19,7 @@ namespace Arkive_Tests.App
         {
             _useCase = factory.PredisposicaoUseCaseMock;
             _useCase.Reset();
-            _client = factory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
+            _client = factory.CreateAuthenticatedClient();
         }
 
         [Fact]

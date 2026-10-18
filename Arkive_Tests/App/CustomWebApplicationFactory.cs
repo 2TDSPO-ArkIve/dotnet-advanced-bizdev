@@ -1,9 +1,11 @@
 using Arkive_API.Application.Interfaces;
+using Arkive_API.Application.UseCases;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Moq;
+using System.Net.Http.Headers;
 
 namespace Arkive_Tests.App
 {
@@ -22,6 +24,7 @@ namespace Arkive_Tests.App
         public Mock<IRacaUseCase> RacaUseCaseMock { get; } = new();
         public Mock<IPredisposicaoUseCase> PredisposicaoUseCaseMock { get; } = new();
         public Mock<IFeedbackNPSUseCase> FeedbackNPSUseCaseMock { get; } = new();
+        public Mock<IAuthUseCase> AuthUseCaseMock { get; } = new();
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
@@ -37,6 +40,7 @@ namespace Arkive_Tests.App
                 services.RemoveAll(typeof(IRacaUseCase));
                 services.RemoveAll(typeof(IPredisposicaoUseCase));
                 services.RemoveAll(typeof(IFeedbackNPSUseCase));
+                services.RemoveAll(typeof(IAuthUseCase));
 
                 services.AddSingleton(CategoriaDoencaUseCaseMock.Object);
                 services.AddSingleton(EspecieUseCaseMock.Object);
@@ -44,7 +48,19 @@ namespace Arkive_Tests.App
                 services.AddSingleton(RacaUseCaseMock.Object);
                 services.AddSingleton(PredisposicaoUseCaseMock.Object);
                 services.AddSingleton(FeedbackNPSUseCaseMock.Object);
+                services.AddSingleton(AuthUseCaseMock.Object);
             });
+        }
+
+        /// <summary>
+        /// Cliente HTTP já com "Authorization: Bearer" assinado pela chave de teste, no perfil informado.
+        /// </summary>
+        public HttpClient CreateAuthenticatedClient(string role = "SYSADMIN")
+        {
+            var client = CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",
+                AuthUseCase.GerarToken("teste@arkive.com", role, SecretkeyTeste));
+            return client;
         }
     }
 

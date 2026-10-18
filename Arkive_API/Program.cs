@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.OpenApi.Models;
 using Serilog;
 using Swashbuckle.AspNetCore.Filters;
 using System.Reflection;
@@ -35,6 +36,27 @@ builder.Services.AddSwaggerGen(c => {
     c.EnableAnnotations();
     c.ExampleFilters();
     c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
+
+    // Botão "Authorize" (cadeado): o Swagger passa a enviar Authorization: Bearer <token>
+    var securitySchema = new OpenApiSecurityScheme
+    {
+        Description = "Cole o token JWT retornado por POST /api/auth.",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        Reference = new OpenApiReference
+        {
+            Type = ReferenceType.SecurityScheme,
+            Id = "Bearer"
+        }
+    };
+    c.AddSecurityDefinition("Bearer", securitySchema);
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        { securitySchema, new[] { "Bearer" } }
+    });
 });
 
 builder.Services.AddSwaggerExamplesFromAssemblyOf<Program>();
