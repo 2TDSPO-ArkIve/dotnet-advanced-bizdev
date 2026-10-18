@@ -21,63 +21,70 @@ namespace Arkive_API.Application.UseCases
             _logger = logger;
         }
 
-        public async Task<OperationResult<IEnumerable<RacaEntity>>> ObterTodasAsync()
+        public async Task<OperationResult<PageResultModel<IEnumerable<RacaEntity>>>> ObterTodasAsync(int skip = 0, int take = 50)
         {
-            _logger.LogInformation("Obtendo todas as raças");
+            _logger.LogInformation("Obtendo todas as raças (skip {Skip}, take {Take})", skip, take);
 
             try
             {
-                var resultado = await _racaRepository.ObterTodosAsync();
+                var (s, t) = Pagination.Normalizar(skip, take);
+                var resultado = await _racaRepository.ObterTodosAsync(s, t);
 
-                if (!resultado.Any())
-                    return OperationResult<IEnumerable<RacaEntity>>.Failure("Nenhuma raça encontrada", 204);
+                if (!resultado.Data.Any())
+                    return OperationResult<PageResultModel<IEnumerable<RacaEntity>>>.Failure("Nenhuma raça encontrada", 204);
 
-                return OperationResult<IEnumerable<RacaEntity>>.Success(resultado);
+                resultado.Links = Pagination.Links("/api/racas", s, t, resultado.TotalRegistros);
+                resultado.Links.Add(new("/api/racas", "create_raca", "POST"));
+                return OperationResult<PageResultModel<IEnumerable<RacaEntity>>>.Success(resultado);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter todas as raças");
-                return OperationResult<IEnumerable<RacaEntity>>.Failure("Ocorreu um erro ao obter as raças");
+                return OperationResult<PageResultModel<IEnumerable<RacaEntity>>>.Failure("Ocorreu um erro ao obter as raças");
             }
         }
 
-        public async Task<OperationResult<IEnumerable<RacaEntity>>> ObterAtivasAsync()
+        public async Task<OperationResult<PageResultModel<IEnumerable<RacaEntity>>>> ObterAtivasAsync(int skip = 0, int take = 50)
         {
-            _logger.LogInformation("Obtendo raças ativas");
+            _logger.LogInformation("Obtendo raças ativas (skip {Skip}, take {Take})", skip, take);
 
             try
             {
-                var resultado = await _racaRepository.ObterAtivosAsync();
+                var (s, t) = Pagination.Normalizar(skip, take);
+                var resultado = await _racaRepository.ObterAtivosAsync(s, t);
 
-                if (!resultado.Any())
-                    return OperationResult<IEnumerable<RacaEntity>>.Failure("Nenhuma raça ativa encontrada", 204);
+                if (!resultado.Data.Any())
+                    return OperationResult<PageResultModel<IEnumerable<RacaEntity>>>.Failure("Nenhuma raça ativa encontrada", 204);
 
-                return OperationResult<IEnumerable<RacaEntity>>.Success(resultado);
+                resultado.Links = Pagination.Links("/api/racas/ativos", s, t, resultado.TotalRegistros);
+                return OperationResult<PageResultModel<IEnumerable<RacaEntity>>>.Success(resultado);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter raças ativas");
-                return OperationResult<IEnumerable<RacaEntity>>.Failure("Ocorreu um erro ao obter as raças ativas");
+                return OperationResult<PageResultModel<IEnumerable<RacaEntity>>>.Failure("Ocorreu um erro ao obter as raças ativas");
             }
         }
 
-        public async Task<OperationResult<IEnumerable<RacaEntity>>> ObterInativasAsync()
+        public async Task<OperationResult<PageResultModel<IEnumerable<RacaEntity>>>> ObterInativasAsync(int skip = 0, int take = 50)
         {
-            _logger.LogInformation("Obtendo raças inativas");
+            _logger.LogInformation("Obtendo raças inativas (skip {Skip}, take {Take})", skip, take);
 
             try
             {
-                var resultado = await _racaRepository.ObterInativosAsync();
+                var (s, t) = Pagination.Normalizar(skip, take);
+                var resultado = await _racaRepository.ObterInativosAsync(s, t);
 
-                if (!resultado.Any())
-                    return OperationResult<IEnumerable<RacaEntity>>.Failure("Nenhuma raça inativa encontrada", 204);
+                if (!resultado.Data.Any())
+                    return OperationResult<PageResultModel<IEnumerable<RacaEntity>>>.Failure("Nenhuma raça inativa encontrada", 204);
 
-                return OperationResult<IEnumerable<RacaEntity>>.Success(resultado);
+                resultado.Links = Pagination.Links("/api/racas/inativos", s, t, resultado.TotalRegistros);
+                return OperationResult<PageResultModel<IEnumerable<RacaEntity>>>.Success(resultado);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter raças inativas");
-                return OperationResult<IEnumerable<RacaEntity>>.Failure("Ocorreu um erro ao obter as raças inativas");
+                return OperationResult<PageResultModel<IEnumerable<RacaEntity>>>.Failure("Ocorreu um erro ao obter as raças inativas");
             }
         }
 

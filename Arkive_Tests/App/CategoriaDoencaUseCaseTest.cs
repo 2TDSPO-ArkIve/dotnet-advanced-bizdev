@@ -3,6 +3,7 @@ using Arkive_API.Application.Mappers;
 using Arkive_API.Application.UseCases;
 using Arkive_API.Domain.Entities;
 using Arkive_API.Domain.Interfaces;
+using Arkive_API.Domain.Models;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 
@@ -32,14 +33,14 @@ namespace Arkive_Tests.App
                 new CategoriaDoencaEntity { Id = 2, Nome = "Bacteriana", StAtivo = "N" }
             };
 
-            _categoriaDoencaRepository.Setup(obj => obj.ObterTodosAsync()).ReturnsAsync(categorias);
+            _categoriaDoencaRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new PageResultModel<IEnumerable<CategoriaDoencaEntity>> { Data = categorias });
 
             // Act
             var resultado = await _categoriaDoencaUseCase.ObterTodasAsync();
 
             // Assert
             Assert.True(resultado.IsSuccess);
-            Assert.Collection(resultado.Value!,
+            Assert.Collection(resultado.Value!.Data,
                 item => { Assert.Equal(1, item.Id); Assert.Equal("Viral", item.Nome); Assert.Equal("S", item.StAtivo); },
                 item => { Assert.Equal(2, item.Id); Assert.Equal("Bacteriana", item.Nome); Assert.Equal("N", item.StAtivo); });
         }
@@ -51,14 +52,14 @@ namespace Arkive_Tests.App
             // Arrange
             var categorias = new List<CategoriaDoencaEntity> { new CategoriaDoencaEntity { Id = 1, Nome = "Viral", StAtivo = "S" } };
 
-            _categoriaDoencaRepository.Setup(obj => obj.ObterAtivosAsync()).ReturnsAsync(categorias);
+            _categoriaDoencaRepository.Setup(obj => obj.ObterAtivosAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new PageResultModel<IEnumerable<CategoriaDoencaEntity>> { Data = categorias });
 
             // Act
             var resultado = await _categoriaDoencaUseCase.ObterAtivasAsync();
 
             // Assert
             Assert.True(resultado.IsSuccess);
-            Assert.Collection(resultado.Value!,
+            Assert.Collection(resultado.Value!.Data,
                 item => { Assert.Equal(1, item.Id); Assert.Equal("Viral", item.Nome); Assert.Equal("S", item.StAtivo); });
         }
 
@@ -69,14 +70,14 @@ namespace Arkive_Tests.App
             // Arrange
             var categorias = new List<CategoriaDoencaEntity> { new CategoriaDoencaEntity { Id = 2, Nome = "Bacteriana", StAtivo = "N" } };
 
-            _categoriaDoencaRepository.Setup(obj => obj.ObterInativosAsync()).ReturnsAsync(categorias);
+            _categoriaDoencaRepository.Setup(obj => obj.ObterInativosAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new PageResultModel<IEnumerable<CategoriaDoencaEntity>> { Data = categorias });
 
             // Act
             var resultado = await _categoriaDoencaUseCase.ObterInativasAsync();
 
             // Assert
             Assert.True(resultado.IsSuccess);
-            Assert.Collection(resultado.Value!,
+            Assert.Collection(resultado.Value!.Data,
                 item => { Assert.Equal(2, item.Id); Assert.Equal("Bacteriana", item.Nome); Assert.Equal("N", item.StAtivo); });
         }
 
@@ -219,7 +220,7 @@ namespace Arkive_Tests.App
         public async Task ObterTodasAsync_QuandoListaVazia_DeveRetornar204()
         {
             // Arrange
-            _categoriaDoencaRepository.Setup(obj => obj.ObterTodosAsync()).ReturnsAsync(new List<CategoriaDoencaEntity>());
+            _categoriaDoencaRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new PageResultModel<IEnumerable<CategoriaDoencaEntity>> { Data = new List<CategoriaDoencaEntity>() });
 
             // Act
             var resultado = await _categoriaDoencaUseCase.ObterTodasAsync();
@@ -234,7 +235,7 @@ namespace Arkive_Tests.App
         public async Task ObterTodasAsync_QuandoRepositorioFalha_DeveRetornar400SemVazarMensagem()
         {
             // Arrange
-            _categoriaDoencaRepository.Setup(obj => obj.ObterTodosAsync())
+            _categoriaDoencaRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>()))
                 .ThrowsAsync(new Exception("ORA-12541: detalhe interno"));
 
             // Act

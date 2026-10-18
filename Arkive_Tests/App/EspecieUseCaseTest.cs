@@ -3,6 +3,7 @@ using Arkive_API.Application.Mappers;
 using Arkive_API.Application.UseCases;
 using Arkive_API.Domain.Entities;
 using Arkive_API.Domain.Interfaces;
+using Arkive_API.Domain.Models;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 
@@ -32,14 +33,14 @@ namespace Arkive_Tests.App
                 new EspecieEntity { Id = 2, Especie = "Felina", StAtivo = "N" }
             };
 
-            _especieRepository.Setup(obj => obj.ObterTodosAsync()).ReturnsAsync(especies);
+            _especieRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new PageResultModel<IEnumerable<EspecieEntity>> { Data = especies });
 
             // Act
             var resultado = await _especieUseCase.ObterTodasAsync();
 
             // Assert
             Assert.True(resultado.IsSuccess);
-            Assert.Collection(resultado.Value!,
+            Assert.Collection(resultado.Value!.Data,
                 item => { Assert.Equal(1, item.Id); Assert.Equal("Canina", item.Especie); Assert.Equal("S", item.StAtivo); },
                 item => { Assert.Equal(2, item.Id); Assert.Equal("Felina", item.Especie); Assert.Equal("N", item.StAtivo); });
         }
@@ -51,14 +52,14 @@ namespace Arkive_Tests.App
             // Arrange
             var especies = new List<EspecieEntity> { new EspecieEntity { Id = 1, Especie = "Canina", StAtivo = "S" } };
 
-            _especieRepository.Setup(obj => obj.ObterAtivosAsync()).ReturnsAsync(especies);
+            _especieRepository.Setup(obj => obj.ObterAtivosAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new PageResultModel<IEnumerable<EspecieEntity>> { Data = especies });
 
             // Act
             var resultado = await _especieUseCase.ObterAtivasAsync();
 
             // Assert
             Assert.True(resultado.IsSuccess);
-            Assert.Collection(resultado.Value!,
+            Assert.Collection(resultado.Value!.Data,
                 item => { Assert.Equal(1, item.Id); Assert.Equal("Canina", item.Especie); Assert.Equal("S", item.StAtivo); });
         }
 
@@ -69,14 +70,14 @@ namespace Arkive_Tests.App
             // Arrange
             var especies = new List<EspecieEntity> { new EspecieEntity { Id = 2, Especie = "Felina", StAtivo = "N" } };
 
-            _especieRepository.Setup(obj => obj.ObterInativosAsync()).ReturnsAsync(especies);
+            _especieRepository.Setup(obj => obj.ObterInativosAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new PageResultModel<IEnumerable<EspecieEntity>> { Data = especies });
 
             // Act
             var resultado = await _especieUseCase.ObterInativasAsync();
 
             // Assert
             Assert.True(resultado.IsSuccess);
-            Assert.Collection(resultado.Value!,
+            Assert.Collection(resultado.Value!.Data,
                 item => { Assert.Equal(2, item.Id); Assert.Equal("Felina", item.Especie); Assert.Equal("N", item.StAtivo); });
         }
 
@@ -219,7 +220,7 @@ namespace Arkive_Tests.App
         public async Task ObterTodasAsync_QuandoListaVazia_DeveRetornar204()
         {
             // Arrange
-            _especieRepository.Setup(obj => obj.ObterTodosAsync()).ReturnsAsync(new List<EspecieEntity>());
+            _especieRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new PageResultModel<IEnumerable<EspecieEntity>> { Data = new List<EspecieEntity>() });
 
             // Act
             var resultado = await _especieUseCase.ObterTodasAsync();
@@ -234,7 +235,7 @@ namespace Arkive_Tests.App
         public async Task ObterTodasAsync_QuandoRepositorioFalha_DeveRetornar400SemVazarMensagem()
         {
             // Arrange
-            _especieRepository.Setup(obj => obj.ObterTodosAsync())
+            _especieRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>()))
                 .ThrowsAsync(new Exception("ORA-12541: detalhe interno"));
 
             // Act

@@ -3,6 +3,7 @@ using Arkive_API.Application.Dtos;
 using Arkive_API.Application.Interfaces;
 using Arkive_API.Doc.Samples;
 using Arkive_API.Domain.Entities;
+using Arkive_API.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
@@ -41,15 +42,15 @@ namespace Arkive_API.Presentation.Controllers
             * Este endpoint não filtra por status; use `/ativos` ou `/inativos` para isso.
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<RacaEntity>))]
+        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<RacaEntity>>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma raça encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
         [SwaggerResponseExample(statusCode: 200, typeof(RacaResponseListSample))]
-        public async Task<IActionResult> GetAllRacas()
+        public async Task<IActionResult> GetAllRacas(int skip = 0, int take = 50)
         {
-            _logger.LogInformation("Listando todas as raças");
+            _logger.LogInformation("Listando todas as raças (skip {Skip}, take {Take})", skip, take);
 
-            var resultado = await _racaUseCase.ObterTodasAsync();
+            var resultado = await _racaUseCase.ObterTodasAsync(skip, take);
 
             if (resultado.StatusCode == 204) return NoContent();
             if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
@@ -70,14 +71,14 @@ namespace Arkive_API.Presentation.Controllers
             * Raças inativas (excluídas logicamente) não aparecem neste retorno.
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<RacaEntity>))]
+        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<RacaEntity>>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma raça ativa encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
-        public async Task<IActionResult> GetRacasAtivas()
+        public async Task<IActionResult> GetRacasAtivas(int skip = 0, int take = 50)
         {
-            _logger.LogInformation("Listando raças ativas");
+            _logger.LogInformation("Listando raças ativas (skip {Skip}, take {Take})", skip, take);
 
-            var resultado = await _racaUseCase.ObterAtivasAsync();
+            var resultado = await _racaUseCase.ObterAtivasAsync(skip, take);
 
             if (resultado.StatusCode == 204) return NoContent();
             if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
@@ -98,14 +99,14 @@ namespace Arkive_API.Presentation.Controllers
             * Raças inativas são registros excluídos logicamente (soft delete), não removidos fisicamente.
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<RacaEntity>))]
+        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<RacaEntity>>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma raça inativa encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
-        public async Task<IActionResult> GetRacasInativas()
+        public async Task<IActionResult> GetRacasInativas(int skip = 0, int take = 50)
         {
-            _logger.LogInformation("Listando raças inativas");
+            _logger.LogInformation("Listando raças inativas (skip {Skip}, take {Take})", skip, take);
 
-            var resultado = await _racaUseCase.ObterInativasAsync();
+            var resultado = await _racaUseCase.ObterInativasAsync(skip, take);
 
             if (resultado.StatusCode == 204) return NoContent();
             if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);

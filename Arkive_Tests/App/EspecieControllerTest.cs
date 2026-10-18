@@ -27,19 +27,19 @@ namespace Arkive_Tests.App
         public async Task GetAll_ComListaDeEspecies_DeveRetornar200()
         {
             // Arrange
-            _useCase.Setup(x => x.ObterTodasAsync()).ReturnsAsync(OperationResult<IEnumerable<EspecieEntity>>.Success(new List<EspecieEntity>
+            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(OperationResult<PageResultModel<IEnumerable<EspecieEntity>>>.Success(new PageResultModel<IEnumerable<EspecieEntity>> { Data = new List<EspecieEntity>
             {
                 new EspecieEntity { Id = 1, Especie = "Canina", StAtivo = "S" },
                 new EspecieEntity { Id = 2, Especie = "Felina", StAtivo = "S" }
-            }));
+            } }));
 
             // Act
             var response = await _client.GetAsync("/api/especies");
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var body = await response.Content.ReadFromJsonAsync<List<EspecieEntity>>();
-            Assert.Equal(2, body!.Count);
+            var body = await response.Content.ReadFromJsonAsync<PageResultModel<List<EspecieEntity>>>();
+            Assert.Equal(2, body!.Data.Count);
         }
 
         [Fact]
@@ -47,7 +47,7 @@ namespace Arkive_Tests.App
         public async Task GetAll_QuandoNaoHaEspecies_DeveRetornar204()
         {
             // Arrange
-            _useCase.Setup(x => x.ObterTodasAsync()).ReturnsAsync(OperationResult<IEnumerable<EspecieEntity>>.Failure("Nenhuma espécie encontrada", 204));
+            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(OperationResult<PageResultModel<IEnumerable<EspecieEntity>>>.Failure("Nenhuma espécie encontrada", 204));
 
             // Act
             var response = await _client.GetAsync("/api/especies");

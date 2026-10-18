@@ -1,12 +1,13 @@
 using Arkive_API.Domain.Entities;
+using Arkive_API.Domain.Models;
 
 namespace Arkive_API.Domain.Interfaces
 {
     public interface IEspecieRepository
     {
-        Task<IEnumerable<EspecieEntity>> ObterTodosAsync();
-        Task<IEnumerable<EspecieEntity>> ObterAtivosAsync();
-        Task<IEnumerable<EspecieEntity>> ObterInativosAsync();
+        Task<PageResultModel<IEnumerable<EspecieEntity>>> ObterTodosAsync(int skip = 0, int take = 50);
+        Task<PageResultModel<IEnumerable<EspecieEntity>>> ObterAtivosAsync(int skip = 0, int take = 50);
+        Task<PageResultModel<IEnumerable<EspecieEntity>>> ObterInativosAsync(int skip = 0, int take = 50);
         Task<EspecieEntity?> ObterPorIdAsync(int id);
         Task<EspecieEntity?> AdicionarAsync(EspecieEntity entity);
         Task<EspecieEntity?> EditarAsync(int id, EspecieEntity entity);

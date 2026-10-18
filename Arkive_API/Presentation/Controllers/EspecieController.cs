@@ -3,6 +3,7 @@ using Arkive_API.Application.Dtos;
 using Arkive_API.Application.Interfaces;
 using Arkive_API.Doc.Samples;
 using Arkive_API.Domain.Entities;
+using Arkive_API.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
@@ -40,15 +41,15 @@ namespace Arkive_API.Presentation.Controllers
             * Este endpoint não filtra por status; use `/ativos` ou `/inativos` para isso.
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<EspecieEntity>))]
+        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<EspecieEntity>>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma espécie encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
         [SwaggerResponseExample(statusCode: 200, typeof(EspecieResponseListSample))]
-        public async Task<IActionResult> GetAllEspecies()
+        public async Task<IActionResult> GetAllEspecies(int skip = 0, int take = 50)
         {
-            _logger.LogInformation("Listando todas as espécies");
+            _logger.LogInformation("Listando todas as espécies (skip {Skip}, take {Take})", skip, take);
 
-            var resultado = await _especieUseCase.ObterTodasAsync();
+            var resultado = await _especieUseCase.ObterTodasAsync(skip, take);
 
             if (resultado.StatusCode == 204) return NoContent();
             if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
@@ -68,14 +69,14 @@ namespace Arkive_API.Presentation.Controllers
             * Espécies inativas (excluídas logicamente) não aparecem neste retorno.
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<EspecieEntity>))]
+        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<EspecieEntity>>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma espécie ativa encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
-        public async Task<IActionResult> GetEspeciesAtivas()
+        public async Task<IActionResult> GetEspeciesAtivas(int skip = 0, int take = 50)
         {
-            _logger.LogInformation("Listando espécies ativas");
+            _logger.LogInformation("Listando espécies ativas (skip {Skip}, take {Take})", skip, take);
 
-            var resultado = await _especieUseCase.ObterAtivasAsync();
+            var resultado = await _especieUseCase.ObterAtivasAsync(skip, take);
 
             if (resultado.StatusCode == 204) return NoContent();
             if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
@@ -95,14 +96,14 @@ namespace Arkive_API.Presentation.Controllers
             * Espécies inativas são registros excluídos logicamente (soft delete), não removidos fisicamente.
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<EspecieEntity>))]
+        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<EspecieEntity>>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma espécie inativa encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
-        public async Task<IActionResult> GetEspeciesInativas()
+        public async Task<IActionResult> GetEspeciesInativas(int skip = 0, int take = 50)
         {
-            _logger.LogInformation("Listando espécies inativas");
+            _logger.LogInformation("Listando espécies inativas (skip {Skip}, take {Take})", skip, take);
 
-            var resultado = await _especieUseCase.ObterInativasAsync();
+            var resultado = await _especieUseCase.ObterInativasAsync(skip, take);
 
             if (resultado.StatusCode == 204) return NoContent();
             if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);

@@ -3,6 +3,7 @@ using Arkive_API.Application.Mappers;
 using Arkive_API.Application.UseCases;
 using Arkive_API.Domain.Entities;
 using Arkive_API.Domain.Interfaces;
+using Arkive_API.Domain.Models;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 
@@ -34,14 +35,14 @@ namespace Arkive_Tests.App
                 new RacaEntity { Id = 2, Raca = "Siamês", StAtivo = "N" }
             };
 
-            _racaRepository.Setup(obj => obj.ObterTodosAsync()).ReturnsAsync(racas);
+            _racaRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new PageResultModel<IEnumerable<RacaEntity>> { Data = racas });
 
             // Act
             var resultado = await _racaUseCase.ObterTodasAsync();
 
             // Assert
             Assert.True(resultado.IsSuccess);
-            Assert.Collection(resultado.Value!,
+            Assert.Collection(resultado.Value!.Data,
                 item =>
                 {
                     Assert.Equal(1, item.Id);
@@ -63,14 +64,14 @@ namespace Arkive_Tests.App
             // Arrange
             var racas = new List<RacaEntity> { new RacaEntity { Id = 1, Raca = "Labrador", StAtivo = "S" } };
 
-            _racaRepository.Setup(obj => obj.ObterAtivosAsync()).ReturnsAsync(racas);
+            _racaRepository.Setup(obj => obj.ObterAtivosAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new PageResultModel<IEnumerable<RacaEntity>> { Data = racas });
 
             // Act
             var resultado = await _racaUseCase.ObterAtivasAsync();
 
             // Assert
             Assert.True(resultado.IsSuccess);
-            Assert.Collection(resultado.Value!,
+            Assert.Collection(resultado.Value!.Data,
                 item =>
                 {
                     Assert.Equal(1, item.Id);
@@ -86,14 +87,14 @@ namespace Arkive_Tests.App
             // Arrange
             var racas = new List<RacaEntity> { new RacaEntity { Id = 2, Raca = "Siamês", StAtivo = "N" } };
 
-            _racaRepository.Setup(obj => obj.ObterInativosAsync()).ReturnsAsync(racas);
+            _racaRepository.Setup(obj => obj.ObterInativosAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new PageResultModel<IEnumerable<RacaEntity>> { Data = racas });
 
             // Act
             var resultado = await _racaUseCase.ObterInativasAsync();
 
             // Assert
             Assert.True(resultado.IsSuccess);
-            Assert.Collection(resultado.Value!,
+            Assert.Collection(resultado.Value!.Data,
                 item =>
                 {
                     Assert.Equal(2, item.Id);
@@ -316,7 +317,7 @@ namespace Arkive_Tests.App
         public async Task ObterTodasAsync_QuandoListaVazia_DeveRetornar204()
         {
             // Arrange
-            _racaRepository.Setup(obj => obj.ObterTodosAsync()).ReturnsAsync(new List<RacaEntity>());
+            _racaRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new PageResultModel<IEnumerable<RacaEntity>> { Data = new List<RacaEntity>() });
 
             // Act
             var resultado = await _racaUseCase.ObterTodasAsync();
@@ -331,7 +332,7 @@ namespace Arkive_Tests.App
         public async Task ObterTodasAsync_QuandoRepositorioFalha_DeveRetornar400SemVazarMensagem()
         {
             // Arrange
-            _racaRepository.Setup(obj => obj.ObterTodosAsync())
+            _racaRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>()))
                 .ThrowsAsync(new Exception("ORA-12541: detalhe interno"));
 
             // Act

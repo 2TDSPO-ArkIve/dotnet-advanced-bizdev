@@ -46,10 +46,29 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Collection(resultado,
+            Assert.Collection(resultado.Data,
                 item => { Assert.Equal("Canina", item.Especie); Assert.Equal("S", item.StAtivo); },
                 item => { Assert.Equal("Felina", item.Especie); Assert.Equal("N", item.StAtivo); },
                 item => { Assert.Equal("Equina", item.Especie); Assert.Equal("S", item.StAtivo); });
+        }
+
+        [Fact]
+        [Trait("Repository", "Especies")]
+        public async Task ObterTodosAsync_ComSkipETake_DeveRetornarSomenteAPaginaPedida()
+        {
+            // Arrange
+            _applicationContext.Especie.AddRange(
+                new EspecieEntity { Especie = "Canina", StAtivo = "S" },
+                new EspecieEntity { Especie = "Felina", StAtivo = "S" },
+                new EspecieEntity { Especie = "Equina", StAtivo = "S" });
+            _applicationContext.SaveChanges();
+
+            // Act
+            var resultado = await _especieRepository.ObterTodosAsync(skip: 1, take: 1);
+
+            // Assert
+            Assert.Equal(3, resultado.TotalRegistros); // total ignora a paginação
+            Assert.Equal("Felina", Assert.Single(resultado.Data).Especie);
         }
 
         [Fact]
@@ -71,7 +90,7 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Collection(resultado,
+            Assert.Collection(resultado.Data,
                 item => { Assert.Equal("Canina", item.Especie); Assert.Equal("S", item.StAtivo); });
         }
 
@@ -94,7 +113,7 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Collection(resultado,
+            Assert.Collection(resultado.Data,
                 item => { Assert.Equal("Felina", item.Especie); Assert.Equal("N", item.StAtivo); });
         }
 

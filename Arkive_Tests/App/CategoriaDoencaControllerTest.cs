@@ -32,16 +32,16 @@ namespace Arkive_Tests.App
                 new CategoriaDoencaEntity { Id = 1, Nome = "Viral", StAtivo = "S" },
                 new CategoriaDoencaEntity { Id = 2, Nome = "Bacteriana", StAtivo = "S" }
             };
-            _useCase.Setup(x => x.ObterTodasAsync()).ReturnsAsync(OperationResult<IEnumerable<CategoriaDoencaEntity>>.Success(categorias));
+            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(OperationResult<PageResultModel<IEnumerable<CategoriaDoencaEntity>>>.Success(new PageResultModel<IEnumerable<CategoriaDoencaEntity>> { Data = categorias }));
 
             // Act
             var response = await _client.GetAsync("/api/categorias-doenca");
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var body = await response.Content.ReadFromJsonAsync<List<CategoriaDoencaEntity>>();
+            var body = await response.Content.ReadFromJsonAsync<PageResultModel<List<CategoriaDoencaEntity>>>();
             Assert.NotNull(body);
-            Assert.Equal(2, body!.Count);
+            Assert.Equal(2, body!.Data.Count);
         }
 
         [Fact]
@@ -49,7 +49,7 @@ namespace Arkive_Tests.App
         public async Task GetAll_QuandoNaoHaCategorias_DeveRetornar204()
         {
             // Arrange
-            _useCase.Setup(x => x.ObterTodasAsync()).ReturnsAsync(OperationResult<IEnumerable<CategoriaDoencaEntity>>.Failure("Nenhuma categoria de doença encontrada", 204));
+            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(OperationResult<PageResultModel<IEnumerable<CategoriaDoencaEntity>>>.Failure("Nenhuma categoria de doença encontrada", 204));
 
             // Act
             var response = await _client.GetAsync("/api/categorias-doenca");

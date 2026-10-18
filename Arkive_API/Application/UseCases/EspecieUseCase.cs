@@ -18,63 +18,70 @@ namespace Arkive_API.Application.UseCases
             _logger = logger;
         }
 
-        public async Task<OperationResult<IEnumerable<EspecieEntity>>> ObterTodasAsync()
+        public async Task<OperationResult<PageResultModel<IEnumerable<EspecieEntity>>>> ObterTodasAsync(int skip = 0, int take = 50)
         {
-            _logger.LogInformation("Obtendo todas as espécies");
+            _logger.LogInformation("Obtendo todas as espécies (skip {Skip}, take {Take})", skip, take);
 
             try
             {
-                var resultado = await _especieRepository.ObterTodosAsync();
+                var (s, t) = Pagination.Normalizar(skip, take);
+                var resultado = await _especieRepository.ObterTodosAsync(s, t);
 
-                if (!resultado.Any())
-                    return OperationResult<IEnumerable<EspecieEntity>>.Failure("Nenhuma espécie encontrada", 204);
+                if (!resultado.Data.Any())
+                    return OperationResult<PageResultModel<IEnumerable<EspecieEntity>>>.Failure("Nenhuma espécie encontrada", 204);
 
-                return OperationResult<IEnumerable<EspecieEntity>>.Success(resultado);
+                resultado.Links = Pagination.Links("/api/especies", s, t, resultado.TotalRegistros);
+                resultado.Links.Add(new("/api/especies", "create_especie", "POST"));
+                return OperationResult<PageResultModel<IEnumerable<EspecieEntity>>>.Success(resultado);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter todas as espécies");
-                return OperationResult<IEnumerable<EspecieEntity>>.Failure("Ocorreu um erro ao obter as espécies");
+                return OperationResult<PageResultModel<IEnumerable<EspecieEntity>>>.Failure("Ocorreu um erro ao obter as espécies");
             }
         }
 
-        public async Task<OperationResult<IEnumerable<EspecieEntity>>> ObterAtivasAsync()
+        public async Task<OperationResult<PageResultModel<IEnumerable<EspecieEntity>>>> ObterAtivasAsync(int skip = 0, int take = 50)
         {
-            _logger.LogInformation("Obtendo espécies ativas");
+            _logger.LogInformation("Obtendo espécies ativas (skip {Skip}, take {Take})", skip, take);
 
             try
             {
-                var resultado = await _especieRepository.ObterAtivosAsync();
+                var (s, t) = Pagination.Normalizar(skip, take);
+                var resultado = await _especieRepository.ObterAtivosAsync(s, t);
 
-                if (!resultado.Any())
-                    return OperationResult<IEnumerable<EspecieEntity>>.Failure("Nenhuma espécie ativa encontrada", 204);
+                if (!resultado.Data.Any())
+                    return OperationResult<PageResultModel<IEnumerable<EspecieEntity>>>.Failure("Nenhuma espécie ativa encontrada", 204);
 
-                return OperationResult<IEnumerable<EspecieEntity>>.Success(resultado);
+                resultado.Links = Pagination.Links("/api/especies/ativos", s, t, resultado.TotalRegistros);
+                return OperationResult<PageResultModel<IEnumerable<EspecieEntity>>>.Success(resultado);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter espécies ativas");
-                return OperationResult<IEnumerable<EspecieEntity>>.Failure("Ocorreu um erro ao obter as espécies ativas");
+                return OperationResult<PageResultModel<IEnumerable<EspecieEntity>>>.Failure("Ocorreu um erro ao obter as espécies ativas");
             }
         }
 
-        public async Task<OperationResult<IEnumerable<EspecieEntity>>> ObterInativasAsync()
+        public async Task<OperationResult<PageResultModel<IEnumerable<EspecieEntity>>>> ObterInativasAsync(int skip = 0, int take = 50)
         {
-            _logger.LogInformation("Obtendo espécies inativas");
+            _logger.LogInformation("Obtendo espécies inativas (skip {Skip}, take {Take})", skip, take);
 
             try
             {
-                var resultado = await _especieRepository.ObterInativosAsync();
+                var (s, t) = Pagination.Normalizar(skip, take);
+                var resultado = await _especieRepository.ObterInativosAsync(s, t);
 
-                if (!resultado.Any())
-                    return OperationResult<IEnumerable<EspecieEntity>>.Failure("Nenhuma espécie inativa encontrada", 204);
+                if (!resultado.Data.Any())
+                    return OperationResult<PageResultModel<IEnumerable<EspecieEntity>>>.Failure("Nenhuma espécie inativa encontrada", 204);
 
-                return OperationResult<IEnumerable<EspecieEntity>>.Success(resultado);
+                resultado.Links = Pagination.Links("/api/especies/inativos", s, t, resultado.TotalRegistros);
+                return OperationResult<PageResultModel<IEnumerable<EspecieEntity>>>.Success(resultado);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter espécies inativas");
-                return OperationResult<IEnumerable<EspecieEntity>>.Failure("Ocorreu um erro ao obter as espécies inativas");
+                return OperationResult<PageResultModel<IEnumerable<EspecieEntity>>>.Failure("Ocorreu um erro ao obter as espécies inativas");
             }
         }
 

@@ -3,6 +3,7 @@ using Arkive_API.Application.Dtos;
 using Arkive_API.Application.Interfaces;
 using Arkive_API.Doc.Samples;
 using Arkive_API.Domain.Entities;
+using Arkive_API.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
@@ -40,15 +41,15 @@ namespace Arkive_API.Presentation.Controllers
             * Este endpoint não filtra por status; use `/ativos` ou `/inativos` para isso.
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<CategoriaDoencaEntity>))]
+        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<CategoriaDoencaEntity>>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma categoria encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
         [SwaggerResponseExample(statusCode: 200, typeof(CategoriaDoencaResponseListSample))]
-        public async Task<IActionResult> GetAllCategorias()
+        public async Task<IActionResult> GetAllCategorias(int skip = 0, int take = 50)
         {
-            _logger.LogInformation("Listando todas as categorias de doença");
+            _logger.LogInformation("Listando todas as categorias de doença (skip {Skip}, take {Take})", skip, take);
 
-            var resultado = await _categoriaDoencaUseCase.ObterTodasAsync();
+            var resultado = await _categoriaDoencaUseCase.ObterTodasAsync(skip, take);
 
             if (resultado.StatusCode == 204) return NoContent();
             if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
@@ -68,14 +69,14 @@ namespace Arkive_API.Presentation.Controllers
             * Categorias inativas (excluídas logicamente) não aparecem neste retorno.
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<CategoriaDoencaEntity>))]
+        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<CategoriaDoencaEntity>>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma categoria ativa encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
-        public async Task<IActionResult> GetCategoriasAtivas()
+        public async Task<IActionResult> GetCategoriasAtivas(int skip = 0, int take = 50)
         {
-            _logger.LogInformation("Listando categorias de doença ativas");
+            _logger.LogInformation("Listando categorias de doença ativas (skip {Skip}, take {Take})", skip, take);
 
-            var resultado = await _categoriaDoencaUseCase.ObterAtivasAsync();
+            var resultado = await _categoriaDoencaUseCase.ObterAtivasAsync(skip, take);
 
             if (resultado.StatusCode == 204) return NoContent();
             if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
@@ -95,14 +96,14 @@ namespace Arkive_API.Presentation.Controllers
             * Categorias inativas são registros excluídos logicamente (soft delete), não removidos fisicamente.
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<CategoriaDoencaEntity>))]
+        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<CategoriaDoencaEntity>>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma categoria inativa encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
-        public async Task<IActionResult> GetCategoriasInativas()
+        public async Task<IActionResult> GetCategoriasInativas(int skip = 0, int take = 50)
         {
-            _logger.LogInformation("Listando categorias de doença inativas");
+            _logger.LogInformation("Listando categorias de doença inativas (skip {Skip}, take {Take})", skip, take);
 
-            var resultado = await _categoriaDoencaUseCase.ObterInativasAsync();
+            var resultado = await _categoriaDoencaUseCase.ObterInativasAsync(skip, take);
 
             if (resultado.StatusCode == 204) return NoContent();
             if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);

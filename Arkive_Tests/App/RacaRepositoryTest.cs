@@ -60,18 +60,19 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Collection(resultado,
-                item =>
-                {
-                    Assert.Equal("Siamês", item.Raca);
-                    Assert.Equal(2, item.IdEspecie);
-                    Assert.Equal("N", item.StAtivo);
-                },
+            // repositório ordena por Id (Skip/Take determinístico): ordem de inserção
+            Assert.Collection(resultado.Data,
                 item =>
                 {
                     Assert.Equal("Labrador", item.Raca);
                     Assert.Equal(1, item.IdEspecie);
                     Assert.Equal("S", item.StAtivo);
+                },
+                item =>
+                {
+                    Assert.Equal("Siamês", item.Raca);
+                    Assert.Equal(2, item.IdEspecie);
+                    Assert.Equal("N", item.StAtivo);
                 });
         }
 
@@ -94,7 +95,7 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Collection(resultado,
+            Assert.Collection(resultado.Data,
                 item =>
                 {
                     Assert.Equal("Labrador", item.Raca);
@@ -122,7 +123,7 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Collection(resultado,
+            Assert.Collection(resultado.Data,
                 item =>
                 {
                     Assert.Equal("Siamês", item.Raca);
