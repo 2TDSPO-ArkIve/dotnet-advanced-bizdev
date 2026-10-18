@@ -62,14 +62,14 @@ namespace Arkive_Tests.App
         {
             // Arrange
             _useCase.Setup(x => x.ObterPorIdAsync(3))
-                .ReturnsAsync(OperationResult<RacaEntity?>.Success(new RacaEntity { Id = 3, Raca = "Bulldog", IdEspecie = 1, StAtivo = "S" }));
+                .ReturnsAsync(OperationResult<GetRacaDto?>.Success(new GetRacaDto { Id = 3, Raca = "Bulldog", IdEspecie = 1, StAtivo = "S" }));
 
             // Act
             var response = await _client.GetAsync("/api/racas/3");
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var body = await response.Content.ReadFromJsonAsync<RacaEntity>();
+            var body = await response.Content.ReadFromJsonAsync<GetRacaDto>();
             Assert.Equal("Bulldog", body!.Raca);
         }
 
@@ -78,7 +78,7 @@ namespace Arkive_Tests.App
         public async Task GetById_QuandoRacaNaoExiste_DeveRetornar404()
         {
             // Arrange
-            _useCase.Setup(x => x.ObterPorIdAsync(It.IsAny<int>())).ReturnsAsync(OperationResult<RacaEntity?>.Failure("Raça não encontrada", 404));
+            _useCase.Setup(x => x.ObterPorIdAsync(It.IsAny<int>())).ReturnsAsync(OperationResult<GetRacaDto?>.Failure("Raça não encontrada", 404));
 
             // Act
             var response = await _client.GetAsync("/api/racas/999");

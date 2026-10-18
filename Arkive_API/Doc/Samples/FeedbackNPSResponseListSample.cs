@@ -38,7 +38,7 @@ namespace Arkive_API.Doc.Samples
             };
 
             var links = Pagination.Links("/api/feedbacks-nps", 0, 2, 10);
-            links.Add(new("/api/feedbacks-nps", "create", "POST"));
+            links.Add(new("/api/feedbacks-nps", "create_feedback_nps", "POST"));
 
             return new PageResultModel<IEnumerable<FeedbackNPSEntity>>
             {

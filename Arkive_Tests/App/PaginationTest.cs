@@ -54,5 +54,20 @@ namespace Arkive_Tests.App
             Assert.Equal(new[] { "self", "prev" }, ultima.Select(l => l.Rel));
             Assert.Equal("/x?skip=10&take=10", ultima[1].Href);
         }
+
+        [Fact]
+        [Trait("Helper", "Pagination")]
+        public void ItemLinks_SemEdicao_OmitePut()
+        {
+            // Act
+            var editavel = Pagination.ItemLinks("/api/doencas", 3, "doenca");
+            var semPut = Pagination.ItemLinks("/api/predisposicoes", 3, "predisposicao", editavel: false);
+
+            // Assert
+            Assert.Equal(new[] { "self", "put_doenca", "delete_doenca" }, editavel.Select(l => l.Rel));
+            Assert.Equal(new[] { "GET", "PUT", "DELETE" }, editavel.Select(l => l.Method));
+            Assert.All(editavel, l => Assert.Equal("/api/doencas/3", l.Href));
+            Assert.Equal(new[] { "self", "delete_predisposicao" }, semPut.Select(l => l.Rel));
+        }
     }
 }

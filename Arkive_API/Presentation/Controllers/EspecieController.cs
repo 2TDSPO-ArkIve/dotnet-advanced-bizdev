@@ -122,10 +122,10 @@ namespace Arkive_API.Presentation.Controllers
             * A busca por ID retorna a espécie independente do status (ativa ou inativa).
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Espécie retornada com sucesso", type: typeof(EspecieEntity))]
+        [SwaggerResponse(statusCode: 200, description: "Espécie retornada com sucesso", type: typeof(GetEspecieDto))]
         [SwaggerResponse(statusCode: 404, description: "Espécie não encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
-        [SwaggerResponseExample(statusCode: 200, typeof(EspecieResponseSample))]
+        [SwaggerResponseExample(statusCode: 200, typeof(EspecieByIdResponseSample))]
         public async Task<IActionResult> GetEspecieById(int id)
         {
             _logger.LogInformation("Buscando espécie {Id}", id);

@@ -9,7 +9,7 @@ namespace Arkive_API.Application.Interfaces
         Task<OperationResult<PageResultModel<IEnumerable<DoencaEntity>>>> ObterTodasAsync(int skip = 0, int take = 50);
         Task<OperationResult<PageResultModel<IEnumerable<DoencaEntity>>>> ObterAtivasAsync(int skip = 0, int take = 50);
         Task<OperationResult<PageResultModel<IEnumerable<DoencaEntity>>>> ObterInativasAsync(int skip = 0, int take = 50);
-        Task<OperationResult<DoencaEntity?>> ObterPorIdAsync(int id);
+        Task<OperationResult<GetDoencaDto?>> ObterPorIdAsync(int id);
         Task<OperationResult<IEnumerable<DoencaEntity>>> ObterPorNomeAsync(string nome);
         Task<OperationResult<IEnumerable<DoencaEntity>>> ObterPorCategoriaAsync(int idCategoria);
 

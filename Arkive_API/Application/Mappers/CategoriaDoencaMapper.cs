@@ -1,5 +1,6 @@
 using Arkive_API.Application.Dtos;
 using Arkive_API.Domain.Entities;
+using Arkive_API.Domain.Models;
 
 namespace Arkive_API.Application.Mappers
 {
@@ -10,6 +11,17 @@ namespace Arkive_API.Application.Mappers
             return new CategoriaDoencaEntity
             {
                 Nome = obj.Nome
+            };
+        }
+
+        public static GetCategoriaDoencaDto ToCategoriaDoencaDto(this CategoriaDoencaEntity obj, IEnumerable<LinkDto> links)
+        {
+            return new GetCategoriaDoencaDto
+            {
+                Id = obj.Id,
+                Nome = obj.Nome,
+                StAtivo = obj.StAtivo,
+                Links = links.ToList()
             };
         }
     }

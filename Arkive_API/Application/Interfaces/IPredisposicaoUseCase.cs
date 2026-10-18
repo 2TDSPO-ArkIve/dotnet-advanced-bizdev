@@ -7,7 +7,7 @@ namespace Arkive_API.Application.Interfaces
     public interface IPredisposicaoUseCase
     {
         Task<OperationResult<PageResultModel<IEnumerable<PredisposicaoEntity>>>> ObterTodasAsync(int skip = 0, int take = 50);
-        Task<OperationResult<PredisposicaoEntity?>> ObterPorIdAsync(int id);
+        Task<OperationResult<GetPredisposicaoDto?>> ObterPorIdAsync(int id);
         Task<OperationResult<PageResultModel<IEnumerable<PredisposicaoEntity>>>> ObterPorEspecieAsync(int idEspecie, int skip = 0, int take = 50);
         Task<OperationResult<PageResultModel<IEnumerable<PredisposicaoEntity>>>> ObterPorRacaAsync(int idRaca, int skip = 0, int take = 50);
         Task<OperationResult<PageResultModel<IEnumerable<PredisposicaoEntity>>>> ObterPorDoencaAsync(int idDoenca, int skip = 0, int take = 50);

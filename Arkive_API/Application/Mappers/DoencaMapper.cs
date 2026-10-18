@@ -1,5 +1,6 @@
 using Arkive_API.Application.Dtos;
 using Arkive_API.Domain.Entities;
+using Arkive_API.Domain.Models;
 
 namespace Arkive_API.Application.Mappers
 {
@@ -14,6 +15,22 @@ namespace Arkive_API.Application.Mappers
                 Descricao = obj.Descricao,
                 CID = obj.CID,
                 Sintomas = obj.Sintomas
+            };
+        }
+
+        public static GetDoencaDto ToDoencaDto(this DoencaEntity obj, IEnumerable<LinkDto> links)
+        {
+            return new GetDoencaDto
+            {
+                Id = obj.Id,
+                Nome = obj.Nome,
+                IdCategoria = obj.IdCategoria,
+                Categoria = obj.Categoria,
+                Descricao = obj.Descricao,
+                CID = obj.CID,
+                Sintomas = obj.Sintomas,
+                StAtivo = obj.StAtivo,
+                Links = links.ToList()
             };
         }
     }

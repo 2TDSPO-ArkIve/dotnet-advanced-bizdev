@@ -25,5 +25,16 @@ namespace Arkive_API.Application
             if (skip > 0) links.Add(new($"{path}?skip={Math.Max(skip - take, 0)}&take={take}", "prev"));
             return links;
         }
+
+        /// <summary>
+        /// Monta os links HATEOAS de um item: self sempre, put_{recurso} se o recurso aceita edição e delete_{recurso}.
+        /// </summary>
+        public static List<LinkDto> ItemLinks(string path, int id, string recurso, bool editavel = true)
+        {
+            var links = new List<LinkDto> { new($"{path}/{id}", "self") };
+            if (editavel) links.Add(new($"{path}/{id}", $"put_{recurso}", "PUT"));
+            links.Add(new($"{path}/{id}", $"delete_{recurso}", "DELETE"));
+            return links;
+        }
     }
 }

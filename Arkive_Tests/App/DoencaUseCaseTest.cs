@@ -107,6 +107,7 @@ namespace Arkive_Tests.App
             Assert.Equal(idDoenca, resultado.Value!.Id);
             Assert.Equal(doenca.Nome, resultado.Value.Nome);
             Assert.Equal(doenca.StAtivo, resultado.Value.StAtivo);
+            Assert.Equal(new[] { "self", "put_doenca", "delete_doenca" }, resultado.Value.Links.Select(l => l.Rel));
         }
 
         [Fact]

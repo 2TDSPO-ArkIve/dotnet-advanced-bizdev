@@ -65,14 +65,14 @@ namespace Arkive_Tests.App
         {
             // Arrange
             _useCase.Setup(x => x.ObterPorIdAsync(8))
-                .ReturnsAsync(OperationResult<FeedbackNPSEntity?>.Success(new FeedbackNPSEntity { Id = 8, Nota = 9, IdResponsavel = 2 }));
+                .ReturnsAsync(OperationResult<GetFeedbackNPSDto?>.Success(new GetFeedbackNPSDto { Id = 8, Nota = 9, IdResponsavel = 2 }));
 
             // Act
             var response = await _client.GetAsync("/api/feedbacks-nps/8");
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var body = await response.Content.ReadFromJsonAsync<FeedbackNPSEntity>();
+            var body = await response.Content.ReadFromJsonAsync<GetFeedbackNPSDto>();
             Assert.Equal(9, body!.Nota);
         }
 
@@ -81,7 +81,7 @@ namespace Arkive_Tests.App
         public async Task GetById_QuandoFeedbackNaoExiste_DeveRetornar404()
         {
             // Arrange
-            _useCase.Setup(x => x.ObterPorIdAsync(It.IsAny<int>())).ReturnsAsync(OperationResult<FeedbackNPSEntity?>.Failure("Feedback NPS não encontrado", 404));
+            _useCase.Setup(x => x.ObterPorIdAsync(It.IsAny<int>())).ReturnsAsync(OperationResult<GetFeedbackNPSDto?>.Failure("Feedback NPS não encontrado", 404));
 
             // Act
             var response = await _client.GetAsync("/api/feedbacks-nps/999");

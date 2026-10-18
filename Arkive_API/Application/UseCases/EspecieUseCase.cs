@@ -78,7 +78,7 @@ namespace Arkive_API.Application.UseCases
             }
         }
 
-        public async Task<OperationResult<EspecieEntity?>> ObterPorIdAsync(int id)
+        public async Task<OperationResult<GetEspecieDto?>> ObterPorIdAsync(int id)
         {
             _logger.LogInformation("Obtendo espécie {Id}", id);
 
@@ -89,15 +89,15 @@ namespace Arkive_API.Application.UseCases
                 if (especie is null)
                 {
                     _logger.LogWarning("Espécie {Id} não encontrada", id);
-                    return OperationResult<EspecieEntity?>.Failure("Espécie não encontrada", 404);
+                    return OperationResult<GetEspecieDto?>.Failure("Espécie não encontrada", 404);
                 }
 
-                return OperationResult<EspecieEntity?>.Success(especie);
+                return OperationResult<GetEspecieDto?>.Success(especie.ToEspecieDto(Pagination.ItemLinks("/api/especies", id, "especie")));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter espécie {Id}", id);
-                return OperationResult<EspecieEntity?>.Failure("Ocorreu um erro ao obter a espécie");
+                return OperationResult<GetEspecieDto?>.Failure("Ocorreu um erro ao obter a espécie");
             }
         }
 

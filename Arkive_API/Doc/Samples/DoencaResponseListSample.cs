@@ -38,7 +38,7 @@ namespace Arkive_API.Doc.Samples
             };
 
             var links = Pagination.Links("/api/doencas", 0, 2, 10);
-            links.Add(new("/api/doencas", "create", "POST"));
+            links.Add(new("/api/doencas", "create_doenca", "POST"));
 
             return new PageResultModel<IEnumerable<DoencaEntity>>
             {

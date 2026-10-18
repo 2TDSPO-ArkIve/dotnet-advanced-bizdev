@@ -65,14 +65,14 @@ namespace Arkive_Tests.App
         {
             // Arrange
             _useCase.Setup(x => x.ObterPorIdAsync(5))
-                .ReturnsAsync(OperationResult<PredisposicaoEntity?>.Success(new PredisposicaoEntity { Id = 5, IdEspecie = 1, IdDoenca = 2 }));
+                .ReturnsAsync(OperationResult<GetPredisposicaoDto?>.Success(new GetPredisposicaoDto { Id = 5, IdEspecie = 1, IdDoenca = 2 }));
 
             // Act
             var response = await _client.GetAsync("/api/predisposicoes/5");
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var body = await response.Content.ReadFromJsonAsync<PredisposicaoEntity>();
+            var body = await response.Content.ReadFromJsonAsync<GetPredisposicaoDto>();
             Assert.Equal(5, body!.Id);
         }
 
@@ -81,7 +81,7 @@ namespace Arkive_Tests.App
         public async Task GetById_QuandoVinculoNaoExiste_DeveRetornar404()
         {
             // Arrange
-            _useCase.Setup(x => x.ObterPorIdAsync(It.IsAny<int>())).ReturnsAsync(OperationResult<PredisposicaoEntity?>.Failure("Predisposição não encontrada", 404));
+            _useCase.Setup(x => x.ObterPorIdAsync(It.IsAny<int>())).ReturnsAsync(OperationResult<GetPredisposicaoDto?>.Failure("Predisposição não encontrada", 404));
 
             // Act
             var response = await _client.GetAsync("/api/predisposicoes/999");

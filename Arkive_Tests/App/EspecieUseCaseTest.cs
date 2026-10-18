@@ -98,6 +98,7 @@ namespace Arkive_Tests.App
             Assert.Equal(idEspecie, resultado.Value!.Id);
             Assert.Equal(especie.Especie, resultado.Value.Especie);
             Assert.Equal(especie.StAtivo, resultado.Value.StAtivo);
+            Assert.Equal(new[] { "self", "put_especie", "delete_especie" }, resultado.Value.Links.Select(l => l.Rel));
         }
 
         [Fact]

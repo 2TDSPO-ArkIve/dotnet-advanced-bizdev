@@ -39,7 +39,7 @@ namespace Arkive_API.Doc.Samples
             };
 
             var links = Pagination.Links("/api/predisposicoes", 0, 2, 10);
-            links.Add(new("/api/predisposicoes", "create", "POST"));
+            links.Add(new("/api/predisposicoes", "create_predisposicao", "POST"));
 
             return new PageResultModel<IEnumerable<PredisposicaoEntity>>
             {

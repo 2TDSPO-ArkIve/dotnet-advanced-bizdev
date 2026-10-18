@@ -1,3 +1,6 @@
+using Arkive_API.Application;
+using Arkive_API.Application.Dtos;
+using Arkive_API.Application.Mappers;
 using Arkive_API.Domain.Entities;
 using Swashbuckle.AspNetCore.Filters;
 
@@ -19,6 +22,14 @@ namespace Arkive_API.Doc.Samples
                 Comentario = "Atendimento excelente, equipe muito atenciosa.",
                 DataFeedback = new DateTime(2026, 8, 20, 14, 30, 0)
             };
+        }
+    }
+
+    public class FeedbackNPSByIdResponseSample : IExamplesProvider<GetFeedbackNPSDto>
+    {
+        public GetFeedbackNPSDto GetExamples()
+        {
+            return new FeedbackNPSResponseSample().GetExamples().ToFeedbackNPSDto(Pagination.ItemLinks("/api/feedbacks-nps", 1, "feedback_nps", editavel: false));
         }
     }
 }

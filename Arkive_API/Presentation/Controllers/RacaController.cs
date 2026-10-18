@@ -126,10 +126,10 @@ namespace Arkive_API.Presentation.Controllers
             * A busca por ID retorna a raça independente do status (ativa ou inativa).
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Raça retornada com sucesso", type: typeof(RacaEntity))]
+        [SwaggerResponse(statusCode: 200, description: "Raça retornada com sucesso", type: typeof(GetRacaDto))]
         [SwaggerResponse(statusCode: 404, description: "Raça não encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
-        [SwaggerResponseExample(statusCode: 200, typeof(RacaResponseSample))]
+        [SwaggerResponseExample(statusCode: 200, typeof(RacaByIdResponseSample))]
         public async Task<IActionResult> GetRacaById(int id)
         {
             _logger.LogInformation("Buscando raça {Id}", id);

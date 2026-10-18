@@ -7,7 +7,7 @@ namespace Arkive_API.Application.Interfaces
     public interface IFeedbackNPSUseCase
     {
         Task<OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>> ObterTodosAsync(int skip = 0, int take = 50);
-        Task<OperationResult<FeedbackNPSEntity?>> ObterPorIdAsync(int id);
+        Task<OperationResult<GetFeedbackNPSDto?>> ObterPorIdAsync(int id);
 
         /// <summary>
         /// Retorna Failure 400 quando a nota está fora do intervalo 0-5.

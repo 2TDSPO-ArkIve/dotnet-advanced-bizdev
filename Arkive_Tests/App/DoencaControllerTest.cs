@@ -69,15 +69,16 @@ namespace Arkive_Tests.App
         {
             // Arrange
             _useCase.Setup(x => x.ObterPorIdAsync(7))
-                .ReturnsAsync(OperationResult<DoencaEntity?>.Success(new DoencaEntity { Id = 7, Nome = "Parvovirose", StAtivo = "S" }));
+                .ReturnsAsync(OperationResult<GetDoencaDto?>.Success(new GetDoencaDto { Id = 7, Nome = "Parvovirose", StAtivo = "S", Links = { new("/api/doencas/7", "self") } }));
 
             // Act
             var response = await _client.GetAsync("/api/doencas/7");
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var body = await response.Content.ReadFromJsonAsync<DoencaEntity>();
+            var body = await response.Content.ReadFromJsonAsync<GetDoencaDto>();
             Assert.Equal("Parvovirose", body!.Nome);
+            Assert.Equal("self", body.Links.Single().Rel); // JSON plano com "links" no mesmo nível dos campos
         }
 
         [Fact]
@@ -86,7 +87,7 @@ namespace Arkive_Tests.App
         {
             // Arrange
             _useCase.Setup(x => x.ObterPorIdAsync(It.IsAny<int>()))
-                .ReturnsAsync(OperationResult<DoencaEntity?>.Failure("Doença não encontrada", 404));
+                .ReturnsAsync(OperationResult<GetDoencaDto?>.Failure("Doença não encontrada", 404));
 
             // Act
             var response = await _client.GetAsync("/api/doencas/999");

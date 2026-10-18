@@ -122,10 +122,10 @@ namespace Arkive_API.Presentation.Controllers
             * A busca por ID retorna a categoria independente do status (ativa ou inativa).
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Categoria retornada com sucesso", type: typeof(CategoriaDoencaEntity))]
+        [SwaggerResponse(statusCode: 200, description: "Categoria retornada com sucesso", type: typeof(GetCategoriaDoencaDto))]
         [SwaggerResponse(statusCode: 404, description: "Categoria não encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
-        [SwaggerResponseExample(statusCode: 200, typeof(CategoriaDoencaResponseSample))]
+        [SwaggerResponseExample(statusCode: 200, typeof(CategoriaDoencaByIdResponseSample))]
         public async Task<IActionResult> GetCategoriaById(int id)
         {
             _logger.LogInformation("Buscando categoria de doença {Id}", id);

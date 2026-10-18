@@ -1,5 +1,7 @@
 using Arkive_API.Application.Dtos;
 using Arkive_API.Application.Mappers;
+using Arkive_API.Domain.Entities;
+using Arkive_API.Domain.Models;
 
 namespace Arkive_Tests.App
 {
@@ -102,6 +104,26 @@ namespace Arkive_Tests.App
             // Assert
             Assert.Equal("Canina", entity.Especie);
             Assert.Equal("S", entity.StAtivo);
+        }
+
+        [Fact]
+        [Trait("Domain", "Mappers")]
+        public void DoencaMapper_ToDoencaDto_DeveCopiarCamposELinks()
+        {
+            // Arrange
+            var entity = new DoencaEntity { Id = 2, Nome = "Cinomose", IdCategoria = 3, CID = "A01", StAtivo = "N" };
+            var links = new[] { new LinkDto("/api/doencas/2", "self") };
+
+            // Act
+            var dto = entity.ToDoencaDto(links);
+
+            // Assert
+            Assert.Equal(2, dto.Id);
+            Assert.Equal("Cinomose", dto.Nome);
+            Assert.Equal(3, dto.IdCategoria);
+            Assert.Equal("A01", dto.CID);
+            Assert.Equal("N", dto.StAtivo);
+            Assert.Equal("self", dto.Links.Single().Rel);
         }
     }
 }

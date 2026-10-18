@@ -120,6 +120,7 @@ namespace Arkive_Tests.App
             Assert.Equal(idRaca, resultado.Value!.Id);
             Assert.Equal(raca.Raca, resultado.Value.Raca);
             Assert.Equal(raca.StAtivo, resultado.Value.StAtivo);
+            Assert.Equal(new[] { "self", "put_raca", "delete_raca" }, resultado.Value.Links.Select(l => l.Rel));
         }
 
         [Fact]

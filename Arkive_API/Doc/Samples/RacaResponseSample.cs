@@ -1,3 +1,6 @@
+using Arkive_API.Application;
+using Arkive_API.Application.Dtos;
+using Arkive_API.Application.Mappers;
 using Arkive_API.Domain.Entities;
 using Swashbuckle.AspNetCore.Filters;
 
@@ -16,6 +19,14 @@ namespace Arkive_API.Doc.Samples
                 Porte = "GRANDE",
                 StAtivo = "S"
             };
+        }
+    }
+
+    public class RacaByIdResponseSample : IExamplesProvider<GetRacaDto>
+    {
+        public GetRacaDto GetExamples()
+        {
+            return new RacaResponseSample().GetExamples().ToRacaDto(Pagination.ItemLinks("/api/racas", 1, "raca"));
         }
     }
 }

@@ -87,6 +87,7 @@ namespace Arkive_Tests.App
             Assert.Equal(idPredisposicao, resultado.Value!.Id);
             Assert.Equal(1, resultado.Value.IdEspecie);
             Assert.Equal(1, resultado.Value.IdDoenca);
+            Assert.Equal(new[] { "self", "delete_predisposicao" }, resultado.Value.Links.Select(l => l.Rel));
         }
 
         [Fact]

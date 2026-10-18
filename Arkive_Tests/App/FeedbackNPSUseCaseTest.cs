@@ -70,6 +70,7 @@ namespace Arkive_Tests.App
             Assert.True(resultado.IsSuccess);
             Assert.Equal(idFeedback, resultado.Value!.Id);
             Assert.Equal(feedback.Nota, resultado.Value.Nota);
+            Assert.Equal(new[] { "self", "delete_feedback_nps" }, resultado.Value.Links.Select(l => l.Rel));
         }
 
         [Theory]

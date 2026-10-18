@@ -43,7 +43,7 @@ namespace Arkive_API.Application.UseCases
                     return OperationResult<PageResultModel<IEnumerable<PredisposicaoEntity>>>.Failure("Nenhuma predisposição encontrada", 204);
 
                 resultado.Links = Pagination.Links("/api/predisposicoes", s, t, resultado.TotalRegistros);
-                resultado.Links.Add(new("/api/predisposicoes", "create", "POST"));
+                resultado.Links.Add(new("/api/predisposicoes", "create_predisposicao", "POST"));
                 return OperationResult<PageResultModel<IEnumerable<PredisposicaoEntity>>>.Success(resultado);
             }
             catch (Exception ex)
@@ -53,7 +53,7 @@ namespace Arkive_API.Application.UseCases
             }
         }
 
-        public async Task<OperationResult<PredisposicaoEntity?>> ObterPorIdAsync(int id)
+        public async Task<OperationResult<GetPredisposicaoDto?>> ObterPorIdAsync(int id)
         {
             _logger.LogInformation("Obtendo predisposição {Id}", id);
 
@@ -64,15 +64,15 @@ namespace Arkive_API.Application.UseCases
                 if (predisposicao is null)
                 {
                     _logger.LogWarning("Predisposição {Id} não encontrada", id);
-                    return OperationResult<PredisposicaoEntity?>.Failure("Predisposição não encontrada", 404);
+                    return OperationResult<GetPredisposicaoDto?>.Failure("Predisposição não encontrada", 404);
                 }
 
-                return OperationResult<PredisposicaoEntity?>.Success(predisposicao);
+                return OperationResult<GetPredisposicaoDto?>.Success(predisposicao.ToPredisposicaoDto(Pagination.ItemLinks("/api/predisposicoes", id, "predisposicao", editavel: false)));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter predisposição {Id}", id);
-                return OperationResult<PredisposicaoEntity?>.Failure("Ocorreu um erro ao obter a predisposição");
+                return OperationResult<GetPredisposicaoDto?>.Failure("Ocorreu um erro ao obter a predisposição");
             }
         }
 

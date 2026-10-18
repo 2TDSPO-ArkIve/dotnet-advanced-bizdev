@@ -66,10 +66,10 @@ namespace Arkive_API.Presentation.Controllers
             * **Status 400 (Bad Request):** Ocorreu uma falha durante a consulta (ex: erro de conexão com o banco).
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Feedback retornado com sucesso", type: typeof(FeedbackNPSEntity))]
+        [SwaggerResponse(statusCode: 200, description: "Feedback retornado com sucesso", type: typeof(GetFeedbackNPSDto))]
         [SwaggerResponse(statusCode: 404, description: "Feedback não encontrado")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
-        [SwaggerResponseExample(statusCode: 200, typeof(FeedbackNPSResponseSample))]
+        [SwaggerResponseExample(statusCode: 200, typeof(FeedbackNPSByIdResponseSample))]
         public async Task<IActionResult> GetFeedbackById(int id)
         {
             _logger.LogInformation("Buscando feedback NPS {Id}", id);

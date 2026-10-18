@@ -63,15 +63,15 @@ namespace Arkive_Tests.App
         public async Task GetById_QuandoCategoriaExiste_DeveRetornar200()
         {
             // Arrange
-            var categoria = new CategoriaDoencaEntity { Id = 5, Nome = "Viral", StAtivo = "S" };
-            _useCase.Setup(x => x.ObterPorIdAsync(5)).ReturnsAsync(OperationResult<CategoriaDoencaEntity?>.Success(categoria));
+            var categoria = new GetCategoriaDoencaDto { Id = 5, Nome = "Viral", StAtivo = "S" };
+            _useCase.Setup(x => x.ObterPorIdAsync(5)).ReturnsAsync(OperationResult<GetCategoriaDoencaDto?>.Success(categoria));
 
             // Act
             var response = await _client.GetAsync("/api/categorias-doenca/5");
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var body = await response.Content.ReadFromJsonAsync<CategoriaDoencaEntity>();
+            var body = await response.Content.ReadFromJsonAsync<GetCategoriaDoencaDto>();
             Assert.Equal(5, body!.Id);
             Assert.Equal("Viral", body.Nome);
         }
@@ -81,7 +81,7 @@ namespace Arkive_Tests.App
         public async Task GetById_QuandoCategoriaNaoExiste_DeveRetornar404()
         {
             // Arrange
-            _useCase.Setup(x => x.ObterPorIdAsync(It.IsAny<int>())).ReturnsAsync(OperationResult<CategoriaDoencaEntity?>.Failure("Categoria de doença não encontrada", 404));
+            _useCase.Setup(x => x.ObterPorIdAsync(It.IsAny<int>())).ReturnsAsync(OperationResult<GetCategoriaDoencaDto?>.Failure("Categoria de doença não encontrada", 404));
 
             // Act
             var response = await _client.GetAsync("/api/categorias-doenca/999");

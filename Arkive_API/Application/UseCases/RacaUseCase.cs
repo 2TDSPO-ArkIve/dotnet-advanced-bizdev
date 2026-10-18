@@ -81,7 +81,7 @@ namespace Arkive_API.Application.UseCases
             }
         }
 
-        public async Task<OperationResult<RacaEntity?>> ObterPorIdAsync(int id)
+        public async Task<OperationResult<GetRacaDto?>> ObterPorIdAsync(int id)
         {
             _logger.LogInformation("Obtendo raça {Id}", id);
 
@@ -92,15 +92,15 @@ namespace Arkive_API.Application.UseCases
                 if (raca is null)
                 {
                     _logger.LogWarning("Raça {Id} não encontrada", id);
-                    return OperationResult<RacaEntity?>.Failure("Raça não encontrada", 404);
+                    return OperationResult<GetRacaDto?>.Failure("Raça não encontrada", 404);
                 }
 
-                return OperationResult<RacaEntity?>.Success(raca);
+                return OperationResult<GetRacaDto?>.Success(raca.ToRacaDto(Pagination.ItemLinks("/api/racas", id, "raca")));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter raça {Id}", id);
-                return OperationResult<RacaEntity?>.Failure("Ocorreu um erro ao obter a raça");
+                return OperationResult<GetRacaDto?>.Failure("Ocorreu um erro ao obter a raça");
             }
         }
 

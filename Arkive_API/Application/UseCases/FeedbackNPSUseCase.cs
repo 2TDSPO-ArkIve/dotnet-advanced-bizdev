@@ -32,7 +32,7 @@ namespace Arkive_API.Application.UseCases
                     return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Failure("Nenhum feedback NPS encontrado", 204);
 
                 resultado.Links = Pagination.Links("/api/feedbacks-nps", s, t, resultado.TotalRegistros);
-                resultado.Links.Add(new("/api/feedbacks-nps", "create", "POST"));
+                resultado.Links.Add(new("/api/feedbacks-nps", "create_feedback_nps", "POST"));
                 return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Success(resultado);
             }
             catch (Exception ex)
@@ -42,7 +42,7 @@ namespace Arkive_API.Application.UseCases
             }
         }
 
-        public async Task<OperationResult<FeedbackNPSEntity?>> ObterPorIdAsync(int id)
+        public async Task<OperationResult<GetFeedbackNPSDto?>> ObterPorIdAsync(int id)
         {
             _logger.LogInformation("Obtendo feedback NPS {Id}", id);
 
@@ -53,15 +53,15 @@ namespace Arkive_API.Application.UseCases
                 if (feedback is null)
                 {
                     _logger.LogWarning("Feedback NPS {Id} não encontrado", id);
-                    return OperationResult<FeedbackNPSEntity?>.Failure("Feedback NPS não encontrado", 404);
+                    return OperationResult<GetFeedbackNPSDto?>.Failure("Feedback NPS não encontrado", 404);
                 }
 
-                return OperationResult<FeedbackNPSEntity?>.Success(feedback);
+                return OperationResult<GetFeedbackNPSDto?>.Success(feedback.ToFeedbackNPSDto(Pagination.ItemLinks("/api/feedbacks-nps", id, "feedback_nps", editavel: false)));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter feedback NPS {Id}", id);
-                return OperationResult<FeedbackNPSEntity?>.Failure("Ocorreu um erro ao obter o feedback NPS");
+                return OperationResult<GetFeedbackNPSDto?>.Failure("Ocorreu um erro ao obter o feedback NPS");
             }
         }
 

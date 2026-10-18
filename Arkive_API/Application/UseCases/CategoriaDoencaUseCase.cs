@@ -78,7 +78,7 @@ namespace Arkive_API.Application.UseCases
             }
         }
 
-        public async Task<OperationResult<CategoriaDoencaEntity?>> ObterPorIdAsync(int id)
+        public async Task<OperationResult<GetCategoriaDoencaDto?>> ObterPorIdAsync(int id)
         {
             _logger.LogInformation("Obtendo categoria de doença {Id}", id);
 
@@ -89,15 +89,15 @@ namespace Arkive_API.Application.UseCases
                 if (categoria is null)
                 {
                     _logger.LogWarning("Categoria de doença {Id} não encontrada", id);
-                    return OperationResult<CategoriaDoencaEntity?>.Failure("Categoria de doença não encontrada", 404);
+                    return OperationResult<GetCategoriaDoencaDto?>.Failure("Categoria de doença não encontrada", 404);
                 }
 
-                return OperationResult<CategoriaDoencaEntity?>.Success(categoria);
+                return OperationResult<GetCategoriaDoencaDto?>.Success(categoria.ToCategoriaDoencaDto(Pagination.ItemLinks("/api/categorias-doenca", id, "categoria_doenca")));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter categoria de doença {Id}", id);
-                return OperationResult<CategoriaDoencaEntity?>.Failure("Ocorreu um erro ao obter a categoria de doença");
+                return OperationResult<GetCategoriaDoencaDto?>.Failure("Ocorreu um erro ao obter a categoria de doença");
             }
         }
 

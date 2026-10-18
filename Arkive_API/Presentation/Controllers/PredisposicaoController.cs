@@ -70,10 +70,10 @@ namespace Arkive_API.Presentation.Controllers
             * Os dados incluem as entidades relacionadas (**Espécie**, **Raça** e **Doença**, esta última com sua **Categoria**).
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Predisposição retornada com sucesso", type: typeof(PredisposicaoEntity))]
+        [SwaggerResponse(statusCode: 200, description: "Predisposição retornada com sucesso", type: typeof(GetPredisposicaoDto))]
         [SwaggerResponse(statusCode: 404, description: "Predisposição não encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
-        [SwaggerResponseExample(statusCode: 200, typeof(PredisposicaoResponseSample))]
+        [SwaggerResponseExample(statusCode: 200, typeof(PredisposicaoByIdResponseSample))]
         public async Task<IActionResult> GetPredisposicaoById(int id)
         {
             _logger.LogInformation("Buscando predisposição {Id}", id);

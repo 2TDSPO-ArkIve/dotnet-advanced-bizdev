@@ -127,10 +127,10 @@ namespace Arkive_API.Presentation.Controllers
             * A busca por ID retorna a doença independente do status (ativa ou inativa).
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Doença retornada com sucesso", type: typeof(DoencaEntity))]
+        [SwaggerResponse(statusCode: 200, description: "Doença retornada com sucesso", type: typeof(GetDoencaDto))]
         [SwaggerResponse(statusCode: 404, description: "Doença não encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
-        [SwaggerResponseExample(statusCode: 200, typeof(DoencaResponseSample))]
+        [SwaggerResponseExample(statusCode: 200, typeof(DoencaByIdResponseSample))]
         public async Task<IActionResult> GetDoencaById(int id)
         {
             _logger.LogInformation("Buscando doença {Id}", id);

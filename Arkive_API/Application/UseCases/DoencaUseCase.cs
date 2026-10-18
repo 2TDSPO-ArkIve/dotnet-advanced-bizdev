@@ -34,7 +34,7 @@ namespace Arkive_API.Application.UseCases
                     return OperationResult<PageResultModel<IEnumerable<DoencaEntity>>>.Failure("Nenhuma doença encontrada", 204);
 
                 resultado.Links = Pagination.Links("/api/doencas", s, t, resultado.TotalRegistros);
-                resultado.Links.Add(new("/api/doencas", "create", "POST"));
+                resultado.Links.Add(new("/api/doencas", "create_doenca", "POST"));
                 return OperationResult<PageResultModel<IEnumerable<DoencaEntity>>>.Success(resultado);
             }
             catch (Exception ex)
@@ -88,7 +88,7 @@ namespace Arkive_API.Application.UseCases
             }
         }
 
-        public async Task<OperationResult<DoencaEntity?>> ObterPorIdAsync(int id)
+        public async Task<OperationResult<GetDoencaDto?>> ObterPorIdAsync(int id)
         {
             _logger.LogInformation("Obtendo doença {Id}", id);
 
@@ -99,15 +99,15 @@ namespace Arkive_API.Application.UseCases
                 if (doenca is null)
                 {
                     _logger.LogWarning("Doença {Id} não encontrada", id);
-                    return OperationResult<DoencaEntity?>.Failure("Doença não encontrada", 404);
+                    return OperationResult<GetDoencaDto?>.Failure("Doença não encontrada", 404);
                 }
 
-                return OperationResult<DoencaEntity?>.Success(doenca);
+                return OperationResult<GetDoencaDto?>.Success(doenca.ToDoencaDto(Pagination.ItemLinks("/api/doencas", id, "doenca")));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter doença {Id}", id);
-                return OperationResult<DoencaEntity?>.Failure("Ocorreu um erro ao obter a doença");
+                return OperationResult<GetDoencaDto?>.Failure("Ocorreu um erro ao obter a doença");
             }
         }
 

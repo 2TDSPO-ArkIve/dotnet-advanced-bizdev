@@ -62,14 +62,14 @@ namespace Arkive_Tests.App
         {
             // Arrange
             _useCase.Setup(x => x.ObterPorIdAsync(4))
-                .ReturnsAsync(OperationResult<EspecieEntity?>.Success(new EspecieEntity { Id = 4, Especie = "Equina", StAtivo = "S" }));
+                .ReturnsAsync(OperationResult<GetEspecieDto?>.Success(new GetEspecieDto { Id = 4, Especie = "Equina", StAtivo = "S" }));
 
             // Act
             var response = await _client.GetAsync("/api/especies/4");
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var body = await response.Content.ReadFromJsonAsync<EspecieEntity>();
+            var body = await response.Content.ReadFromJsonAsync<GetEspecieDto>();
             Assert.Equal("Equina", body!.Especie);
         }
 
@@ -78,7 +78,7 @@ namespace Arkive_Tests.App
         public async Task GetById_QuandoEspecieNaoExiste_DeveRetornar404()
         {
             // Arrange
-            _useCase.Setup(x => x.ObterPorIdAsync(It.IsAny<int>())).ReturnsAsync(OperationResult<EspecieEntity?>.Failure("Espécie não encontrada", 404));
+            _useCase.Setup(x => x.ObterPorIdAsync(It.IsAny<int>())).ReturnsAsync(OperationResult<GetEspecieDto?>.Failure("Espécie não encontrada", 404));
 
             // Act
             var response = await _client.GetAsync("/api/especies/999");
