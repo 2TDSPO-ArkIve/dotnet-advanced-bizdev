@@ -6,11 +6,11 @@ namespace Arkive_API.Application.Interfaces
 {
     public interface IRacaUseCase
     {
-        Task<OperationResult<PageResultModel<IEnumerable<RacaEntity>>>> ObterTodasAsync(int skip = 0, int take = 50);
-        Task<OperationResult<PageResultModel<IEnumerable<RacaEntity>>>> ObterAtivasAsync(int skip = 0, int take = 50);
-        Task<OperationResult<PageResultModel<IEnumerable<RacaEntity>>>> ObterInativasAsync(int skip = 0, int take = 50);
+        Task<OperationResult<PageResultModel<IEnumerable<GetRacaDto>>>> ObterTodasAsync(int skip = 0, int take = 50);
+        Task<OperationResult<PageResultModel<IEnumerable<GetRacaDto>>>> ObterAtivasAsync(int skip = 0, int take = 50);
+        Task<OperationResult<PageResultModel<IEnumerable<GetRacaDto>>>> ObterInativasAsync(int skip = 0, int take = 50);
         Task<OperationResult<GetRacaDto?>> ObterPorIdAsync(int id);
-        Task<OperationResult<IEnumerable<RacaEntity>>> ObterPorEspecieAsync(int idEspecie);
+        Task<OperationResult<IEnumerable<GetRacaDto>>> ObterPorEspecieAsync(int idEspecie);
 
         /// <summary>
         /// Retorna Failure 404 quando dto.IdEspecie não existe ou está inativo.

@@ -6,12 +6,12 @@ namespace Arkive_API.Application.Interfaces
 {
     public interface IDoencaUseCase
     {
-        Task<OperationResult<PageResultModel<IEnumerable<DoencaEntity>>>> ObterTodasAsync(int skip = 0, int take = 50);
-        Task<OperationResult<PageResultModel<IEnumerable<DoencaEntity>>>> ObterAtivasAsync(int skip = 0, int take = 50);
-        Task<OperationResult<PageResultModel<IEnumerable<DoencaEntity>>>> ObterInativasAsync(int skip = 0, int take = 50);
+        Task<OperationResult<PageResultModel<IEnumerable<GetDoencaDto>>>> ObterTodasAsync(int skip = 0, int take = 50);
+        Task<OperationResult<PageResultModel<IEnumerable<GetDoencaDto>>>> ObterAtivasAsync(int skip = 0, int take = 50);
+        Task<OperationResult<PageResultModel<IEnumerable<GetDoencaDto>>>> ObterInativasAsync(int skip = 0, int take = 50);
         Task<OperationResult<GetDoencaDto?>> ObterPorIdAsync(int id);
-        Task<OperationResult<IEnumerable<DoencaEntity>>> ObterPorNomeAsync(string nome);
-        Task<OperationResult<IEnumerable<DoencaEntity>>> ObterPorCategoriaAsync(int idCategoria);
+        Task<OperationResult<IEnumerable<GetDoencaDto>>> ObterPorNomeAsync(string nome);
+        Task<OperationResult<IEnumerable<GetDoencaDto>>> ObterPorCategoriaAsync(int idCategoria);
 
         /// <summary>
         /// Retorna Failure 404 quando dto.IdCategoria é informado mas não existe ou está inativo.

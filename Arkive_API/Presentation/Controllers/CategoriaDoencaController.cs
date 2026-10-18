@@ -41,7 +41,7 @@ namespace Arkive_API.Presentation.Controllers
             * Este endpoint não filtra por status; use `/ativos` ou `/inativos` para isso.
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<CategoriaDoencaEntity>>))]
+        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<GetCategoriaDoencaDto>>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma categoria encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
         [SwaggerResponseExample(statusCode: 200, typeof(CategoriaDoencaResponseListSample))]
@@ -69,7 +69,7 @@ namespace Arkive_API.Presentation.Controllers
             * Categorias inativas (excluídas logicamente) não aparecem neste retorno.
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<CategoriaDoencaEntity>>))]
+        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<GetCategoriaDoencaDto>>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma categoria ativa encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
         public async Task<IActionResult> GetCategoriasAtivas(int skip = 0, int take = 50)
@@ -96,7 +96,7 @@ namespace Arkive_API.Presentation.Controllers
             * Categorias inativas são registros excluídos logicamente (soft delete), não removidos fisicamente.
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<CategoriaDoencaEntity>>))]
+        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<GetCategoriaDoencaDto>>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma categoria inativa encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
         public async Task<IActionResult> GetCategoriasInativas(int skip = 0, int take = 50)

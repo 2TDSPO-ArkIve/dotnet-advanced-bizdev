@@ -77,6 +77,7 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.True(resultado.IsSuccess);
+            Assert.All(resultado.Value!.Data, item => Assert.Equal(new[] { "get_especie", "reativar_especie" }, item.Links.Select(l => l.Rel)));
             Assert.Collection(resultado.Value!.Data,
                 item => { Assert.Equal(2, item.Id); Assert.Equal("Felina", item.Especie); Assert.Equal("N", item.StAtivo); });
         }

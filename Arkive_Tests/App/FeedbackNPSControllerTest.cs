@@ -27,20 +27,20 @@ namespace Arkive_Tests.App
         public async Task GetAll_ComListaDeFeedbacks_DeveRetornar200()
         {
             // Arrange
-            var feedbacks = new List<FeedbackNPSEntity>
+            var feedbacks = new List<GetFeedbackNPSDto>
             {
-                new FeedbackNPSEntity { Id = 1, Nota = 10, IdResponsavel = 1 },
-                new FeedbackNPSEntity { Id = 2, Nota = 7, IdAnimal = 5 }
+                new GetFeedbackNPSDto { Id = 1, Nota = 10, IdResponsavel = 1 },
+                new GetFeedbackNPSDto { Id = 2, Nota = 7, IdAnimal = 5 }
             };
             _useCase.Setup(x => x.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>()))
-                .ReturnsAsync(OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Success(new PageResultModel<IEnumerable<FeedbackNPSEntity>> { Data = feedbacks, TotalRegistros = feedbacks.Count }));
+                .ReturnsAsync(OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>.Success(new PageResultModel<IEnumerable<GetFeedbackNPSDto>> { Data = feedbacks, TotalRegistros = feedbacks.Count }));
 
             // Act
             var response = await _client.GetAsync("/api/feedbacks-nps");
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var body = await response.Content.ReadFromJsonAsync<PageResultModel<List<FeedbackNPSEntity>>>();
+            var body = await response.Content.ReadFromJsonAsync<PageResultModel<List<GetFeedbackNPSDto>>>();
             Assert.Equal(2, body!.Data.Count);
         }
 
@@ -50,7 +50,7 @@ namespace Arkive_Tests.App
         {
             // Arrange
             _useCase.Setup(x => x.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>()))
-                .ReturnsAsync(OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Failure("Nenhum feedback NPS encontrado", 204));
+                .ReturnsAsync(OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>.Failure("Nenhum feedback NPS encontrado", 204));
 
             // Act
             var response = await _client.GetAsync("/api/feedbacks-nps");

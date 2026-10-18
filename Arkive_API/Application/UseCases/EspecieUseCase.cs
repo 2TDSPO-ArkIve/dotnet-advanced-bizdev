@@ -18,7 +18,7 @@ namespace Arkive_API.Application.UseCases
             _logger = logger;
         }
 
-        public async Task<OperationResult<PageResultModel<IEnumerable<EspecieEntity>>>> ObterTodasAsync(int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<GetEspecieDto>>>> ObterTodasAsync(int skip = 0, int take = 50)
         {
             _logger.LogInformation("Obtendo todas as espécies (skip {Skip}, take {Take})", skip, take);
 
@@ -28,20 +28,20 @@ namespace Arkive_API.Application.UseCases
                 var resultado = await _especieRepository.ObterTodosAsync(s, t);
 
                 if (!resultado.Data.Any())
-                    return OperationResult<PageResultModel<IEnumerable<EspecieEntity>>>.Failure("Nenhuma espécie encontrada", 204);
+                    return OperationResult<PageResultModel<IEnumerable<GetEspecieDto>>>.Failure("Nenhuma espécie encontrada", 204);
 
                 resultado.Links = Pagination.Links("/api/especies", s, t, resultado.TotalRegistros);
                 resultado.Links.Add(new("/api/especies", "create_especie", "POST"));
-                return OperationResult<PageResultModel<IEnumerable<EspecieEntity>>>.Success(resultado);
+                return OperationResult<PageResultModel<IEnumerable<GetEspecieDto>>>.Success(Pagination.MapearItens(resultado, x => ItemDto(x)));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter todas as espécies");
-                return OperationResult<PageResultModel<IEnumerable<EspecieEntity>>>.Failure("Ocorreu um erro ao obter as espécies");
+                return OperationResult<PageResultModel<IEnumerable<GetEspecieDto>>>.Failure("Ocorreu um erro ao obter as espécies");
             }
         }
 
-        public async Task<OperationResult<PageResultModel<IEnumerable<EspecieEntity>>>> ObterAtivasAsync(int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<GetEspecieDto>>>> ObterAtivasAsync(int skip = 0, int take = 50)
         {
             _logger.LogInformation("Obtendo espécies ativas (skip {Skip}, take {Take})", skip, take);
 
@@ -51,19 +51,19 @@ namespace Arkive_API.Application.UseCases
                 var resultado = await _especieRepository.ObterAtivosAsync(s, t);
 
                 if (!resultado.Data.Any())
-                    return OperationResult<PageResultModel<IEnumerable<EspecieEntity>>>.Failure("Nenhuma espécie ativa encontrada", 204);
+                    return OperationResult<PageResultModel<IEnumerable<GetEspecieDto>>>.Failure("Nenhuma espécie ativa encontrada", 204);
 
                 resultado.Links = Pagination.Links("/api/especies/ativos", s, t, resultado.TotalRegistros);
-                return OperationResult<PageResultModel<IEnumerable<EspecieEntity>>>.Success(resultado);
+                return OperationResult<PageResultModel<IEnumerable<GetEspecieDto>>>.Success(Pagination.MapearItens(resultado, x => ItemDto(x)));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter espécies ativas");
-                return OperationResult<PageResultModel<IEnumerable<EspecieEntity>>>.Failure("Ocorreu um erro ao obter as espécies ativas");
+                return OperationResult<PageResultModel<IEnumerable<GetEspecieDto>>>.Failure("Ocorreu um erro ao obter as espécies ativas");
             }
         }
 
-        public async Task<OperationResult<PageResultModel<IEnumerable<EspecieEntity>>>> ObterInativasAsync(int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<GetEspecieDto>>>> ObterInativasAsync(int skip = 0, int take = 50)
         {
             _logger.LogInformation("Obtendo espécies inativas (skip {Skip}, take {Take})", skip, take);
 
@@ -73,15 +73,15 @@ namespace Arkive_API.Application.UseCases
                 var resultado = await _especieRepository.ObterInativosAsync(s, t);
 
                 if (!resultado.Data.Any())
-                    return OperationResult<PageResultModel<IEnumerable<EspecieEntity>>>.Failure("Nenhuma espécie inativa encontrada", 204);
+                    return OperationResult<PageResultModel<IEnumerable<GetEspecieDto>>>.Failure("Nenhuma espécie inativa encontrada", 204);
 
                 resultado.Links = Pagination.Links("/api/especies/inativos", s, t, resultado.TotalRegistros);
-                return OperationResult<PageResultModel<IEnumerable<EspecieEntity>>>.Success(resultado);
+                return OperationResult<PageResultModel<IEnumerable<GetEspecieDto>>>.Success(Pagination.MapearItens(resultado, x => ItemDto(x)));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter espécies inativas");
-                return OperationResult<PageResultModel<IEnumerable<EspecieEntity>>>.Failure("Ocorreu um erro ao obter as espécies inativas");
+                return OperationResult<PageResultModel<IEnumerable<GetEspecieDto>>>.Failure("Ocorreu um erro ao obter as espécies inativas");
             }
         }
 
@@ -99,7 +99,7 @@ namespace Arkive_API.Application.UseCases
                     return OperationResult<GetEspecieDto?>.Failure("Espécie não encontrada", 404);
                 }
 
-                return OperationResult<GetEspecieDto?>.Success(especie.ToEspecieDto(Pagination.ItemLinks("/api/especies", id, "especie")));
+                return OperationResult<GetEspecieDto?>.Success(ItemDto(especie, naLista: false));
             }
             catch (Exception ex)
             {
@@ -192,5 +192,11 @@ namespace Arkive_API.Application.UseCases
                 return OperationResult<EspecieEntity?>.Failure("Ocorreu um erro ao inativar a espécie");
             }
         }
+
+        /// <summary>
+        /// Converte a entidade no DTO de retorno com links HATEOAS de item (get_ na lista, self no GetById).
+        /// </summary>
+        private static GetEspecieDto ItemDto(EspecieEntity x, bool naLista = true)
+            => x.ToEspecieDto(Pagination.ItemLinks("/api/especies", x.Id, "especie", ativo: x.StAtivo == "S", naLista: naLista));
     }
 }

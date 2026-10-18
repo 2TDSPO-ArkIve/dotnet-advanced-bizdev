@@ -27,14 +27,33 @@ namespace Arkive_API.Application
         }
 
         /// <summary>
-        /// Monta os links HATEOAS de um item: self sempre, put_{recurso} se o recurso aceita edição e delete_{recurso}.
+        /// Monta os links HATEOAS de um item: self (GetById) ou get_{recurso} (lista).
+        /// Ativo: put_{recurso} se o recurso aceita edição e delete_{recurso}. Inativo: só reativar_{recurso}.
         /// </summary>
-        public static List<LinkDto> ItemLinks(string path, int id, string recurso, bool editavel = true)
+        public static List<LinkDto> ItemLinks(string path, int id, string recurso, bool editavel = true, bool ativo = true, bool naLista = false)
         {
-            var links = new List<LinkDto> { new($"{path}/{id}", "self") };
+            var links = new List<LinkDto> { new($"{path}/{id}", naLista ? $"get_{recurso}" : "self") };
+            if (!ativo)
+            {
+                links.Add(new($"{path}/reativar/{id}", $"reativar_{recurso}", "PUT"));
+                return links;
+            }
             if (editavel) links.Add(new($"{path}/{id}", $"put_{recurso}", "PUT"));
             links.Add(new($"{path}/{id}", $"delete_{recurso}", "DELETE"));
             return links;
         }
+
+        /// <summary>
+        /// Converte os itens de uma página mantendo deslocamento, total e links da página.
+        /// </summary>
+        public static PageResultModel<IEnumerable<TDto>> MapearItens<T, TDto>(PageResultModel<IEnumerable<T>> page, Func<T, TDto> map)
+            => new()
+            {
+                Data = page.Data.Select(map).ToList(),
+                Deslocamento = page.Deslocamento,
+                RegistroRetornado = page.RegistroRetornado,
+                TotalRegistros = page.TotalRegistros,
+                Links = page.Links
+            };
     }
 }

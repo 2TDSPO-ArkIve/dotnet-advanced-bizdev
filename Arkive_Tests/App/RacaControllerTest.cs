@@ -27,10 +27,10 @@ namespace Arkive_Tests.App
         public async Task GetAll_ComListaDeRacas_DeveRetornar200()
         {
             // Arrange
-            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(OperationResult<PageResultModel<IEnumerable<RacaEntity>>>.Success(new PageResultModel<IEnumerable<RacaEntity>> { Data = new List<RacaEntity>
+            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(OperationResult<PageResultModel<IEnumerable<GetRacaDto>>>.Success(new PageResultModel<IEnumerable<GetRacaDto>> { Data = new List<GetRacaDto>
             {
-                new RacaEntity { Id = 1, Raca = "Poodle", IdEspecie = 1, StAtivo = "S" },
-                new RacaEntity { Id = 2, Raca = "Siamês", IdEspecie = 2, StAtivo = "S" }
+                new GetRacaDto { Id = 1, Raca = "Poodle", IdEspecie = 1, StAtivo = "S" },
+                new GetRacaDto { Id = 2, Raca = "Siamês", IdEspecie = 2, StAtivo = "S" }
             } }));
 
             // Act
@@ -38,7 +38,7 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var body = await response.Content.ReadFromJsonAsync<PageResultModel<List<RacaEntity>>>();
+            var body = await response.Content.ReadFromJsonAsync<PageResultModel<List<GetRacaDto>>>();
             Assert.Equal(2, body!.Data.Count);
         }
 
@@ -47,7 +47,7 @@ namespace Arkive_Tests.App
         public async Task GetAll_QuandoNaoHaRacas_DeveRetornar204()
         {
             // Arrange
-            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(OperationResult<PageResultModel<IEnumerable<RacaEntity>>>.Failure("Nenhuma raça encontrada", 204));
+            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(OperationResult<PageResultModel<IEnumerable<GetRacaDto>>>.Failure("Nenhuma raça encontrada", 204));
 
             // Act
             var response = await _client.GetAsync("/api/racas");

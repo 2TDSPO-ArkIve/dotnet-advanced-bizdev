@@ -27,10 +27,10 @@ namespace Arkive_Tests.App
         public async Task GetAll_ComListaDeEspecies_DeveRetornar200()
         {
             // Arrange
-            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(OperationResult<PageResultModel<IEnumerable<EspecieEntity>>>.Success(new PageResultModel<IEnumerable<EspecieEntity>> { Data = new List<EspecieEntity>
+            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(OperationResult<PageResultModel<IEnumerable<GetEspecieDto>>>.Success(new PageResultModel<IEnumerable<GetEspecieDto>> { Data = new List<GetEspecieDto>
             {
-                new EspecieEntity { Id = 1, Especie = "Canina", StAtivo = "S" },
-                new EspecieEntity { Id = 2, Especie = "Felina", StAtivo = "S" }
+                new GetEspecieDto { Id = 1, Especie = "Canina", StAtivo = "S" },
+                new GetEspecieDto { Id = 2, Especie = "Felina", StAtivo = "S" }
             } }));
 
             // Act
@@ -38,7 +38,7 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var body = await response.Content.ReadFromJsonAsync<PageResultModel<List<EspecieEntity>>>();
+            var body = await response.Content.ReadFromJsonAsync<PageResultModel<List<GetEspecieDto>>>();
             Assert.Equal(2, body!.Data.Count);
         }
 
@@ -47,7 +47,7 @@ namespace Arkive_Tests.App
         public async Task GetAll_QuandoNaoHaEspecies_DeveRetornar204()
         {
             // Arrange
-            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(OperationResult<PageResultModel<IEnumerable<EspecieEntity>>>.Failure("Nenhuma espécie encontrada", 204));
+            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(OperationResult<PageResultModel<IEnumerable<GetEspecieDto>>>.Failure("Nenhuma espécie encontrada", 204));
 
             // Act
             var response = await _client.GetAsync("/api/especies");

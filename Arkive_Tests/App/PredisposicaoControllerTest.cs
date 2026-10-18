@@ -27,20 +27,20 @@ namespace Arkive_Tests.App
         public async Task GetAll_ComListaDePredisposicoes_DeveRetornar200()
         {
             // Arrange
-            var predisposicoes = new List<PredisposicaoEntity>
+            var predisposicoes = new List<GetPredisposicaoDto>
             {
-                new PredisposicaoEntity { Id = 1, IdEspecie = 1, IdDoenca = 1 },
-                new PredisposicaoEntity { Id = 2, IdEspecie = 1, IdRaca = 3, IdDoenca = 2 }
+                new GetPredisposicaoDto { Id = 1, IdEspecie = 1, IdDoenca = 1 },
+                new GetPredisposicaoDto { Id = 2, IdEspecie = 1, IdRaca = 3, IdDoenca = 2 }
             };
             _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>()))
-                .ReturnsAsync(OperationResult<PageResultModel<IEnumerable<PredisposicaoEntity>>>.Success(new PageResultModel<IEnumerable<PredisposicaoEntity>> { Data = predisposicoes, TotalRegistros = predisposicoes.Count }));
+                .ReturnsAsync(OperationResult<PageResultModel<IEnumerable<GetPredisposicaoDto>>>.Success(new PageResultModel<IEnumerable<GetPredisposicaoDto>> { Data = predisposicoes, TotalRegistros = predisposicoes.Count }));
 
             // Act
             var response = await _client.GetAsync("/api/predisposicoes");
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var body = await response.Content.ReadFromJsonAsync<PageResultModel<List<PredisposicaoEntity>>>();
+            var body = await response.Content.ReadFromJsonAsync<PageResultModel<List<GetPredisposicaoDto>>>();
             Assert.Equal(2, body!.Data.Count);
         }
 
@@ -50,7 +50,7 @@ namespace Arkive_Tests.App
         {
             // Arrange
             _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>()))
-                .ReturnsAsync(OperationResult<PageResultModel<IEnumerable<PredisposicaoEntity>>>.Failure("Nenhuma predisposição encontrada", 204));
+                .ReturnsAsync(OperationResult<PageResultModel<IEnumerable<GetPredisposicaoDto>>>.Failure("Nenhuma predisposição encontrada", 204));
 
             // Act
             var response = await _client.GetAsync("/api/predisposicoes");

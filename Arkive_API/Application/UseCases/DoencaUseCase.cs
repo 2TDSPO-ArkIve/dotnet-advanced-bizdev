@@ -21,7 +21,7 @@ namespace Arkive_API.Application.UseCases
             _logger = logger;
         }
 
-        public async Task<OperationResult<PageResultModel<IEnumerable<DoencaEntity>>>> ObterTodasAsync(int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<GetDoencaDto>>>> ObterTodasAsync(int skip = 0, int take = 50)
         {
             _logger.LogInformation("Obtendo doenças (skip {Skip}, take {Take})", skip, take);
 
@@ -31,20 +31,20 @@ namespace Arkive_API.Application.UseCases
                 var resultado = await _doencaRepository.ObterTodosAsync(s, t);
 
                 if (!resultado.Data.Any())
-                    return OperationResult<PageResultModel<IEnumerable<DoencaEntity>>>.Failure("Nenhuma doença encontrada", 204);
+                    return OperationResult<PageResultModel<IEnumerable<GetDoencaDto>>>.Failure("Nenhuma doença encontrada", 204);
 
                 resultado.Links = Pagination.Links("/api/doencas", s, t, resultado.TotalRegistros);
                 resultado.Links.Add(new("/api/doencas", "create_doenca", "POST"));
-                return OperationResult<PageResultModel<IEnumerable<DoencaEntity>>>.Success(resultado);
+                return OperationResult<PageResultModel<IEnumerable<GetDoencaDto>>>.Success(Pagination.MapearItens(resultado, x => ItemDto(x)));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter doenças");
-                return OperationResult<PageResultModel<IEnumerable<DoencaEntity>>>.Failure("Ocorreu um erro ao obter as doenças");
+                return OperationResult<PageResultModel<IEnumerable<GetDoencaDto>>>.Failure("Ocorreu um erro ao obter as doenças");
             }
         }
 
-        public async Task<OperationResult<PageResultModel<IEnumerable<DoencaEntity>>>> ObterAtivasAsync(int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<GetDoencaDto>>>> ObterAtivasAsync(int skip = 0, int take = 50)
         {
             _logger.LogInformation("Obtendo doenças ativas (skip {Skip}, take {Take})", skip, take);
 
@@ -54,19 +54,19 @@ namespace Arkive_API.Application.UseCases
                 var resultado = await _doencaRepository.ObterAtivosAsync(s, t);
 
                 if (!resultado.Data.Any())
-                    return OperationResult<PageResultModel<IEnumerable<DoencaEntity>>>.Failure("Nenhuma doença ativa encontrada", 204);
+                    return OperationResult<PageResultModel<IEnumerable<GetDoencaDto>>>.Failure("Nenhuma doença ativa encontrada", 204);
 
                 resultado.Links = Pagination.Links("/api/doencas/ativos", s, t, resultado.TotalRegistros);
-                return OperationResult<PageResultModel<IEnumerable<DoencaEntity>>>.Success(resultado);
+                return OperationResult<PageResultModel<IEnumerable<GetDoencaDto>>>.Success(Pagination.MapearItens(resultado, x => ItemDto(x)));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter doenças ativas");
-                return OperationResult<PageResultModel<IEnumerable<DoencaEntity>>>.Failure("Ocorreu um erro ao obter as doenças ativas");
+                return OperationResult<PageResultModel<IEnumerable<GetDoencaDto>>>.Failure("Ocorreu um erro ao obter as doenças ativas");
             }
         }
 
-        public async Task<OperationResult<PageResultModel<IEnumerable<DoencaEntity>>>> ObterInativasAsync(int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<GetDoencaDto>>>> ObterInativasAsync(int skip = 0, int take = 50)
         {
             _logger.LogInformation("Obtendo doenças inativas (skip {Skip}, take {Take})", skip, take);
 
@@ -76,15 +76,15 @@ namespace Arkive_API.Application.UseCases
                 var resultado = await _doencaRepository.ObterInativosAsync(s, t);
 
                 if (!resultado.Data.Any())
-                    return OperationResult<PageResultModel<IEnumerable<DoencaEntity>>>.Failure("Nenhuma doença inativa encontrada", 204);
+                    return OperationResult<PageResultModel<IEnumerable<GetDoencaDto>>>.Failure("Nenhuma doença inativa encontrada", 204);
 
                 resultado.Links = Pagination.Links("/api/doencas/inativos", s, t, resultado.TotalRegistros);
-                return OperationResult<PageResultModel<IEnumerable<DoencaEntity>>>.Success(resultado);
+                return OperationResult<PageResultModel<IEnumerable<GetDoencaDto>>>.Success(Pagination.MapearItens(resultado, x => ItemDto(x)));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter doenças inativas");
-                return OperationResult<PageResultModel<IEnumerable<DoencaEntity>>>.Failure("Ocorreu um erro ao obter as doenças inativas");
+                return OperationResult<PageResultModel<IEnumerable<GetDoencaDto>>>.Failure("Ocorreu um erro ao obter as doenças inativas");
             }
         }
 
@@ -102,7 +102,7 @@ namespace Arkive_API.Application.UseCases
                     return OperationResult<GetDoencaDto?>.Failure("Doença não encontrada", 404);
                 }
 
-                return OperationResult<GetDoencaDto?>.Success(doenca.ToDoencaDto(Pagination.ItemLinks("/api/doencas", id, "doenca")));
+                return OperationResult<GetDoencaDto?>.Success(ItemDto(doenca, naLista: false));
             }
             catch (Exception ex)
             {
@@ -111,7 +111,7 @@ namespace Arkive_API.Application.UseCases
             }
         }
 
-        public async Task<OperationResult<IEnumerable<DoencaEntity>>> ObterPorNomeAsync(string nome)
+        public async Task<OperationResult<IEnumerable<GetDoencaDto>>> ObterPorNomeAsync(string nome)
         {
             _logger.LogInformation("Obtendo doenças por nome {Nome}", nome);
 
@@ -120,18 +120,18 @@ namespace Arkive_API.Application.UseCases
                 var resultado = await _doencaRepository.ObterPorNomeAsync(nome);
 
                 if (!resultado.Any())
-                    return OperationResult<IEnumerable<DoencaEntity>>.Failure("Nenhuma doença encontrada com esse nome", 204);
+                    return OperationResult<IEnumerable<GetDoencaDto>>.Failure("Nenhuma doença encontrada com esse nome", 204);
 
-                return OperationResult<IEnumerable<DoencaEntity>>.Success(resultado);
+                return OperationResult<IEnumerable<GetDoencaDto>>.Success(resultado.Select(x => ItemDto(x)).ToList());
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter doenças por nome {Nome}", nome);
-                return OperationResult<IEnumerable<DoencaEntity>>.Failure("Ocorreu um erro ao obter as doenças por nome");
+                return OperationResult<IEnumerable<GetDoencaDto>>.Failure("Ocorreu um erro ao obter as doenças por nome");
             }
         }
 
-        public async Task<OperationResult<IEnumerable<DoencaEntity>>> ObterPorCategoriaAsync(int idCategoria)
+        public async Task<OperationResult<IEnumerable<GetDoencaDto>>> ObterPorCategoriaAsync(int idCategoria)
         {
             _logger.LogInformation("Obtendo doenças da categoria {IdCategoria}", idCategoria);
 
@@ -140,14 +140,14 @@ namespace Arkive_API.Application.UseCases
                 var resultado = await _doencaRepository.ObterPorCategoriaAsync(idCategoria);
 
                 if (!resultado.Any())
-                    return OperationResult<IEnumerable<DoencaEntity>>.Failure("Nenhuma doença encontrada para esta categoria", 204);
+                    return OperationResult<IEnumerable<GetDoencaDto>>.Failure("Nenhuma doença encontrada para esta categoria", 204);
 
-                return OperationResult<IEnumerable<DoencaEntity>>.Success(resultado);
+                return OperationResult<IEnumerable<GetDoencaDto>>.Success(resultado.Select(x => ItemDto(x)).ToList());
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter doenças da categoria {IdCategoria}", idCategoria);
-                return OperationResult<IEnumerable<DoencaEntity>>.Failure("Ocorreu um erro ao obter as doenças da categoria");
+                return OperationResult<IEnumerable<GetDoencaDto>>.Failure("Ocorreu um erro ao obter as doenças da categoria");
             }
         }
 
@@ -265,5 +265,11 @@ namespace Arkive_API.Application.UseCases
                 throw new CategoriaNaoEncontradaException(idCategoria.Value);
             }
         }
+
+        /// <summary>
+        /// Converte a entidade no DTO de retorno com links HATEOAS de item (get_ na lista, self no GetById).
+        /// </summary>
+        private static GetDoencaDto ItemDto(DoencaEntity x, bool naLista = true)
+            => x.ToDoencaDto(Pagination.ItemLinks("/api/doencas", x.Id, "doenca", ativo: x.StAtivo == "S", naLista: naLista));
     }
 }

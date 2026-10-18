@@ -1,13 +1,15 @@
 using Arkive_API.Application;
+using Arkive_API.Application.Dtos;
+using Arkive_API.Application.Mappers;
 using Arkive_API.Domain.Entities;
 using Arkive_API.Domain.Models;
 using Swashbuckle.AspNetCore.Filters;
 
 namespace Arkive_API.Doc.Samples
 {
-    public class PredisposicaoResponseListSample : IExamplesProvider<PageResultModel<IEnumerable<PredisposicaoEntity>>>
+    public class PredisposicaoResponseListSample : IExamplesProvider<PageResultModel<IEnumerable<GetPredisposicaoDto>>>
     {
-        public PageResultModel<IEnumerable<PredisposicaoEntity>> GetExamples()
+        public PageResultModel<IEnumerable<GetPredisposicaoDto>> GetExamples()
         {
             var especieCanina = new EspecieEntity { Id = 1, Especie = "Canina", StAtivo = "S" };
             var categoriaOrtopedica = new CategoriaDoencaEntity { Id = 1, Nome = "Doenças Ortopédicas", StAtivo = "S" };
@@ -41,9 +43,9 @@ namespace Arkive_API.Doc.Samples
             var links = Pagination.Links("/api/predisposicoes", 0, 2, 10);
             links.Add(new("/api/predisposicoes", "create_predisposicao", "POST"));
 
-            return new PageResultModel<IEnumerable<PredisposicaoEntity>>
+            return new PageResultModel<IEnumerable<GetPredisposicaoDto>>
             {
-                Data = data,
+                Data = data.Select(x => x.ToPredisposicaoDto(Pagination.ItemLinks("/api/predisposicoes", x.Id, "predisposicao", editavel: false, naLista: true))).ToList(),
                 Deslocamento = 0,
                 RegistroRetornado = 2,
                 TotalRegistros = 10,

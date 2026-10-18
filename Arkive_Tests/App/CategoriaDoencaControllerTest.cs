@@ -27,19 +27,19 @@ namespace Arkive_Tests.App
         public async Task GetAll_ComListaDeCategorias_DeveRetornar200()
         {
             // Arrange
-            var categorias = new List<CategoriaDoencaEntity>
+            var categorias = new List<GetCategoriaDoencaDto>
             {
-                new CategoriaDoencaEntity { Id = 1, Nome = "Viral", StAtivo = "S" },
-                new CategoriaDoencaEntity { Id = 2, Nome = "Bacteriana", StAtivo = "S" }
+                new GetCategoriaDoencaDto { Id = 1, Nome = "Viral", StAtivo = "S" },
+                new GetCategoriaDoencaDto { Id = 2, Nome = "Bacteriana", StAtivo = "S" }
             };
-            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(OperationResult<PageResultModel<IEnumerable<CategoriaDoencaEntity>>>.Success(new PageResultModel<IEnumerable<CategoriaDoencaEntity>> { Data = categorias }));
+            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(OperationResult<PageResultModel<IEnumerable<GetCategoriaDoencaDto>>>.Success(new PageResultModel<IEnumerable<GetCategoriaDoencaDto>> { Data = categorias }));
 
             // Act
             var response = await _client.GetAsync("/api/categorias-doenca");
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var body = await response.Content.ReadFromJsonAsync<PageResultModel<List<CategoriaDoencaEntity>>>();
+            var body = await response.Content.ReadFromJsonAsync<PageResultModel<List<GetCategoriaDoencaDto>>>();
             Assert.NotNull(body);
             Assert.Equal(2, body!.Data.Count);
         }
@@ -49,7 +49,7 @@ namespace Arkive_Tests.App
         public async Task GetAll_QuandoNaoHaCategorias_DeveRetornar204()
         {
             // Arrange
-            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(OperationResult<PageResultModel<IEnumerable<CategoriaDoencaEntity>>>.Failure("Nenhuma categoria de doença encontrada", 204));
+            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(OperationResult<PageResultModel<IEnumerable<GetCategoriaDoencaDto>>>.Failure("Nenhuma categoria de doença encontrada", 204));
 
             // Act
             var response = await _client.GetAsync("/api/categorias-doenca");

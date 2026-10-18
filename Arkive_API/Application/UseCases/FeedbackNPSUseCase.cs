@@ -19,7 +19,7 @@ namespace Arkive_API.Application.UseCases
             _logger = logger;
         }
 
-        public async Task<OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>> ObterTodosAsync(int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>> ObterTodosAsync(int skip = 0, int take = 50)
         {
             _logger.LogInformation("Obtendo feedbacks NPS (skip {Skip}, take {Take})", skip, take);
 
@@ -29,16 +29,16 @@ namespace Arkive_API.Application.UseCases
                 var resultado = await _feedbackNPSRepository.ObterTodosAsync(s, t);
 
                 if (!resultado.Data.Any())
-                    return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Failure("Nenhum feedback NPS encontrado", 204);
+                    return OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>.Failure("Nenhum feedback NPS encontrado", 204);
 
                 resultado.Links = Pagination.Links("/api/feedbacks-nps", s, t, resultado.TotalRegistros);
                 resultado.Links.Add(new("/api/feedbacks-nps", "create_feedback_nps", "POST"));
-                return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Success(resultado);
+                return OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>.Success(Pagination.MapearItens(resultado, x => ItemDto(x)));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter feedbacks NPS");
-                return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Failure("Ocorreu um erro ao obter os feedbacks NPS");
+                return OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>.Failure("Ocorreu um erro ao obter os feedbacks NPS");
             }
         }
 
@@ -56,7 +56,7 @@ namespace Arkive_API.Application.UseCases
                     return OperationResult<GetFeedbackNPSDto?>.Failure("Feedback NPS não encontrado", 404);
                 }
 
-                return OperationResult<GetFeedbackNPSDto?>.Success(feedback.ToFeedbackNPSDto(Pagination.ItemLinks("/api/feedbacks-nps", id, "feedback_nps", editavel: false)));
+                return OperationResult<GetFeedbackNPSDto?>.Success(ItemDto(feedback, naLista: false));
             }
             catch (Exception ex)
             {
@@ -65,7 +65,7 @@ namespace Arkive_API.Application.UseCases
             }
         }
 
-        public async Task<OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>> ObterPorNotaAsync(int nota, int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>> ObterPorNotaAsync(int nota, int skip = 0, int take = 50)
         {
             _logger.LogInformation("Obtendo feedbacks NPS com nota {Nota} (skip {Skip}, take {Take})", nota, skip, take);
 
@@ -81,23 +81,23 @@ namespace Arkive_API.Application.UseCases
                 var resultado = await _feedbackNPSRepository.ObterPorNotaAsync(nota, s, t);
 
                 if (!resultado.Data.Any())
-                    return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Failure("Nenhum feedback NPS encontrado para esta nota", 204);
+                    return OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>.Failure("Nenhum feedback NPS encontrado para esta nota", 204);
 
                 resultado.Links = Pagination.Links($"/api/feedbacks-nps/nota/{nota}", s, t, resultado.TotalRegistros);
-                return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Success(resultado);
+                return OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>.Success(Pagination.MapearItens(resultado, x => ItemDto(x)));
             }
             catch (ArgumentOutOfRangeException ex)
             {
-                return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Failure(ex.Message, 400);
+                return OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>.Failure(ex.Message, 400);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter feedbacks NPS com nota {Nota}", nota);
-                return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Failure("Ocorreu um erro ao obter os feedbacks NPS por nota");
+                return OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>.Failure("Ocorreu um erro ao obter os feedbacks NPS por nota");
             }
         }
 
-        public async Task<OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>> ObterPorResponsavelAsync(int idResponsavel, int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>> ObterPorResponsavelAsync(int idResponsavel, int skip = 0, int take = 50)
         {
             _logger.LogInformation("Obtendo feedbacks NPS do responsável {IdResponsavel} (skip {Skip}, take {Take})", idResponsavel, skip, take);
 
@@ -107,19 +107,19 @@ namespace Arkive_API.Application.UseCases
                 var resultado = await _feedbackNPSRepository.ObterPorResponsavelAsync(idResponsavel, s, t);
 
                 if (!resultado.Data.Any())
-                    return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Failure("Nenhum feedback NPS encontrado para este responsável", 204);
+                    return OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>.Failure("Nenhum feedback NPS encontrado para este responsável", 204);
 
                 resultado.Links = Pagination.Links($"/api/feedbacks-nps/responsavel/{idResponsavel}", s, t, resultado.TotalRegistros);
-                return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Success(resultado);
+                return OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>.Success(Pagination.MapearItens(resultado, x => ItemDto(x)));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter feedbacks NPS do responsável {IdResponsavel}", idResponsavel);
-                return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Failure("Ocorreu um erro ao obter os feedbacks NPS do responsável");
+                return OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>.Failure("Ocorreu um erro ao obter os feedbacks NPS do responsável");
             }
         }
 
-        public async Task<OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>> ObterPorAnimalAsync(int idAnimal, int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>> ObterPorAnimalAsync(int idAnimal, int skip = 0, int take = 50)
         {
             _logger.LogInformation("Obtendo feedbacks NPS do animal {IdAnimal} (skip {Skip}, take {Take})", idAnimal, skip, take);
 
@@ -129,19 +129,19 @@ namespace Arkive_API.Application.UseCases
                 var resultado = await _feedbackNPSRepository.ObterPorAnimalAsync(idAnimal, s, t);
 
                 if (!resultado.Data.Any())
-                    return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Failure("Nenhum feedback NPS encontrado para este animal", 204);
+                    return OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>.Failure("Nenhum feedback NPS encontrado para este animal", 204);
 
                 resultado.Links = Pagination.Links($"/api/feedbacks-nps/animal/{idAnimal}", s, t, resultado.TotalRegistros);
-                return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Success(resultado);
+                return OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>.Success(Pagination.MapearItens(resultado, x => ItemDto(x)));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter feedbacks NPS do animal {IdAnimal}", idAnimal);
-                return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Failure("Ocorreu um erro ao obter os feedbacks NPS do animal");
+                return OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>.Failure("Ocorreu um erro ao obter os feedbacks NPS do animal");
             }
         }
 
-        public async Task<OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>> ObterPorClinicaAsync(int idClinica, int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>> ObterPorClinicaAsync(int idClinica, int skip = 0, int take = 50)
         {
             _logger.LogInformation("Obtendo feedbacks NPS da clínica {IdClinica} (skip {Skip}, take {Take})", idClinica, skip, take);
 
@@ -151,19 +151,19 @@ namespace Arkive_API.Application.UseCases
                 var resultado = await _feedbackNPSRepository.ObterPorClinicaAsync(idClinica, s, t);
 
                 if (!resultado.Data.Any())
-                    return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Failure("Nenhum feedback NPS encontrado para esta clínica", 204);
+                    return OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>.Failure("Nenhum feedback NPS encontrado para esta clínica", 204);
 
                 resultado.Links = Pagination.Links($"/api/feedbacks-nps/clinica/{idClinica}", s, t, resultado.TotalRegistros);
-                return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Success(resultado);
+                return OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>.Success(Pagination.MapearItens(resultado, x => ItemDto(x)));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter feedbacks NPS da clínica {IdClinica}", idClinica);
-                return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Failure("Ocorreu um erro ao obter os feedbacks NPS da clínica");
+                return OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>.Failure("Ocorreu um erro ao obter os feedbacks NPS da clínica");
             }
         }
 
-        public async Task<OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>> ObterPorVeterinarioAsync(int idVeterinario, int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>> ObterPorVeterinarioAsync(int idVeterinario, int skip = 0, int take = 50)
         {
             _logger.LogInformation("Obtendo feedbacks NPS do veterinário {IdVeterinario} (skip {Skip}, take {Take})", idVeterinario, skip, take);
 
@@ -173,19 +173,19 @@ namespace Arkive_API.Application.UseCases
                 var resultado = await _feedbackNPSRepository.ObterPorVeterinarioAsync(idVeterinario, s, t);
 
                 if (!resultado.Data.Any())
-                    return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Failure("Nenhum feedback NPS encontrado para este veterinário", 204);
+                    return OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>.Failure("Nenhum feedback NPS encontrado para este veterinário", 204);
 
                 resultado.Links = Pagination.Links($"/api/feedbacks-nps/veterinario/{idVeterinario}", s, t, resultado.TotalRegistros);
-                return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Success(resultado);
+                return OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>.Success(Pagination.MapearItens(resultado, x => ItemDto(x)));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter feedbacks NPS do veterinário {IdVeterinario}", idVeterinario);
-                return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Failure("Ocorreu um erro ao obter os feedbacks NPS do veterinário");
+                return OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>.Failure("Ocorreu um erro ao obter os feedbacks NPS do veterinário");
             }
         }
 
-        public async Task<OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>> ObterPorDataAsync(DateTime data, int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>> ObterPorDataAsync(DateTime data, int skip = 0, int take = 50)
         {
             _logger.LogInformation("Obtendo feedbacks NPS da data {Data:yyyy-MM-dd} (skip {Skip}, take {Take})", data, skip, take);
 
@@ -195,15 +195,15 @@ namespace Arkive_API.Application.UseCases
                 var resultado = await _feedbackNPSRepository.ObterPorDataAsync(data, s, t);
 
                 if (!resultado.Data.Any())
-                    return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Failure("Nenhum feedback NPS encontrado para esta data", 204);
+                    return OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>.Failure("Nenhum feedback NPS encontrado para esta data", 204);
 
                 resultado.Links = Pagination.Links($"/api/feedbacks-nps/data/{data:yyyy-MM-dd}", s, t, resultado.TotalRegistros);
-                return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Success(resultado);
+                return OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>.Success(Pagination.MapearItens(resultado, x => ItemDto(x)));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter feedbacks NPS da data {Data:yyyy-MM-dd}", data);
-                return OperationResult<PageResultModel<IEnumerable<FeedbackNPSEntity>>>.Failure("Ocorreu um erro ao obter os feedbacks NPS da data");
+                return OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>.Failure("Ocorreu um erro ao obter os feedbacks NPS da data");
             }
         }
 
@@ -291,5 +291,11 @@ namespace Arkive_API.Application.UseCases
                 return OperationResult<FeedbackNPSEntity?>.Failure("Ocorreu um erro ao remover o feedback NPS");
             }
         }
+
+        /// <summary>
+        /// Converte a entidade no DTO de retorno com links HATEOAS de item (get_ na lista, self no GetById).
+        /// </summary>
+        private static GetFeedbackNPSDto ItemDto(FeedbackNPSEntity x, bool naLista = true)
+            => x.ToFeedbackNPSDto(Pagination.ItemLinks("/api/feedbacks-nps", x.Id, "feedback_nps", editavel: false, naLista: naLista));
     }
 }

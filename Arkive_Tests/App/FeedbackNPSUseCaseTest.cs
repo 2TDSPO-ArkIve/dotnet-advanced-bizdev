@@ -48,6 +48,7 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.True(resultado.IsSuccess);
+            Assert.All(resultado.Value!.Data, item => Assert.Equal(new[] { "get_feedback_nps", "delete_feedback_nps" }, item.Links.Select(l => l.Rel)));
             Assert.Collection(resultado.Value!.Data,
                 item => { Assert.Equal(1, item.Id); Assert.Equal(10, item.Nota); },
                 item => { Assert.Equal(2, item.Id); Assert.Equal(5, item.Nota); });

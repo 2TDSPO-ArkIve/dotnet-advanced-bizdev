@@ -94,6 +94,7 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.True(resultado.IsSuccess);
+            Assert.All(resultado.Value!.Data, item => Assert.Equal(new[] { "get_raca", "reativar_raca" }, item.Links.Select(l => l.Rel)));
             Assert.Collection(resultado.Value!.Data,
                 item =>
                 {

@@ -1,13 +1,15 @@
 using Arkive_API.Application;
+using Arkive_API.Application.Dtos;
+using Arkive_API.Application.Mappers;
 using Arkive_API.Domain.Entities;
 using Arkive_API.Domain.Models;
 using Swashbuckle.AspNetCore.Filters;
 
 namespace Arkive_API.Doc.Samples
 {
-    public class FeedbackNPSResponseListSample : IExamplesProvider<PageResultModel<IEnumerable<FeedbackNPSEntity>>>
+    public class FeedbackNPSResponseListSample : IExamplesProvider<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>
     {
-        public PageResultModel<IEnumerable<FeedbackNPSEntity>> GetExamples()
+        public PageResultModel<IEnumerable<GetFeedbackNPSDto>> GetExamples()
         {
             var data = new List<FeedbackNPSEntity>
             {
@@ -40,9 +42,9 @@ namespace Arkive_API.Doc.Samples
             var links = Pagination.Links("/api/feedbacks-nps", 0, 2, 10);
             links.Add(new("/api/feedbacks-nps", "create_feedback_nps", "POST"));
 
-            return new PageResultModel<IEnumerable<FeedbackNPSEntity>>
+            return new PageResultModel<IEnumerable<GetFeedbackNPSDto>>
             {
-                Data = data,
+                Data = data.Select(x => x.ToFeedbackNPSDto(Pagination.ItemLinks("/api/feedbacks-nps", x.Id, "feedback_nps", editavel: false, naLista: true))).ToList(),
                 Deslocamento = 0,
                 RegistroRetornado = 2,
                 TotalRegistros = 10,

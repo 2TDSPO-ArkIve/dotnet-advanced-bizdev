@@ -1,13 +1,15 @@
 using Arkive_API.Application;
+using Arkive_API.Application.Dtos;
+using Arkive_API.Application.Mappers;
 using Arkive_API.Domain.Entities;
 using Arkive_API.Domain.Models;
 using Swashbuckle.AspNetCore.Filters;
 
 namespace Arkive_API.Doc.Samples
 {
-    public class RacaResponseListSample : IExamplesProvider<PageResultModel<IEnumerable<RacaEntity>>>
+    public class RacaResponseListSample : IExamplesProvider<PageResultModel<IEnumerable<GetRacaDto>>>
     {
-        public PageResultModel<IEnumerable<RacaEntity>> GetExamples()
+        public PageResultModel<IEnumerable<GetRacaDto>> GetExamples()
         {
             var canina = new EspecieEntity { Id = 1, Especie = "Canina", StAtivo = "S" };
 
@@ -20,9 +22,9 @@ namespace Arkive_API.Doc.Samples
             var links = Pagination.Links("/api/racas", 0, 2, 10);
             links.Add(new("/api/racas", "create_raca", "POST"));
 
-            return new PageResultModel<IEnumerable<RacaEntity>>
+            return new PageResultModel<IEnumerable<GetRacaDto>>
             {
-                Data = data,
+                Data = data.Select(x => x.ToRacaDto(Pagination.ItemLinks("/api/racas", x.Id, "raca", ativo: x.StAtivo == "S", naLista: true))).ToList(),
                 Deslocamento = 0,
                 RegistroRetornado = 2,
                 TotalRegistros = 10,

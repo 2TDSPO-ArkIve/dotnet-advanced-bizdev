@@ -42,7 +42,7 @@ namespace Arkive_API.Presentation.Controllers
             * Este endpoint não filtra por status; use `/ativos` ou `/inativos` para isso.
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<DoencaEntity>>))]
+        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<GetDoencaDto>>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma doença encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
         [SwaggerResponseExample(statusCode: 200, typeof(DoencaResponseListSample))]
@@ -71,7 +71,7 @@ namespace Arkive_API.Presentation.Controllers
             * Doenças inativas (excluídas logicamente) não aparecem neste retorno.
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<DoencaEntity>>))]
+        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<GetDoencaDto>>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma doença ativa encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
         public async Task<IActionResult> GetDoencasAtivas(int skip = 0, int take = 50)
@@ -99,7 +99,7 @@ namespace Arkive_API.Presentation.Controllers
             * Doenças inativas são registros excluídos logicamente (soft delete), não removidos fisicamente.
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<DoencaEntity>>))]
+        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<GetDoencaDto>>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma doença inativa encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
         public async Task<IActionResult> GetDoencasInativas(int skip = 0, int take = 50)
@@ -155,7 +155,7 @@ namespace Arkive_API.Presentation.Controllers
             * Somente doenças ativas são retornadas por este endpoint.
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<DoencaEntity>))]
+        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<GetDoencaDto>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma doença encontrada com esse nome")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
         public async Task<IActionResult> GetDoencaByNome(string nome)
@@ -182,7 +182,7 @@ namespace Arkive_API.Presentation.Controllers
             * Somente doenças ativas são retornadas por este endpoint.
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<DoencaEntity>))]
+        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<GetDoencaDto>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma doença encontrada para esta categoria")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
         public async Task<IActionResult> GetDoencaByCategoria(int idCategoria)

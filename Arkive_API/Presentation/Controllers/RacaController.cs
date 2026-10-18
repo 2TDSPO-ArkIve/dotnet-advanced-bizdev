@@ -42,7 +42,7 @@ namespace Arkive_API.Presentation.Controllers
             * Este endpoint não filtra por status; use `/ativos` ou `/inativos` para isso.
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<RacaEntity>>))]
+        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<GetRacaDto>>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma raça encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
         [SwaggerResponseExample(statusCode: 200, typeof(RacaResponseListSample))]
@@ -71,7 +71,7 @@ namespace Arkive_API.Presentation.Controllers
             * Raças inativas (excluídas logicamente) não aparecem neste retorno.
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<RacaEntity>>))]
+        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<GetRacaDto>>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma raça ativa encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
         public async Task<IActionResult> GetRacasAtivas(int skip = 0, int take = 50)
@@ -99,7 +99,7 @@ namespace Arkive_API.Presentation.Controllers
             * Raças inativas são registros excluídos logicamente (soft delete), não removidos fisicamente.
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<RacaEntity>>))]
+        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<GetRacaDto>>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma raça inativa encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
         public async Task<IActionResult> GetRacasInativas(int skip = 0, int take = 50)
@@ -154,7 +154,7 @@ namespace Arkive_API.Presentation.Controllers
             * Somente raças ativas são retornadas por este endpoint.
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<RacaEntity>))]
+        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<GetRacaDto>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma raça encontrada para esta espécie")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
         public async Task<IActionResult> GetRacasByEspecie(int idEspecie)

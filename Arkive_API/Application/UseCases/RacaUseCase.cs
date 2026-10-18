@@ -21,7 +21,7 @@ namespace Arkive_API.Application.UseCases
             _logger = logger;
         }
 
-        public async Task<OperationResult<PageResultModel<IEnumerable<RacaEntity>>>> ObterTodasAsync(int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<GetRacaDto>>>> ObterTodasAsync(int skip = 0, int take = 50)
         {
             _logger.LogInformation("Obtendo todas as raças (skip {Skip}, take {Take})", skip, take);
 
@@ -31,20 +31,20 @@ namespace Arkive_API.Application.UseCases
                 var resultado = await _racaRepository.ObterTodosAsync(s, t);
 
                 if (!resultado.Data.Any())
-                    return OperationResult<PageResultModel<IEnumerable<RacaEntity>>>.Failure("Nenhuma raça encontrada", 204);
+                    return OperationResult<PageResultModel<IEnumerable<GetRacaDto>>>.Failure("Nenhuma raça encontrada", 204);
 
                 resultado.Links = Pagination.Links("/api/racas", s, t, resultado.TotalRegistros);
                 resultado.Links.Add(new("/api/racas", "create_raca", "POST"));
-                return OperationResult<PageResultModel<IEnumerable<RacaEntity>>>.Success(resultado);
+                return OperationResult<PageResultModel<IEnumerable<GetRacaDto>>>.Success(Pagination.MapearItens(resultado, x => ItemDto(x)));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter todas as raças");
-                return OperationResult<PageResultModel<IEnumerable<RacaEntity>>>.Failure("Ocorreu um erro ao obter as raças");
+                return OperationResult<PageResultModel<IEnumerable<GetRacaDto>>>.Failure("Ocorreu um erro ao obter as raças");
             }
         }
 
-        public async Task<OperationResult<PageResultModel<IEnumerable<RacaEntity>>>> ObterAtivasAsync(int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<GetRacaDto>>>> ObterAtivasAsync(int skip = 0, int take = 50)
         {
             _logger.LogInformation("Obtendo raças ativas (skip {Skip}, take {Take})", skip, take);
 
@@ -54,19 +54,19 @@ namespace Arkive_API.Application.UseCases
                 var resultado = await _racaRepository.ObterAtivosAsync(s, t);
 
                 if (!resultado.Data.Any())
-                    return OperationResult<PageResultModel<IEnumerable<RacaEntity>>>.Failure("Nenhuma raça ativa encontrada", 204);
+                    return OperationResult<PageResultModel<IEnumerable<GetRacaDto>>>.Failure("Nenhuma raça ativa encontrada", 204);
 
                 resultado.Links = Pagination.Links("/api/racas/ativos", s, t, resultado.TotalRegistros);
-                return OperationResult<PageResultModel<IEnumerable<RacaEntity>>>.Success(resultado);
+                return OperationResult<PageResultModel<IEnumerable<GetRacaDto>>>.Success(Pagination.MapearItens(resultado, x => ItemDto(x)));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter raças ativas");
-                return OperationResult<PageResultModel<IEnumerable<RacaEntity>>>.Failure("Ocorreu um erro ao obter as raças ativas");
+                return OperationResult<PageResultModel<IEnumerable<GetRacaDto>>>.Failure("Ocorreu um erro ao obter as raças ativas");
             }
         }
 
-        public async Task<OperationResult<PageResultModel<IEnumerable<RacaEntity>>>> ObterInativasAsync(int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<GetRacaDto>>>> ObterInativasAsync(int skip = 0, int take = 50)
         {
             _logger.LogInformation("Obtendo raças inativas (skip {Skip}, take {Take})", skip, take);
 
@@ -76,15 +76,15 @@ namespace Arkive_API.Application.UseCases
                 var resultado = await _racaRepository.ObterInativosAsync(s, t);
 
                 if (!resultado.Data.Any())
-                    return OperationResult<PageResultModel<IEnumerable<RacaEntity>>>.Failure("Nenhuma raça inativa encontrada", 204);
+                    return OperationResult<PageResultModel<IEnumerable<GetRacaDto>>>.Failure("Nenhuma raça inativa encontrada", 204);
 
                 resultado.Links = Pagination.Links("/api/racas/inativos", s, t, resultado.TotalRegistros);
-                return OperationResult<PageResultModel<IEnumerable<RacaEntity>>>.Success(resultado);
+                return OperationResult<PageResultModel<IEnumerable<GetRacaDto>>>.Success(Pagination.MapearItens(resultado, x => ItemDto(x)));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter raças inativas");
-                return OperationResult<PageResultModel<IEnumerable<RacaEntity>>>.Failure("Ocorreu um erro ao obter as raças inativas");
+                return OperationResult<PageResultModel<IEnumerable<GetRacaDto>>>.Failure("Ocorreu um erro ao obter as raças inativas");
             }
         }
 
@@ -102,7 +102,7 @@ namespace Arkive_API.Application.UseCases
                     return OperationResult<GetRacaDto?>.Failure("Raça não encontrada", 404);
                 }
 
-                return OperationResult<GetRacaDto?>.Success(raca.ToRacaDto(Pagination.ItemLinks("/api/racas", id, "raca")));
+                return OperationResult<GetRacaDto?>.Success(ItemDto(raca, naLista: false));
             }
             catch (Exception ex)
             {
@@ -111,7 +111,7 @@ namespace Arkive_API.Application.UseCases
             }
         }
 
-        public async Task<OperationResult<IEnumerable<RacaEntity>>> ObterPorEspecieAsync(int idEspecie)
+        public async Task<OperationResult<IEnumerable<GetRacaDto>>> ObterPorEspecieAsync(int idEspecie)
         {
             _logger.LogInformation("Obtendo raças da espécie {IdEspecie}", idEspecie);
 
@@ -120,14 +120,14 @@ namespace Arkive_API.Application.UseCases
                 var resultado = await _racaRepository.ObterPorEspecieAsync(idEspecie);
 
                 if (!resultado.Any())
-                    return OperationResult<IEnumerable<RacaEntity>>.Failure("Nenhuma raça encontrada para esta espécie", 204);
+                    return OperationResult<IEnumerable<GetRacaDto>>.Failure("Nenhuma raça encontrada para esta espécie", 204);
 
-                return OperationResult<IEnumerable<RacaEntity>>.Success(resultado);
+                return OperationResult<IEnumerable<GetRacaDto>>.Success(resultado.Select(x => ItemDto(x)).ToList());
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao obter raças da espécie {IdEspecie}", idEspecie);
-                return OperationResult<IEnumerable<RacaEntity>>.Failure("Ocorreu um erro ao obter as raças da espécie");
+                return OperationResult<IEnumerable<GetRacaDto>>.Failure("Ocorreu um erro ao obter as raças da espécie");
             }
         }
 
@@ -243,5 +243,11 @@ namespace Arkive_API.Application.UseCases
                 throw new EspecieNaoEncontradaException(idEspecie);
             }
         }
+
+        /// <summary>
+        /// Converte a entidade no DTO de retorno com links HATEOAS de item (get_ na lista, self no GetById).
+        /// </summary>
+        private static GetRacaDto ItemDto(RacaEntity x, bool naLista = true)
+            => x.ToRacaDto(Pagination.ItemLinks("/api/racas", x.Id, "raca", ativo: x.StAtivo == "S", naLista: naLista));
     }
 }

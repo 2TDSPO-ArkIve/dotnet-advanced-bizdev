@@ -65,6 +65,7 @@ namespace Arkive_Tests.App
             // Assert
             Assert.NotNull(resultado);
             Assert.True(resultado.IsSuccess);
+            Assert.All(resultado.Value!.Data, item => Assert.Equal(new[] { "get_doenca", "put_doenca", "delete_doenca" }, item.Links.Select(l => l.Rel)));
             Assert.Collection(resultado.Value!.Data,
                 item => { Assert.Equal(1, item.Id); Assert.Equal("Cinomose", item.Nome); Assert.Equal("S", item.StAtivo); });
         }
@@ -85,6 +86,7 @@ namespace Arkive_Tests.App
             // Assert
             Assert.NotNull(resultado);
             Assert.True(resultado.IsSuccess);
+            Assert.All(resultado.Value!.Data, item => Assert.Equal(new[] { "get_doenca", "reativar_doenca" }, item.Links.Select(l => l.Rel)));
             Assert.Collection(resultado.Value!.Data,
                 item => { Assert.Equal(2, item.Id); Assert.Equal("Raiva", item.Nome); Assert.Equal("N", item.StAtivo); });
         }
