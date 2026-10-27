@@ -204,9 +204,6 @@ namespace Arkive_API.Presentation.Controllers
             return CreatedAtAction(nameof(GetPredisposicaoById), new { id = resultado.Value?.Id ?? 0 }, resultado.Value);
         }
 
-        // Sem PUT — conforme PRD §16.3.5:
-        // "o PUT pode ser substituído por remover o vínculo antigo e criar um novo"
-
         [HttpDelete("{id}")]
         [Authorize(Roles = Roles.SysAdmin)]
         [SwaggerResponse(statusCode: 403, description: "Perfil sem permissão para esta operação")]

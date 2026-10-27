@@ -243,8 +243,6 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Listando feedbacks NPS da data {Data} (skip {Skip}, take {Take})", data, skip, take);
 
-            // Parsing de formato de entrada (rota é string) — não é regra de negócio,
-            // então permanece no Controller, igual ao original.
             if (!DateTime.TryParse(data, out DateTime dataParsed))
             {
                 _logger.LogWarning("Formato de data inválido recebido: {Data}", data);
@@ -290,8 +288,6 @@ namespace Arkive_API.Presentation.Controllers
             _logger.LogInformation("Feedback NPS registrado com sucesso: {Id}", resultado.Value?.Id ?? 0);
             return CreatedAtAction(nameof(GetFeedbackById), new { id = resultado.Value?.Id ?? 0 }, resultado.Value);
         }
-
-        // Sem PUT — feedback NPS é um registro imutável por natureza
 
         [HttpDelete("{id}")]
         [Authorize(Roles = Roles.SysAdmin)]

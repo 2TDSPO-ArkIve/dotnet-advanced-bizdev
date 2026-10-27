@@ -157,7 +157,6 @@ namespace Arkive_Infrastructure.Repositories
                 _context.Predisposicao.Add(entity);
                 await _context.SaveChangesAsync();
 
-                // Recarrega com os relacionamentos para devolver o objeto completo, igual ao Controller original
                 return await ComRelacionamentos().FirstOrDefaultAsync(x => x.Id == entity.Id);
             }
             catch (Exception ex)

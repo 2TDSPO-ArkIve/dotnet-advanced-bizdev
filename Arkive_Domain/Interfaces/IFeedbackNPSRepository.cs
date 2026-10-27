@@ -17,8 +17,6 @@ namespace Arkive_Domain.Interfaces
         Task<FeedbackNPSEntity?> DeletarAsync(int id);
 
         // Verificações de existência nas tabelas externas (sincronizadas pela API Java).
-        // Ficam aqui porque são consultas simples no mesmo ApplicationContext, não uma chamada
-        // a outro serviço — continua sendo "acesso a dado", só que em tabela de outro domínio.
         Task<bool> ResponsavelExisteAsync(int id);
         Task<bool> AnimalExisteAsync(int id);
         Task<bool> ClinicaExisteAsync(int id);

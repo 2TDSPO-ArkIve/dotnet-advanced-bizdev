@@ -19,12 +19,10 @@ builder.Services.AddIoC(builder.Configuration);
 builder.Services.AddAutenticacao(builder.Configuration);
 
 var healthChecks = builder.Services.AddHealthChecks()
-    // Liveness: o processo está de pé? (auto-contido, sem I/O externo)
     .AddCheck(
         "self",
         () => HealthCheckResult.Healthy(),
         tags: ["live"])
-    // Readiness: o banco responde?
     .AddOracle(
         connectionString: builder.Configuration.GetConnectionString("Oracle") ?? "",
         name: "oracle",
@@ -48,14 +46,12 @@ builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
 builder.Services.AddControllers(o => o.Filters.Add<AuditoriaFilter>());
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c => {
     c.EnableAnnotations();
     c.ExampleFilters();
     c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
 
-    // Botão "Authorize" (cadeado): o Swagger passa a enviar Authorization: Bearer <token>
     var securitySchema = new OpenApiSecurityScheme
     {
         Description = "Cole o token JWT retornado por POST /api/auth.",
@@ -116,7 +112,6 @@ var app = builder.Build();
 app.UseSerilogRequestLogging();
 app.UseExceptionHandler();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
