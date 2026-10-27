@@ -21,7 +21,7 @@ namespace Arkive_API.Presentation.Controllers
 
         [HttpGet("live")]
         [SwaggerOperation(
-            Summary = "Liveness — a API está no ar?",
+            Summary = "Liveness - a API está no ar?",
             Description = """
             Executa apenas o check `self` (sem I/O externo). Use para o orquestrador
             decidir se reinicia o processo.
@@ -56,7 +56,7 @@ namespace Arkive_API.Presentation.Controllers
 
         [HttpGet("db")]
         [SwaggerOperation(
-            Summary = "Readiness — os bancos estão on-line?",
+            Summary = "Readiness - os bancos estão on-line?",
             Description = """
             Executa um ping leve no Oracle (dados) e no MongoDB (auditoria). Use para o load balancer
             anexar/desanexar a instância do pool de tráfego.
