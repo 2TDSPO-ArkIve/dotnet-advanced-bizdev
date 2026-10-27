@@ -22,6 +22,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Arkive_API\Arkive_API.csproj" />
+    <ProjectReference Include="..\Arkive_Application\Arkive_Application.csproj" />
+    <ProjectReference Include="..\Arkive_Domain\Arkive_Domain.csproj" />
+    <ProjectReference Include="..\Arkive_Infrastructure\Arkive_Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

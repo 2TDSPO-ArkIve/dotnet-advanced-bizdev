@@ -1,8 +1,8 @@
 using System.Net;
 using System.Net.Http.Json;
-using Arkive_API.Application.Dtos;
-using Arkive_API.Application.Interfaces;
-using Arkive_API.Domain.Models;
+using Arkive_Application.Dtos;
+using Arkive_Application.Interfaces;
+using Arkive_Domain.Models;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Moq;
 

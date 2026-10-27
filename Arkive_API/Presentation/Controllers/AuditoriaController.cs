@@ -1,8 +1,8 @@
-using Arkive_API.Application;
-using Arkive_API.Application.Dtos;
-using Arkive_API.Application.Interfaces;
+using Arkive_Application;
+using Arkive_Application.Dtos;
+using Arkive_Application.Interfaces;
 using Arkive_API.Doc.Samples;
-using Arkive_API.Domain.Models;
+using Arkive_Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;

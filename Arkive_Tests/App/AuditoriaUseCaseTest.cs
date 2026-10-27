@@ -1,7 +1,7 @@
-using Arkive_API.Application.UseCases;
-using Arkive_API.Domain.Entities;
-using Arkive_API.Domain.Interfaces;
-using Arkive_API.Domain.Models;
+using Arkive_Application.UseCases;
+using Arkive_Domain.Entities;
+using Arkive_Domain.Interfaces;
+using Arkive_Domain.Models;
 using Microsoft.Extensions.Logging.Abstractions;
 using MongoDB.Bson;
 using Moq;

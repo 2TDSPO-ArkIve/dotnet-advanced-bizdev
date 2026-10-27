@@ -1,6 +1,6 @@
 using System.Net;
-using Arkive_API.Application.Exceptions;
-using Arkive_API.Application.Interfaces;
+using Arkive_Application.Exceptions;
+using Arkive_Application.Interfaces;
 using Moq;
 
 namespace Arkive_Tests.App

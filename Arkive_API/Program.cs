@@ -1,4 +1,4 @@
-using Arkive_API.Infrastructure.IoC;
+using Arkive_IoC;
 using Arkive_API.Presentation.Filters;
 using Arkive_API.Presentation.Handlers;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;

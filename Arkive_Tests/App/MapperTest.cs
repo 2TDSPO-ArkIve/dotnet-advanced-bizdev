@@ -1,7 +1,7 @@
-using Arkive_API.Application.Dtos;
-using Arkive_API.Application.Mappers;
-using Arkive_API.Domain.Entities;
-using Arkive_API.Domain.Models;
+using Arkive_Application.Dtos;
+using Arkive_Application.Mappers;
+using Arkive_Domain.Entities;
+using Arkive_Domain.Models;
 
 namespace Arkive_Tests.App
 {

@@ -1,8 +1,8 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
-using Arkive_API.Application.Dtos;
-using Arkive_API.Domain.Entities;
-using Arkive_API.Domain.Models;
+using Arkive_Application.Dtos;
+using Arkive_Domain.Entities;
+using Arkive_Domain.Models;
 using Moq;
 
 namespace Arkive_Tests.App
@@ -11,7 +11,7 @@ namespace Arkive_Tests.App
     public class CategoriaDoencaControllerTest
     {
         private readonly CustomWebApplicationFactory _factory;
-        private readonly Mock<Arkive_API.Application.Interfaces.ICategoriaDoencaUseCase> _useCase;
+        private readonly Mock<Arkive_Application.Interfaces.ICategoriaDoencaUseCase> _useCase;
         private readonly HttpClient _client;
 
         public CategoriaDoencaControllerTest(CustomWebApplicationFactory factory)

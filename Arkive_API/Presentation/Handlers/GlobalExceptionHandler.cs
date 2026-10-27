@@ -1,4 +1,4 @@
-using Arkive_API.Application.Exceptions;
+using Arkive_Application.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 

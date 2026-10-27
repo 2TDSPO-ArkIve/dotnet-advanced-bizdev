@@ -1,7 +1,7 @@
-using Arkive_API.Application.Dtos;
-using Arkive_API.Application.UseCases;
-using Arkive_API.Domain.Entities.External;
-using Arkive_API.Domain.Interfaces;
+using Arkive_Application.Dtos;
+using Arkive_Application.UseCases;
+using Arkive_Domain.Entities.External;
+using Arkive_Domain.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;

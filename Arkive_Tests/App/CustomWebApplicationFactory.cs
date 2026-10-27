@@ -1,6 +1,6 @@
-using Arkive_API.Application.Interfaces;
-using Arkive_API.Application.UseCases;
-using Arkive_API.Domain.Interfaces;
+using Arkive_Application.Interfaces;
+using Arkive_Application.UseCases;
+using Arkive_Domain.Interfaces;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;

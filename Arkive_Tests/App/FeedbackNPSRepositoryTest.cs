@@ -1,7 +1,7 @@
-﻿using Arkive_API.Domain.Entities;
-using Arkive_API.Domain.Entities.External;
-using Arkive_API.Infrastructure.Data;
-using Arkive_API.Infrastructure.Data.Repositories;
+﻿using Arkive_Domain.Entities;
+using Arkive_Domain.Entities.External;
+using Arkive_Infrastructure;
+using Arkive_Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace Arkive_Tests.App

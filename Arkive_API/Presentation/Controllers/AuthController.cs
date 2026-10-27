@@ -1,5 +1,5 @@
-using Arkive_API.Application.Dtos;
-using Arkive_API.Application.Interfaces;
+using Arkive_Application.Dtos;
+using Arkive_Application.Interfaces;
 using Arkive_API.Doc.Samples;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;

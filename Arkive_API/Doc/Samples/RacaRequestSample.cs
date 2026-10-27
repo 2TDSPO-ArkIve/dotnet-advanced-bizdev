@@ -1,4 +1,4 @@
-using Arkive_API.Application.Dtos;
+using Arkive_Application.Dtos;
 using Swashbuckle.AspNetCore.Filters;
 
 namespace Arkive_API.Doc.Samples

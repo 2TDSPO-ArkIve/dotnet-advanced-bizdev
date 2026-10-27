@@ -1,8 +1,8 @@
-using Arkive_API.Application;
-using Arkive_API.Application.Dtos;
-using Arkive_API.Application.Mappers;
-using Arkive_API.Domain.Entities;
-using Arkive_API.Domain.Models;
+using Arkive_Application;
+using Arkive_Application.Dtos;
+using Arkive_Application.Mappers;
+using Arkive_Domain.Entities;
+using Arkive_Domain.Models;
 using Swashbuckle.AspNetCore.Filters;
 
 namespace Arkive_API.Doc.Samples

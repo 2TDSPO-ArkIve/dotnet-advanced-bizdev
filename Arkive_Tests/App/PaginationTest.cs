@@ -1,5 +1,5 @@
-﻿using Arkive_API.Application;
-using Arkive_API.Domain.Models;
+﻿using Arkive_Application;
+using Arkive_Domain.Models;
 
 namespace Arkive_Tests.App
 {

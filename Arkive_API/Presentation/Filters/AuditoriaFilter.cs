@@ -1,6 +1,6 @@
-using Arkive_API.Application.Dtos;
-using Arkive_API.Domain.Entities;
-using Arkive_API.Domain.Interfaces;
+using Arkive_Application.Dtos;
+using Arkive_Domain.Entities;
+using Arkive_Domain.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;

@@ -1,9 +1,9 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
-using Arkive_API.Application.Dtos;
-using Arkive_API.Application.Interfaces;
-using Arkive_API.Domain.Entities;
-using Arkive_API.Domain.Models;
+using Arkive_Application.Dtos;
+using Arkive_Application.Interfaces;
+using Arkive_Domain.Entities;
+using Arkive_Domain.Models;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Moq;
 
@@ -112,7 +112,7 @@ namespace Arkive_Tests.App
         {
             // Arrange
             _useCase.Setup(x => x.AdicionarAsync(It.IsAny<PredisposicaoRequestDto>()))
-                .ReturnsAsync(OperationResult<PredisposicaoEntity?>.Failure(new Arkive_API.Application.Exceptions.DoencaNaoEncontradaException(999).Message, 404));
+                .ReturnsAsync(OperationResult<PredisposicaoEntity?>.Failure(new Arkive_Application.Exceptions.DoencaNaoEncontradaException(999).Message, 404));
 
             // Act
             var response = await _client.PostAsJsonAsync("/api/predisposicoes",

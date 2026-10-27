@@ -1,10 +1,10 @@
 using System.Net;
 using System.Net.Http.Json;
-using Arkive_API.Application.Dtos;
-using Arkive_API.Application.Interfaces;
-using Arkive_API.Domain.Entities;
-using Arkive_API.Domain.Interfaces;
-using Arkive_API.Domain.Models;
+using Arkive_Application.Dtos;
+using Arkive_Application.Interfaces;
+using Arkive_Domain.Entities;
+using Arkive_Domain.Interfaces;
+using Arkive_Domain.Models;
 using Moq;
 
 namespace Arkive_Tests.App
