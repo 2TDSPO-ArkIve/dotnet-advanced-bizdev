@@ -35,7 +35,7 @@ namespace Arkive_Tests.App
                 new DoencaEntity { Id = 2, Nome = "Raiva", StAtivo = "N" }
             };
 
-            _doencaRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>()))
+            _doencaRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(new PageResultModel<IEnumerable<DoencaEntity>> { Data = doencas, TotalRegistros = doencas.Count });
 
             // Act
@@ -56,7 +56,7 @@ namespace Arkive_Tests.App
             // Arrange
             var doencas = new List<DoencaEntity> { new DoencaEntity { Id = 1, Nome = "Cinomose", StAtivo = "S" } };
 
-            _doencaRepository.Setup(obj => obj.ObterAtivosAsync(It.IsAny<int>(), It.IsAny<int>()))
+            _doencaRepository.Setup(obj => obj.ObterAtivosAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(new PageResultModel<IEnumerable<DoencaEntity>> { Data = doencas, TotalRegistros = doencas.Count });
 
             // Act
@@ -77,7 +77,7 @@ namespace Arkive_Tests.App
             // Arrange
             var doencas = new List<DoencaEntity> { new DoencaEntity { Id = 2, Nome = "Raiva", StAtivo = "N" } };
 
-            _doencaRepository.Setup(obj => obj.ObterInativosAsync(It.IsAny<int>(), It.IsAny<int>()))
+            _doencaRepository.Setup(obj => obj.ObterInativosAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(new PageResultModel<IEnumerable<DoencaEntity>> { Data = doencas, TotalRegistros = doencas.Count });
 
             // Act
@@ -329,7 +329,7 @@ namespace Arkive_Tests.App
         public async Task ObterTodasAsync_QuandoListaVazia_DeveRetornar204()
         {
             // Arrange
-            _doencaRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>()))
+            _doencaRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(new PageResultModel<IEnumerable<DoencaEntity>> { Data = new List<DoencaEntity>() });
 
             // Act
@@ -345,7 +345,7 @@ namespace Arkive_Tests.App
         public async Task ObterTodasAsync_QuandoRepositorioFalha_DeveRetornar400SemVazarMensagem()
         {
             // Arrange
-            _doencaRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>()))
+            _doencaRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ThrowsAsync(new Exception("ORA-12541: detalhe interno"));
 
             // Act

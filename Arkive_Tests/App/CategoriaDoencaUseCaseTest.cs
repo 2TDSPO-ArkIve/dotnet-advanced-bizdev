@@ -33,7 +33,7 @@ namespace Arkive_Tests.App
                 new CategoriaDoencaEntity { Id = 2, Nome = "Bacteriana", StAtivo = "N" }
             };
 
-            _categoriaDoencaRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new PageResultModel<IEnumerable<CategoriaDoencaEntity>> { Data = categorias });
+            _categoriaDoencaRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new PageResultModel<IEnumerable<CategoriaDoencaEntity>> { Data = categorias });
 
             // Act
             var resultado = await _categoriaDoencaUseCase.ObterTodasAsync();
@@ -52,7 +52,7 @@ namespace Arkive_Tests.App
             // Arrange
             var categorias = new List<CategoriaDoencaEntity> { new CategoriaDoencaEntity { Id = 1, Nome = "Viral", StAtivo = "S" } };
 
-            _categoriaDoencaRepository.Setup(obj => obj.ObterAtivosAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new PageResultModel<IEnumerable<CategoriaDoencaEntity>> { Data = categorias });
+            _categoriaDoencaRepository.Setup(obj => obj.ObterAtivosAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new PageResultModel<IEnumerable<CategoriaDoencaEntity>> { Data = categorias });
 
             // Act
             var resultado = await _categoriaDoencaUseCase.ObterAtivasAsync();
@@ -70,7 +70,7 @@ namespace Arkive_Tests.App
             // Arrange
             var categorias = new List<CategoriaDoencaEntity> { new CategoriaDoencaEntity { Id = 2, Nome = "Bacteriana", StAtivo = "N" } };
 
-            _categoriaDoencaRepository.Setup(obj => obj.ObterInativosAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new PageResultModel<IEnumerable<CategoriaDoencaEntity>> { Data = categorias });
+            _categoriaDoencaRepository.Setup(obj => obj.ObterInativosAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new PageResultModel<IEnumerable<CategoriaDoencaEntity>> { Data = categorias });
 
             // Act
             var resultado = await _categoriaDoencaUseCase.ObterInativasAsync();
@@ -221,7 +221,7 @@ namespace Arkive_Tests.App
         public async Task ObterTodasAsync_QuandoListaVazia_DeveRetornar204()
         {
             // Arrange
-            _categoriaDoencaRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new PageResultModel<IEnumerable<CategoriaDoencaEntity>> { Data = new List<CategoriaDoencaEntity>() });
+            _categoriaDoencaRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new PageResultModel<IEnumerable<CategoriaDoencaEntity>> { Data = new List<CategoriaDoencaEntity>() });
 
             // Act
             var resultado = await _categoriaDoencaUseCase.ObterTodasAsync();
@@ -236,7 +236,7 @@ namespace Arkive_Tests.App
         public async Task ObterTodasAsync_QuandoRepositorioFalha_DeveRetornar400SemVazarMensagem()
         {
             // Arrange
-            _categoriaDoencaRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>()))
+            _categoriaDoencaRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ThrowsAsync(new Exception("ORA-12541: detalhe interno"));
 
             // Act

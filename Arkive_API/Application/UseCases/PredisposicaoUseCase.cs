@@ -30,19 +30,19 @@ namespace Arkive_API.Application.UseCases
             _logger = logger;
         }
 
-        public async Task<OperationResult<PageResultModel<IEnumerable<GetPredisposicaoDto>>>> ObterTodasAsync(int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<GetPredisposicaoDto>>>> ObterTodasAsync(int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             _logger.LogInformation("Obtendo predisposições (skip {Skip}, take {Take})", skip, take);
 
             try
             {
                 var (s, t) = Pagination.Normalizar(skip, take);
-                var resultado = await _predisposicaoRepository.ObterTodosAsync(s, t);
+                var resultado = await _predisposicaoRepository.ObterTodosAsync(s, t, ordenarPor, direcao);
 
                 if (!resultado.Data.Any())
                     return OperationResult<PageResultModel<IEnumerable<GetPredisposicaoDto>>>.Failure("Nenhuma predisposição encontrada", 204);
 
-                resultado.Links = Pagination.Links("/api/predisposicoes", s, t, resultado.TotalRegistros);
+                resultado.Links = Pagination.Links("/api/predisposicoes", s, t, resultado.TotalRegistros, ordenarPor, direcao);
                 resultado.Links.Add(new("/api/predisposicoes", "create_predisposicao", "POST"));
                 return OperationResult<PageResultModel<IEnumerable<GetPredisposicaoDto>>>.Success(Pagination.MapearItens(resultado, x => ItemDto(x)));
             }
@@ -76,19 +76,19 @@ namespace Arkive_API.Application.UseCases
             }
         }
 
-        public async Task<OperationResult<PageResultModel<IEnumerable<GetPredisposicaoDto>>>> ObterPorEspecieAsync(int idEspecie, int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<GetPredisposicaoDto>>>> ObterPorEspecieAsync(int idEspecie, int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             _logger.LogInformation("Obtendo predisposições da espécie {IdEspecie} (skip {Skip}, take {Take})", idEspecie, skip, take);
 
             try
             {
                 var (s, t) = Pagination.Normalizar(skip, take);
-                var resultado = await _predisposicaoRepository.ObterPorEspecieAsync(idEspecie, s, t);
+                var resultado = await _predisposicaoRepository.ObterPorEspecieAsync(idEspecie, s, t, ordenarPor, direcao);
 
                 if (!resultado.Data.Any())
                     return OperationResult<PageResultModel<IEnumerable<GetPredisposicaoDto>>>.Failure("Nenhuma predisposição encontrada para esta espécie", 204);
 
-                resultado.Links = Pagination.Links($"/api/predisposicoes/especie/{idEspecie}", s, t, resultado.TotalRegistros);
+                resultado.Links = Pagination.Links($"/api/predisposicoes/especie/{idEspecie}", s, t, resultado.TotalRegistros, ordenarPor, direcao);
                 return OperationResult<PageResultModel<IEnumerable<GetPredisposicaoDto>>>.Success(Pagination.MapearItens(resultado, x => ItemDto(x)));
             }
             catch (Exception ex)
@@ -98,19 +98,19 @@ namespace Arkive_API.Application.UseCases
             }
         }
 
-        public async Task<OperationResult<PageResultModel<IEnumerable<GetPredisposicaoDto>>>> ObterPorRacaAsync(int idRaca, int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<GetPredisposicaoDto>>>> ObterPorRacaAsync(int idRaca, int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             _logger.LogInformation("Obtendo predisposições da raça {IdRaca} (skip {Skip}, take {Take})", idRaca, skip, take);
 
             try
             {
                 var (s, t) = Pagination.Normalizar(skip, take);
-                var resultado = await _predisposicaoRepository.ObterPorRacaAsync(idRaca, s, t);
+                var resultado = await _predisposicaoRepository.ObterPorRacaAsync(idRaca, s, t, ordenarPor, direcao);
 
                 if (!resultado.Data.Any())
                     return OperationResult<PageResultModel<IEnumerable<GetPredisposicaoDto>>>.Failure("Nenhuma predisposição encontrada para esta raça", 204);
 
-                resultado.Links = Pagination.Links($"/api/predisposicoes/raca/{idRaca}", s, t, resultado.TotalRegistros);
+                resultado.Links = Pagination.Links($"/api/predisposicoes/raca/{idRaca}", s, t, resultado.TotalRegistros, ordenarPor, direcao);
                 return OperationResult<PageResultModel<IEnumerable<GetPredisposicaoDto>>>.Success(Pagination.MapearItens(resultado, x => ItemDto(x)));
             }
             catch (Exception ex)
@@ -120,19 +120,19 @@ namespace Arkive_API.Application.UseCases
             }
         }
 
-        public async Task<OperationResult<PageResultModel<IEnumerable<GetPredisposicaoDto>>>> ObterPorDoencaAsync(int idDoenca, int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<GetPredisposicaoDto>>>> ObterPorDoencaAsync(int idDoenca, int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             _logger.LogInformation("Obtendo predisposições da doença {IdDoenca} (skip {Skip}, take {Take})", idDoenca, skip, take);
 
             try
             {
                 var (s, t) = Pagination.Normalizar(skip, take);
-                var resultado = await _predisposicaoRepository.ObterPorDoencaAsync(idDoenca, s, t);
+                var resultado = await _predisposicaoRepository.ObterPorDoencaAsync(idDoenca, s, t, ordenarPor, direcao);
 
                 if (!resultado.Data.Any())
                     return OperationResult<PageResultModel<IEnumerable<GetPredisposicaoDto>>>.Failure("Nenhuma predisposição encontrada para esta doença", 204);
 
-                resultado.Links = Pagination.Links($"/api/predisposicoes/doenca/{idDoenca}", s, t, resultado.TotalRegistros);
+                resultado.Links = Pagination.Links($"/api/predisposicoes/doenca/{idDoenca}", s, t, resultado.TotalRegistros, ordenarPor, direcao);
                 return OperationResult<PageResultModel<IEnumerable<GetPredisposicaoDto>>>.Success(Pagination.MapearItens(resultado, x => ItemDto(x)));
             }
             catch (Exception ex)

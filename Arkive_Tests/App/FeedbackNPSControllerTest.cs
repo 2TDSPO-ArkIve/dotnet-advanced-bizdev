@@ -32,7 +32,7 @@ namespace Arkive_Tests.App
                 new GetFeedbackNPSDto { Id = 1, Nota = 10, IdResponsavel = 1 },
                 new GetFeedbackNPSDto { Id = 2, Nota = 7, IdAnimal = 5 }
             };
-            _useCase.Setup(x => x.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>()))
+            _useCase.Setup(x => x.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>.Success(new PageResultModel<IEnumerable<GetFeedbackNPSDto>> { Data = feedbacks, TotalRegistros = feedbacks.Count }));
 
             // Act
@@ -49,7 +49,7 @@ namespace Arkive_Tests.App
         public async Task GetAll_QuandoNaoHaFeedbacks_DeveRetornar204()
         {
             // Arrange
-            _useCase.Setup(x => x.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>()))
+            _useCase.Setup(x => x.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>.Failure("Nenhum feedback NPS encontrado", 204));
 
             // Act

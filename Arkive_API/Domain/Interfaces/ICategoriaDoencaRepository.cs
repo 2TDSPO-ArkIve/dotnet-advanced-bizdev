@@ -5,9 +5,9 @@ namespace Arkive_API.Domain.Interfaces
 {
     public interface ICategoriaDoencaRepository
     {
-        Task<PageResultModel<IEnumerable<CategoriaDoencaEntity>>> ObterTodosAsync(int skip = 0, int take = 50);
-        Task<PageResultModel<IEnumerable<CategoriaDoencaEntity>>> ObterAtivosAsync(int skip = 0, int take = 50);
-        Task<PageResultModel<IEnumerable<CategoriaDoencaEntity>>> ObterInativosAsync(int skip = 0, int take = 50);
+        Task<PageResultModel<IEnumerable<CategoriaDoencaEntity>>> ObterTodosAsync(int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc");
+        Task<PageResultModel<IEnumerable<CategoriaDoencaEntity>>> ObterAtivosAsync(int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc");
+        Task<PageResultModel<IEnumerable<CategoriaDoencaEntity>>> ObterInativosAsync(int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc");
         Task<CategoriaDoencaEntity?> ObterPorIdAsync(int id);
         Task<CategoriaDoencaEntity?> AdicionarAsync(CategoriaDoencaEntity entity);
         Task<CategoriaDoencaEntity?> EditarAsync(int id, CategoriaDoencaEntity entity);

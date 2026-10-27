@@ -6,9 +6,9 @@ namespace Arkive_API.Application.Interfaces
 {
     public interface IRacaUseCase
     {
-        Task<OperationResult<PageResultModel<IEnumerable<GetRacaDto>>>> ObterTodasAsync(int skip = 0, int take = 50);
-        Task<OperationResult<PageResultModel<IEnumerable<GetRacaDto>>>> ObterAtivasAsync(int skip = 0, int take = 50);
-        Task<OperationResult<PageResultModel<IEnumerable<GetRacaDto>>>> ObterInativasAsync(int skip = 0, int take = 50);
+        Task<OperationResult<PageResultModel<IEnumerable<GetRacaDto>>>> ObterTodasAsync(int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc");
+        Task<OperationResult<PageResultModel<IEnumerable<GetRacaDto>>>> ObterAtivasAsync(int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc");
+        Task<OperationResult<PageResultModel<IEnumerable<GetRacaDto>>>> ObterInativasAsync(int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc");
         Task<OperationResult<GetRacaDto?>> ObterPorIdAsync(int id);
         Task<OperationResult<IEnumerable<GetRacaDto>>> ObterPorEspecieAsync(int idEspecie);
 

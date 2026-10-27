@@ -14,15 +14,27 @@ namespace Arkive_API.Infrastructure.Data.Repositories
             _context = context;
         }
 
-        public async Task<PageResultModel<IEnumerable<FeedbackNPSEntity>>> ObterTodosAsync(int skip = 0, int take = 50)
+        // Campos aceitos em ordenarPor; qualquer outro valor cai em id asc
+        private static IOrderedQueryable<FeedbackNPSEntity> Ordenar(IQueryable<FeedbackNPSEntity> query, string? ordenarPor, string? direcao)
+        {
+            var desc = Ordenacao.Desc(direcao);
+            return ordenarPor?.ToLowerInvariant() switch
+            {
+                "nota" => query.Por(x => x.Nota, desc).ThenBy(x => x.Id),
+                "data" => query.Por(x => x.DataFeedback, desc).ThenBy(x => x.Id),
+                "id" => query.Por(x => x.Id, desc),
+                _ => query.OrderBy(x => x.Id)
+            };
+        }
+
+        public async Task<PageResultModel<IEnumerable<FeedbackNPSEntity>>> ObterTodosAsync(int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             try
             {
                 var query = _context.FeedbackNPS.AsQueryable();
 
                 var total = await query.CountAsync();
-                var dados = await query
-                    .OrderBy(x => x.Id)
+                var dados = await Ordenar(query, ordenarPor, direcao)
                     .Skip(skip)
                     .Take(take)
                     .ToListAsync();
@@ -54,15 +66,14 @@ namespace Arkive_API.Infrastructure.Data.Repositories
             }
         }
 
-        public async Task<PageResultModel<IEnumerable<FeedbackNPSEntity>>> ObterPorNotaAsync(int nota, int skip = 0, int take = 50)
+        public async Task<PageResultModel<IEnumerable<FeedbackNPSEntity>>> ObterPorNotaAsync(int nota, int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             try
             {
                 var query = _context.FeedbackNPS.Where(x => x.Nota == nota);
 
                 var total = await query.CountAsync();
-                var dados = await query
-                    .OrderBy(x => x.Id)
+                var dados = await Ordenar(query, ordenarPor, direcao)
                     .Skip(skip)
                     .Take(take)
                     .ToListAsync();
@@ -81,15 +92,14 @@ namespace Arkive_API.Infrastructure.Data.Repositories
             }
         }
 
-        public async Task<PageResultModel<IEnumerable<FeedbackNPSEntity>>> ObterPorResponsavelAsync(int idResponsavel, int skip = 0, int take = 50)
+        public async Task<PageResultModel<IEnumerable<FeedbackNPSEntity>>> ObterPorResponsavelAsync(int idResponsavel, int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             try
             {
                 var query = _context.FeedbackNPS.Where(x => x.IdResponsavel == idResponsavel);
 
                 var total = await query.CountAsync();
-                var dados = await query
-                    .OrderBy(x => x.Id)
+                var dados = await Ordenar(query, ordenarPor, direcao)
                     .Skip(skip)
                     .Take(take)
                     .ToListAsync();
@@ -108,15 +118,14 @@ namespace Arkive_API.Infrastructure.Data.Repositories
             }
         }
 
-        public async Task<PageResultModel<IEnumerable<FeedbackNPSEntity>>> ObterPorAnimalAsync(int idAnimal, int skip = 0, int take = 50)
+        public async Task<PageResultModel<IEnumerable<FeedbackNPSEntity>>> ObterPorAnimalAsync(int idAnimal, int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             try
             {
                 var query = _context.FeedbackNPS.Where(x => x.IdAnimal == idAnimal);
 
                 var total = await query.CountAsync();
-                var dados = await query
-                    .OrderBy(x => x.Id)
+                var dados = await Ordenar(query, ordenarPor, direcao)
                     .Skip(skip)
                     .Take(take)
                     .ToListAsync();
@@ -135,15 +144,14 @@ namespace Arkive_API.Infrastructure.Data.Repositories
             }
         }
 
-        public async Task<PageResultModel<IEnumerable<FeedbackNPSEntity>>> ObterPorClinicaAsync(int idClinica, int skip = 0, int take = 50)
+        public async Task<PageResultModel<IEnumerable<FeedbackNPSEntity>>> ObterPorClinicaAsync(int idClinica, int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             try
             {
                 var query = _context.FeedbackNPS.Where(x => x.IdClinica == idClinica);
 
                 var total = await query.CountAsync();
-                var dados = await query
-                    .OrderBy(x => x.Id)
+                var dados = await Ordenar(query, ordenarPor, direcao)
                     .Skip(skip)
                     .Take(take)
                     .ToListAsync();
@@ -162,15 +170,14 @@ namespace Arkive_API.Infrastructure.Data.Repositories
             }
         }
 
-        public async Task<PageResultModel<IEnumerable<FeedbackNPSEntity>>> ObterPorVeterinarioAsync(int idVeterinario, int skip = 0, int take = 50)
+        public async Task<PageResultModel<IEnumerable<FeedbackNPSEntity>>> ObterPorVeterinarioAsync(int idVeterinario, int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             try
             {
                 var query = _context.FeedbackNPS.Where(x => x.IdVeterinario == idVeterinario);
 
                 var total = await query.CountAsync();
-                var dados = await query
-                    .OrderBy(x => x.Id)
+                var dados = await Ordenar(query, ordenarPor, direcao)
                     .Skip(skip)
                     .Take(take)
                     .ToListAsync();
@@ -189,7 +196,7 @@ namespace Arkive_API.Infrastructure.Data.Repositories
             }
         }
 
-        public async Task<PageResultModel<IEnumerable<FeedbackNPSEntity>>> ObterPorDataAsync(DateTime data, int skip = 0, int take = 50)
+        public async Task<PageResultModel<IEnumerable<FeedbackNPSEntity>>> ObterPorDataAsync(DateTime data, int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             try
             {
@@ -199,8 +206,7 @@ namespace Arkive_API.Infrastructure.Data.Repositories
                 var query = _context.FeedbackNPS.Where(x => x.DataFeedback >= inicio && x.DataFeedback < fim);
 
                 var total = await query.CountAsync();
-                var dados = await query
-                    .OrderBy(x => x.Id)
+                var dados = await Ordenar(query, ordenarPor, direcao)
                     .Skip(skip)
                     .Take(take)
                     .ToListAsync();

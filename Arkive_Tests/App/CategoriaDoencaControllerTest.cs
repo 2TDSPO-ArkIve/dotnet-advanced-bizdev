@@ -32,7 +32,7 @@ namespace Arkive_Tests.App
                 new GetCategoriaDoencaDto { Id = 1, Nome = "Viral", StAtivo = "S" },
                 new GetCategoriaDoencaDto { Id = 2, Nome = "Bacteriana", StAtivo = "S" }
             };
-            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(OperationResult<PageResultModel<IEnumerable<GetCategoriaDoencaDto>>>.Success(new PageResultModel<IEnumerable<GetCategoriaDoencaDto>> { Data = categorias }));
+            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(OperationResult<PageResultModel<IEnumerable<GetCategoriaDoencaDto>>>.Success(new PageResultModel<IEnumerable<GetCategoriaDoencaDto>> { Data = categorias }));
 
             // Act
             var response = await _client.GetAsync("/api/categorias-doenca");
@@ -49,7 +49,7 @@ namespace Arkive_Tests.App
         public async Task GetAll_QuandoNaoHaCategorias_DeveRetornar204()
         {
             // Arrange
-            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(OperationResult<PageResultModel<IEnumerable<GetCategoriaDoencaDto>>>.Failure("Nenhuma categoria de doença encontrada", 204));
+            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(OperationResult<PageResultModel<IEnumerable<GetCategoriaDoencaDto>>>.Failure("Nenhuma categoria de doença encontrada", 204));
 
             // Act
             var response = await _client.GetAsync("/api/categorias-doenca");

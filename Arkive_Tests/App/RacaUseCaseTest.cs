@@ -35,7 +35,7 @@ namespace Arkive_Tests.App
                 new RacaEntity { Id = 2, Raca = "Siamês", StAtivo = "N" }
             };
 
-            _racaRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new PageResultModel<IEnumerable<RacaEntity>> { Data = racas });
+            _racaRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new PageResultModel<IEnumerable<RacaEntity>> { Data = racas });
 
             // Act
             var resultado = await _racaUseCase.ObterTodasAsync();
@@ -64,7 +64,7 @@ namespace Arkive_Tests.App
             // Arrange
             var racas = new List<RacaEntity> { new RacaEntity { Id = 1, Raca = "Labrador", StAtivo = "S" } };
 
-            _racaRepository.Setup(obj => obj.ObterAtivosAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new PageResultModel<IEnumerable<RacaEntity>> { Data = racas });
+            _racaRepository.Setup(obj => obj.ObterAtivosAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new PageResultModel<IEnumerable<RacaEntity>> { Data = racas });
 
             // Act
             var resultado = await _racaUseCase.ObterAtivasAsync();
@@ -87,7 +87,7 @@ namespace Arkive_Tests.App
             // Arrange
             var racas = new List<RacaEntity> { new RacaEntity { Id = 2, Raca = "Siamês", StAtivo = "N" } };
 
-            _racaRepository.Setup(obj => obj.ObterInativosAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new PageResultModel<IEnumerable<RacaEntity>> { Data = racas });
+            _racaRepository.Setup(obj => obj.ObterInativosAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new PageResultModel<IEnumerable<RacaEntity>> { Data = racas });
 
             // Act
             var resultado = await _racaUseCase.ObterInativasAsync();
@@ -318,7 +318,7 @@ namespace Arkive_Tests.App
         public async Task ObterTodasAsync_QuandoListaVazia_DeveRetornar204()
         {
             // Arrange
-            _racaRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new PageResultModel<IEnumerable<RacaEntity>> { Data = new List<RacaEntity>() });
+            _racaRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new PageResultModel<IEnumerable<RacaEntity>> { Data = new List<RacaEntity>() });
 
             // Act
             var resultado = await _racaUseCase.ObterTodasAsync();
@@ -333,7 +333,7 @@ namespace Arkive_Tests.App
         public async Task ObterTodasAsync_QuandoRepositorioFalha_DeveRetornar400SemVazarMensagem()
         {
             // Arrange
-            _racaRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>()))
+            _racaRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ThrowsAsync(new Exception("ORA-12541: detalhe interno"));
 
             // Act

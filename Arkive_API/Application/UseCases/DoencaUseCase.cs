@@ -21,19 +21,19 @@ namespace Arkive_API.Application.UseCases
             _logger = logger;
         }
 
-        public async Task<OperationResult<PageResultModel<IEnumerable<GetDoencaDto>>>> ObterTodasAsync(int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<GetDoencaDto>>>> ObterTodasAsync(int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             _logger.LogInformation("Obtendo doenças (skip {Skip}, take {Take})", skip, take);
 
             try
             {
                 var (s, t) = Pagination.Normalizar(skip, take);
-                var resultado = await _doencaRepository.ObterTodosAsync(s, t);
+                var resultado = await _doencaRepository.ObterTodosAsync(s, t, ordenarPor, direcao);
 
                 if (!resultado.Data.Any())
                     return OperationResult<PageResultModel<IEnumerable<GetDoencaDto>>>.Failure("Nenhuma doença encontrada", 204);
 
-                resultado.Links = Pagination.Links("/api/doencas", s, t, resultado.TotalRegistros);
+                resultado.Links = Pagination.Links("/api/doencas", s, t, resultado.TotalRegistros, ordenarPor, direcao);
                 resultado.Links.Add(new("/api/doencas", "create_doenca", "POST"));
                 return OperationResult<PageResultModel<IEnumerable<GetDoencaDto>>>.Success(Pagination.MapearItens(resultado, x => ItemDto(x)));
             }
@@ -44,19 +44,19 @@ namespace Arkive_API.Application.UseCases
             }
         }
 
-        public async Task<OperationResult<PageResultModel<IEnumerable<GetDoencaDto>>>> ObterAtivasAsync(int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<GetDoencaDto>>>> ObterAtivasAsync(int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             _logger.LogInformation("Obtendo doenças ativas (skip {Skip}, take {Take})", skip, take);
 
             try
             {
                 var (s, t) = Pagination.Normalizar(skip, take);
-                var resultado = await _doencaRepository.ObterAtivosAsync(s, t);
+                var resultado = await _doencaRepository.ObterAtivosAsync(s, t, ordenarPor, direcao);
 
                 if (!resultado.Data.Any())
                     return OperationResult<PageResultModel<IEnumerable<GetDoencaDto>>>.Failure("Nenhuma doença ativa encontrada", 204);
 
-                resultado.Links = Pagination.Links("/api/doencas/ativos", s, t, resultado.TotalRegistros);
+                resultado.Links = Pagination.Links("/api/doencas/ativos", s, t, resultado.TotalRegistros, ordenarPor, direcao);
                 return OperationResult<PageResultModel<IEnumerable<GetDoencaDto>>>.Success(Pagination.MapearItens(resultado, x => ItemDto(x)));
             }
             catch (Exception ex)
@@ -66,19 +66,19 @@ namespace Arkive_API.Application.UseCases
             }
         }
 
-        public async Task<OperationResult<PageResultModel<IEnumerable<GetDoencaDto>>>> ObterInativasAsync(int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<GetDoencaDto>>>> ObterInativasAsync(int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             _logger.LogInformation("Obtendo doenças inativas (skip {Skip}, take {Take})", skip, take);
 
             try
             {
                 var (s, t) = Pagination.Normalizar(skip, take);
-                var resultado = await _doencaRepository.ObterInativosAsync(s, t);
+                var resultado = await _doencaRepository.ObterInativosAsync(s, t, ordenarPor, direcao);
 
                 if (!resultado.Data.Any())
                     return OperationResult<PageResultModel<IEnumerable<GetDoencaDto>>>.Failure("Nenhuma doença inativa encontrada", 204);
 
-                resultado.Links = Pagination.Links("/api/doencas/inativos", s, t, resultado.TotalRegistros);
+                resultado.Links = Pagination.Links("/api/doencas/inativos", s, t, resultado.TotalRegistros, ordenarPor, direcao);
                 return OperationResult<PageResultModel<IEnumerable<GetDoencaDto>>>.Success(Pagination.MapearItens(resultado, x => ItemDto(x)));
             }
             catch (Exception ex)

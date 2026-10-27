@@ -40,17 +40,18 @@ namespace Arkive_API.Presentation.Controllers
             ## Observações:
             * Os dados incluem as entidades relacionadas (**Espécie**, **Raça** e **Doença**, esta última com sua **Categoria**).
             * Esta entidade não possui soft delete; um vínculo removido é apagado fisicamente.
+            * Ordenação: `ordenarPor` (`id`) e `direcao` (`asc` ou `desc`). Valor inválido ordena por `id` crescente.
             """
         )]
         [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<GetPredisposicaoDto>>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma predisposição encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
         [SwaggerResponseExample(statusCode: 200, typeof(PredisposicaoResponseListSample))]
-        public async Task<IActionResult> GetAllPredisposicoes(int skip = 0, int take = 50)
+        public async Task<IActionResult> GetAllPredisposicoes(int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             _logger.LogInformation("Listando predisposições (skip {Skip}, take {Take})", skip, take);
 
-            var resultado = await _predisposicaoUseCase.ObterTodasAsync(skip, take);
+            var resultado = await _predisposicaoUseCase.ObterTodasAsync(skip, take, ordenarPor, direcao);
 
             if (resultado.StatusCode == 204) return NoContent();
             if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
@@ -95,16 +96,17 @@ namespace Arkive_API.Presentation.Controllers
 
             ## Observações:
             * Este filtro não valida se o ID de espécie informado existe; caso não exista, o retorno será uma lista vazia (204).
+            * Ordenação: `ordenarPor` (`id`) e `direcao` (`asc` ou `desc`). Valor inválido ordena por `id` crescente.
             """
         )]
         [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<GetPredisposicaoDto>>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma predisposição encontrada para esta espécie")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
-        public async Task<IActionResult> GetPredisposicaoByEspecie(int idEspecie, int skip = 0, int take = 50)
+        public async Task<IActionResult> GetPredisposicaoByEspecie(int idEspecie, int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             _logger.LogInformation("Listando predisposições da espécie {IdEspecie} (skip {Skip}, take {Take})", idEspecie, skip, take);
 
-            var resultado = await _predisposicaoUseCase.ObterPorEspecieAsync(idEspecie, skip, take);
+            var resultado = await _predisposicaoUseCase.ObterPorEspecieAsync(idEspecie, skip, take, ordenarPor, direcao);
 
             if (resultado.StatusCode == 204) return NoContent();
             if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
@@ -122,16 +124,17 @@ namespace Arkive_API.Presentation.Controllers
 
             ## Observações:
             * Este filtro não valida se o ID de raça informado existe; caso não exista, o retorno será uma lista vazia (204).
+            * Ordenação: `ordenarPor` (`id`) e `direcao` (`asc` ou `desc`). Valor inválido ordena por `id` crescente.
             """
         )]
         [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<GetPredisposicaoDto>>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma predisposição encontrada para esta raça")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
-        public async Task<IActionResult> GetPredisposicaoByRaca(int idRaca, int skip = 0, int take = 50)
+        public async Task<IActionResult> GetPredisposicaoByRaca(int idRaca, int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             _logger.LogInformation("Listando predisposições da raça {IdRaca} (skip {Skip}, take {Take})", idRaca, skip, take);
 
-            var resultado = await _predisposicaoUseCase.ObterPorRacaAsync(idRaca, skip, take);
+            var resultado = await _predisposicaoUseCase.ObterPorRacaAsync(idRaca, skip, take, ordenarPor, direcao);
 
             if (resultado.StatusCode == 204) return NoContent();
             if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
@@ -149,16 +152,17 @@ namespace Arkive_API.Presentation.Controllers
 
             ## Observações:
             * Este filtro não valida se o ID de doença informado existe; caso não exista, o retorno será uma lista vazia (204).
+            * Ordenação: `ordenarPor` (`id`) e `direcao` (`asc` ou `desc`). Valor inválido ordena por `id` crescente.
             """
         )]
         [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<GetPredisposicaoDto>>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma predisposição encontrada para esta doença")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
-        public async Task<IActionResult> GetPredisposicaoByDoenca(int idDoenca, int skip = 0, int take = 50)
+        public async Task<IActionResult> GetPredisposicaoByDoenca(int idDoenca, int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             _logger.LogInformation("Listando predisposições da doença {IdDoenca} (skip {Skip}, take {Take})", idDoenca, skip, take);
 
-            var resultado = await _predisposicaoUseCase.ObterPorDoencaAsync(idDoenca, skip, take);
+            var resultado = await _predisposicaoUseCase.ObterPorDoencaAsync(idDoenca, skip, take, ordenarPor, direcao);
 
             if (resultado.StatusCode == 204) return NoContent();
             if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);

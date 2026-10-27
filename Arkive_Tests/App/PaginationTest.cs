@@ -58,6 +58,18 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Helper", "Pagination")]
+        public void Links_ComOrdenacao_RepassaParametrosEmTodosOsLinks()
+        {
+            // Act
+            var links = Pagination.Links("/x", 10, 10, 30, "nome", "desc");
+
+            // Assert
+            Assert.All(links, l => Assert.EndsWith("&ordenarPor=nome&direcao=desc", l.Href));
+            Assert.Equal(new[] { "self", "next", "prev" }, links.Select(l => l.Rel));
+        }
+
+        [Fact]
+        [Trait("Helper", "Pagination")]
         public void ItemLinks_SemEdicao_OmitePut()
         {
             // Act

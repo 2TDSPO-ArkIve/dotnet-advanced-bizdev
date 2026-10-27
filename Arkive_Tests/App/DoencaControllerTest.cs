@@ -35,7 +35,7 @@ namespace Arkive_Tests.App
                 new GetDoencaDto { Id = 1, Nome = "Cinomose", StAtivo = "S" },
                 new GetDoencaDto { Id = 2, Nome = "Raiva", StAtivo = "N" }
             };
-            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>()))
+            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(OperationResult<PageResultModel<IEnumerable<GetDoencaDto>>>.Success(
                     new PageResultModel<IEnumerable<GetDoencaDto>> { Data = doencas, TotalRegistros = doencas.Count }));
 
@@ -53,7 +53,7 @@ namespace Arkive_Tests.App
         public async Task GetAll_QuandoNaoHaDoencas_DeveRetornar204()
         {
             // Arrange
-            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>()))
+            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(OperationResult<PageResultModel<IEnumerable<GetDoencaDto>>>.Failure("Nenhuma doença encontrada", 204));
 
             // Act

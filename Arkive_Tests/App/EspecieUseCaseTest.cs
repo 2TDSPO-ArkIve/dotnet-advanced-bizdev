@@ -33,7 +33,7 @@ namespace Arkive_Tests.App
                 new EspecieEntity { Id = 2, Especie = "Felina", StAtivo = "N" }
             };
 
-            _especieRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new PageResultModel<IEnumerable<EspecieEntity>> { Data = especies });
+            _especieRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new PageResultModel<IEnumerable<EspecieEntity>> { Data = especies });
 
             // Act
             var resultado = await _especieUseCase.ObterTodasAsync();
@@ -52,7 +52,7 @@ namespace Arkive_Tests.App
             // Arrange
             var especies = new List<EspecieEntity> { new EspecieEntity { Id = 1, Especie = "Canina", StAtivo = "S" } };
 
-            _especieRepository.Setup(obj => obj.ObterAtivosAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new PageResultModel<IEnumerable<EspecieEntity>> { Data = especies });
+            _especieRepository.Setup(obj => obj.ObterAtivosAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new PageResultModel<IEnumerable<EspecieEntity>> { Data = especies });
 
             // Act
             var resultado = await _especieUseCase.ObterAtivasAsync();
@@ -70,7 +70,7 @@ namespace Arkive_Tests.App
             // Arrange
             var especies = new List<EspecieEntity> { new EspecieEntity { Id = 2, Especie = "Felina", StAtivo = "N" } };
 
-            _especieRepository.Setup(obj => obj.ObterInativosAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new PageResultModel<IEnumerable<EspecieEntity>> { Data = especies });
+            _especieRepository.Setup(obj => obj.ObterInativosAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new PageResultModel<IEnumerable<EspecieEntity>> { Data = especies });
 
             // Act
             var resultado = await _especieUseCase.ObterInativasAsync();
@@ -221,7 +221,7 @@ namespace Arkive_Tests.App
         public async Task ObterTodasAsync_QuandoListaVazia_DeveRetornar204()
         {
             // Arrange
-            _especieRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new PageResultModel<IEnumerable<EspecieEntity>> { Data = new List<EspecieEntity>() });
+            _especieRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new PageResultModel<IEnumerable<EspecieEntity>> { Data = new List<EspecieEntity>() });
 
             // Act
             var resultado = await _especieUseCase.ObterTodasAsync();
@@ -236,7 +236,7 @@ namespace Arkive_Tests.App
         public async Task ObterTodasAsync_QuandoRepositorioFalha_DeveRetornar400SemVazarMensagem()
         {
             // Arrange
-            _especieRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>()))
+            _especieRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ThrowsAsync(new Exception("ORA-12541: detalhe interno"));
 
             // Act

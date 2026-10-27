@@ -27,7 +27,7 @@ namespace Arkive_Tests.App
         public async Task GetAll_ComListaDeEspecies_DeveRetornar200()
         {
             // Arrange
-            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(OperationResult<PageResultModel<IEnumerable<GetEspecieDto>>>.Success(new PageResultModel<IEnumerable<GetEspecieDto>> { Data = new List<GetEspecieDto>
+            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(OperationResult<PageResultModel<IEnumerable<GetEspecieDto>>>.Success(new PageResultModel<IEnumerable<GetEspecieDto>> { Data = new List<GetEspecieDto>
             {
                 new GetEspecieDto { Id = 1, Especie = "Canina", StAtivo = "S" },
                 new GetEspecieDto { Id = 2, Especie = "Felina", StAtivo = "S" }
@@ -47,7 +47,7 @@ namespace Arkive_Tests.App
         public async Task GetAll_QuandoNaoHaEspecies_DeveRetornar204()
         {
             // Arrange
-            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(OperationResult<PageResultModel<IEnumerable<GetEspecieDto>>>.Failure("Nenhuma espécie encontrada", 204));
+            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(OperationResult<PageResultModel<IEnumerable<GetEspecieDto>>>.Failure("Nenhuma espécie encontrada", 204));
 
             // Act
             var response = await _client.GetAsync("/api/especies");

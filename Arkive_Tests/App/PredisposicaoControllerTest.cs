@@ -32,7 +32,7 @@ namespace Arkive_Tests.App
                 new GetPredisposicaoDto { Id = 1, IdEspecie = 1, IdDoenca = 1 },
                 new GetPredisposicaoDto { Id = 2, IdEspecie = 1, IdRaca = 3, IdDoenca = 2 }
             };
-            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>()))
+            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(OperationResult<PageResultModel<IEnumerable<GetPredisposicaoDto>>>.Success(new PageResultModel<IEnumerable<GetPredisposicaoDto>> { Data = predisposicoes, TotalRegistros = predisposicoes.Count }));
 
             // Act
@@ -49,7 +49,7 @@ namespace Arkive_Tests.App
         public async Task GetAll_QuandoNaoHaPredisposicoes_DeveRetornar204()
         {
             // Arrange
-            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>()))
+            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(OperationResult<PageResultModel<IEnumerable<GetPredisposicaoDto>>>.Failure("Nenhuma predisposição encontrada", 204));
 
             // Act

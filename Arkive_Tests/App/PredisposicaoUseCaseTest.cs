@@ -44,7 +44,7 @@ namespace Arkive_Tests.App
                 new PredisposicaoEntity { Id = 2, IdEspecie = 2, IdDoenca = 2 }
             };
 
-            _predisposicaoRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>()))
+            _predisposicaoRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(new PageResultModel<IEnumerable<PredisposicaoEntity>> { Data = predisposicoes, TotalRegistros = predisposicoes.Count });
 
             // Act
@@ -99,7 +99,7 @@ namespace Arkive_Tests.App
             int idEspecie = 1;
             var predisposicoes = new List<PredisposicaoEntity> { new PredisposicaoEntity { Id = 1, IdEspecie = idEspecie, IdDoenca = 1 } };
 
-            _predisposicaoRepository.Setup(obj => obj.ObterPorEspecieAsync(idEspecie, It.IsAny<int>(), It.IsAny<int>()))
+            _predisposicaoRepository.Setup(obj => obj.ObterPorEspecieAsync(idEspecie, It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(new PageResultModel<IEnumerable<PredisposicaoEntity>> { Data = predisposicoes, TotalRegistros = predisposicoes.Count });
 
             // Act
@@ -123,7 +123,7 @@ namespace Arkive_Tests.App
             int idRaca = 1;
             var predisposicoes = new List<PredisposicaoEntity> { new PredisposicaoEntity { Id = 1, IdEspecie = 1, IdRaca = idRaca, IdDoenca = 1 } };
 
-            _predisposicaoRepository.Setup(obj => obj.ObterPorRacaAsync(idRaca, It.IsAny<int>(), It.IsAny<int>()))
+            _predisposicaoRepository.Setup(obj => obj.ObterPorRacaAsync(idRaca, It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(new PageResultModel<IEnumerable<PredisposicaoEntity>> { Data = predisposicoes, TotalRegistros = predisposicoes.Count });
 
             // Act
@@ -148,7 +148,7 @@ namespace Arkive_Tests.App
             int idDoenca = 1;
             var predisposicoes = new List<PredisposicaoEntity> { new PredisposicaoEntity { Id = 1, IdEspecie = 1, IdDoenca = idDoenca } };
 
-            _predisposicaoRepository.Setup(obj => obj.ObterPorDoencaAsync(idDoenca, It.IsAny<int>(), It.IsAny<int>()))
+            _predisposicaoRepository.Setup(obj => obj.ObterPorDoencaAsync(idDoenca, It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(new PageResultModel<IEnumerable<PredisposicaoEntity>> { Data = predisposicoes, TotalRegistros = predisposicoes.Count });
 
             // Act
@@ -326,7 +326,7 @@ namespace Arkive_Tests.App
         public async Task ObterTodasAsync_QuandoListaVazia_DeveRetornar204()
         {
             // Arrange
-            _predisposicaoRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>()))
+            _predisposicaoRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(new PageResultModel<IEnumerable<PredisposicaoEntity>> { Data = new List<PredisposicaoEntity>() });
 
             // Act
@@ -342,7 +342,7 @@ namespace Arkive_Tests.App
         public async Task ObterTodasAsync_QuandoRepositorioFalha_DeveRetornar400SemVazarMensagem()
         {
             // Arrange
-            _predisposicaoRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>()))
+            _predisposicaoRepository.Setup(obj => obj.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ThrowsAsync(new Exception("ORA-12541: detalhe interno"));
 
             // Act

@@ -26,6 +26,28 @@ namespace Arkive_Tests.App
             _especieRepository = new EspecieRepository(_applicationContext);
         }
 
+        [Theory]
+        [InlineData("nome", "asc", "Canina,Equina,Felina")]
+        [InlineData("nome", "desc", "Felina,Equina,Canina")]
+        [InlineData("id", "desc", "Equina,Canina,Felina")]
+        [InlineData("invalido", "desc", "Felina,Canina,Equina")]
+        [Trait("Repository", "Especies")]
+        public async Task ObterTodosAsync_ComOrdenacao_DeveOrdenarConformeParametros(string ordenarPor, string direcao, string esperado)
+        {
+            // Arrange
+            _applicationContext.Especie.AddRange(
+                new EspecieEntity { Especie = "Felina" },
+                new EspecieEntity { Especie = "Canina" },
+                new EspecieEntity { Especie = "Equina" });
+            _applicationContext.SaveChanges();
+
+            // Act
+            var resultado = await _especieRepository.ObterTodosAsync(0, 50, ordenarPor, direcao);
+
+            // Assert
+            Assert.Equal(esperado.Split(','), resultado.Data.Select(x => x.Especie));
+        }
+
         [Fact]
         [Trait("Repository", "Especies")]
         public async Task ObterTodosAsync_DeveRetornarTodasAsEspecies()

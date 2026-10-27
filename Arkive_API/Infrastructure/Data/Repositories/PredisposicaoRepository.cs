@@ -23,15 +23,25 @@ namespace Arkive_API.Infrastructure.Data.Repositories
                     .ThenInclude(d => d.Categoria);
         }
 
-        public async Task<PageResultModel<IEnumerable<PredisposicaoEntity>>> ObterTodosAsync(int skip = 0, int take = 50)
+        // Campos aceitos em ordenarPor; qualquer outro valor cai em id asc
+        private static IOrderedQueryable<PredisposicaoEntity> Ordenar(IQueryable<PredisposicaoEntity> query, string? ordenarPor, string? direcao)
+        {
+            var desc = Ordenacao.Desc(direcao);
+            return ordenarPor?.ToLowerInvariant() switch
+            {
+                "id" => query.Por(x => x.Id, desc),
+                _ => query.OrderBy(x => x.Id)
+            };
+        }
+
+        public async Task<PageResultModel<IEnumerable<PredisposicaoEntity>>> ObterTodosAsync(int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             try
             {
                 var query = ComRelacionamentos();
 
                 var total = await query.CountAsync();
-                var dados = await query
-                    .OrderBy(x => x.Id)
+                var dados = await Ordenar(query, ordenarPor, direcao)
                     .Skip(skip)
                     .Take(take)
                     .ToListAsync();
@@ -62,15 +72,14 @@ namespace Arkive_API.Infrastructure.Data.Repositories
             }
         }
 
-        public async Task<PageResultModel<IEnumerable<PredisposicaoEntity>>> ObterPorEspecieAsync(int idEspecie, int skip = 0, int take = 50)
+        public async Task<PageResultModel<IEnumerable<PredisposicaoEntity>>> ObterPorEspecieAsync(int idEspecie, int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             try
             {
                 var query = ComRelacionamentos().Where(x => x.IdEspecie == idEspecie);
 
                 var total = await query.CountAsync();
-                var dados = await query
-                    .OrderBy(x => x.Id)
+                var dados = await Ordenar(query, ordenarPor, direcao)
                     .Skip(skip)
                     .Take(take)
                     .ToListAsync();
@@ -89,15 +98,14 @@ namespace Arkive_API.Infrastructure.Data.Repositories
             }
         }
 
-        public async Task<PageResultModel<IEnumerable<PredisposicaoEntity>>> ObterPorRacaAsync(int idRaca, int skip = 0, int take = 50)
+        public async Task<PageResultModel<IEnumerable<PredisposicaoEntity>>> ObterPorRacaAsync(int idRaca, int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             try
             {
                 var query = ComRelacionamentos().Where(x => x.IdRaca == idRaca);
 
                 var total = await query.CountAsync();
-                var dados = await query
-                    .OrderBy(x => x.Id)
+                var dados = await Ordenar(query, ordenarPor, direcao)
                     .Skip(skip)
                     .Take(take)
                     .ToListAsync();
@@ -116,15 +124,14 @@ namespace Arkive_API.Infrastructure.Data.Repositories
             }
         }
 
-        public async Task<PageResultModel<IEnumerable<PredisposicaoEntity>>> ObterPorDoencaAsync(int idDoenca, int skip = 0, int take = 50)
+        public async Task<PageResultModel<IEnumerable<PredisposicaoEntity>>> ObterPorDoencaAsync(int idDoenca, int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             try
             {
                 var query = ComRelacionamentos().Where(x => x.IdDoenca == idDoenca);
 
                 var total = await query.CountAsync();
-                var dados = await query
-                    .OrderBy(x => x.Id)
+                var dados = await Ordenar(query, ordenarPor, direcao)
                     .Skip(skip)
                     .Take(take)
                     .ToListAsync();

@@ -21,19 +21,19 @@ namespace Arkive_API.Application.UseCases
             _logger = logger;
         }
 
-        public async Task<OperationResult<PageResultModel<IEnumerable<GetRacaDto>>>> ObterTodasAsync(int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<GetRacaDto>>>> ObterTodasAsync(int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             _logger.LogInformation("Obtendo todas as raças (skip {Skip}, take {Take})", skip, take);
 
             try
             {
                 var (s, t) = Pagination.Normalizar(skip, take);
-                var resultado = await _racaRepository.ObterTodosAsync(s, t);
+                var resultado = await _racaRepository.ObterTodosAsync(s, t, ordenarPor, direcao);
 
                 if (!resultado.Data.Any())
                     return OperationResult<PageResultModel<IEnumerable<GetRacaDto>>>.Failure("Nenhuma raça encontrada", 204);
 
-                resultado.Links = Pagination.Links("/api/racas", s, t, resultado.TotalRegistros);
+                resultado.Links = Pagination.Links("/api/racas", s, t, resultado.TotalRegistros, ordenarPor, direcao);
                 resultado.Links.Add(new("/api/racas", "create_raca", "POST"));
                 return OperationResult<PageResultModel<IEnumerable<GetRacaDto>>>.Success(Pagination.MapearItens(resultado, x => ItemDto(x)));
             }
@@ -44,19 +44,19 @@ namespace Arkive_API.Application.UseCases
             }
         }
 
-        public async Task<OperationResult<PageResultModel<IEnumerable<GetRacaDto>>>> ObterAtivasAsync(int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<GetRacaDto>>>> ObterAtivasAsync(int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             _logger.LogInformation("Obtendo raças ativas (skip {Skip}, take {Take})", skip, take);
 
             try
             {
                 var (s, t) = Pagination.Normalizar(skip, take);
-                var resultado = await _racaRepository.ObterAtivosAsync(s, t);
+                var resultado = await _racaRepository.ObterAtivosAsync(s, t, ordenarPor, direcao);
 
                 if (!resultado.Data.Any())
                     return OperationResult<PageResultModel<IEnumerable<GetRacaDto>>>.Failure("Nenhuma raça ativa encontrada", 204);
 
-                resultado.Links = Pagination.Links("/api/racas/ativos", s, t, resultado.TotalRegistros);
+                resultado.Links = Pagination.Links("/api/racas/ativos", s, t, resultado.TotalRegistros, ordenarPor, direcao);
                 return OperationResult<PageResultModel<IEnumerable<GetRacaDto>>>.Success(Pagination.MapearItens(resultado, x => ItemDto(x)));
             }
             catch (Exception ex)
@@ -66,19 +66,19 @@ namespace Arkive_API.Application.UseCases
             }
         }
 
-        public async Task<OperationResult<PageResultModel<IEnumerable<GetRacaDto>>>> ObterInativasAsync(int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<GetRacaDto>>>> ObterInativasAsync(int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             _logger.LogInformation("Obtendo raças inativas (skip {Skip}, take {Take})", skip, take);
 
             try
             {
                 var (s, t) = Pagination.Normalizar(skip, take);
-                var resultado = await _racaRepository.ObterInativosAsync(s, t);
+                var resultado = await _racaRepository.ObterInativosAsync(s, t, ordenarPor, direcao);
 
                 if (!resultado.Data.Any())
                     return OperationResult<PageResultModel<IEnumerable<GetRacaDto>>>.Failure("Nenhuma raça inativa encontrada", 204);
 
-                resultado.Links = Pagination.Links("/api/racas/inativos", s, t, resultado.TotalRegistros);
+                resultado.Links = Pagination.Links("/api/racas/inativos", s, t, resultado.TotalRegistros, ordenarPor, direcao);
                 return OperationResult<PageResultModel<IEnumerable<GetRacaDto>>>.Success(Pagination.MapearItens(resultado, x => ItemDto(x)));
             }
             catch (Exception ex)

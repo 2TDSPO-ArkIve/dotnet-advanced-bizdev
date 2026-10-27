@@ -6,9 +6,9 @@ namespace Arkive_API.Application.Interfaces
 {
     public interface IDoencaUseCase
     {
-        Task<OperationResult<PageResultModel<IEnumerable<GetDoencaDto>>>> ObterTodasAsync(int skip = 0, int take = 50);
-        Task<OperationResult<PageResultModel<IEnumerable<GetDoencaDto>>>> ObterAtivasAsync(int skip = 0, int take = 50);
-        Task<OperationResult<PageResultModel<IEnumerable<GetDoencaDto>>>> ObterInativasAsync(int skip = 0, int take = 50);
+        Task<OperationResult<PageResultModel<IEnumerable<GetDoencaDto>>>> ObterTodasAsync(int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc");
+        Task<OperationResult<PageResultModel<IEnumerable<GetDoencaDto>>>> ObterAtivasAsync(int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc");
+        Task<OperationResult<PageResultModel<IEnumerable<GetDoencaDto>>>> ObterInativasAsync(int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc");
         Task<OperationResult<GetDoencaDto?>> ObterPorIdAsync(int id);
         Task<OperationResult<IEnumerable<GetDoencaDto>>> ObterPorNomeAsync(string nome);
         Task<OperationResult<IEnumerable<GetDoencaDto>>> ObterPorCategoriaAsync(int idCategoria);

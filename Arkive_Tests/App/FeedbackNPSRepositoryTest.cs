@@ -29,6 +29,25 @@ namespace Arkive_Tests.App
 
         [Fact]
         [Trait("Repository", "FeedbackNPS")]
+        public async Task ObterTodosAsync_OrdenandoPorNotaDesc_DeveDesempatarPorIdCrescente()
+        {
+            // Arrange: notas repetidas; o desempate por Id mantém a paginação estável
+            _applicationContext.FeedbackNPS.AddRange(
+                new FeedbackNPSEntity { Id = 1, Nota = 3 },
+                new FeedbackNPSEntity { Id = 2, Nota = 5 },
+                new FeedbackNPSEntity { Id = 3, Nota = 5 },
+                new FeedbackNPSEntity { Id = 4, Nota = 3 });
+            _applicationContext.SaveChanges();
+
+            // Act
+            var resultado = await _feedbackNPSRepository.ObterTodosAsync(0, 50, "nota", "desc");
+
+            // Assert
+            Assert.Equal(new[] { 2, 3, 1, 4 }, resultado.Data.Select(x => x.Id));
+        }
+
+        [Fact]
+        [Trait("Repository", "FeedbackNPS")]
         public async Task ObterTodosAsync_DeveRetornarTodosOsFeedbacks()
         {
             // Arrange

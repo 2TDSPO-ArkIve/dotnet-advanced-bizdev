@@ -27,7 +27,7 @@ namespace Arkive_Tests.App
         public async Task GetAll_ComListaDeRacas_DeveRetornar200()
         {
             // Arrange
-            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(OperationResult<PageResultModel<IEnumerable<GetRacaDto>>>.Success(new PageResultModel<IEnumerable<GetRacaDto>> { Data = new List<GetRacaDto>
+            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(OperationResult<PageResultModel<IEnumerable<GetRacaDto>>>.Success(new PageResultModel<IEnumerable<GetRacaDto>> { Data = new List<GetRacaDto>
             {
                 new GetRacaDto { Id = 1, Raca = "Poodle", IdEspecie = 1, StAtivo = "S" },
                 new GetRacaDto { Id = 2, Raca = "Siamês", IdEspecie = 2, StAtivo = "S" }
@@ -47,7 +47,7 @@ namespace Arkive_Tests.App
         public async Task GetAll_QuandoNaoHaRacas_DeveRetornar204()
         {
             // Arrange
-            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(OperationResult<PageResultModel<IEnumerable<GetRacaDto>>>.Failure("Nenhuma raça encontrada", 204));
+            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(OperationResult<PageResultModel<IEnumerable<GetRacaDto>>>.Failure("Nenhuma raça encontrada", 204));
 
             // Act
             var response = await _client.GetAsync("/api/racas");

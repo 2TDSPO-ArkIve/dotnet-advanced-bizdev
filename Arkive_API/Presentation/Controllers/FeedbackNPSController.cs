@@ -39,17 +39,18 @@ namespace Arkive_API.Presentation.Controllers
 
             ## Observações:
             * Esta entidade não possui soft delete; um feedback removido é apagado fisicamente.
+            * Ordenação: `ordenarPor` (`id`, `nota` ou `data`) e `direcao` (`asc` ou `desc`). Valor inválido ordena por `id` crescente.
             """
         )]
         [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<GetFeedbackNPSDto>>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhum feedback encontrado")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
         [SwaggerResponseExample(statusCode: 200, typeof(FeedbackNPSResponseListSample))]
-        public async Task<IActionResult> GetAllFeedbacks(int skip = 0, int take = 50)
+        public async Task<IActionResult> GetAllFeedbacks(int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             _logger.LogInformation("Listando feedbacks NPS (skip {Skip}, take {Take})", skip, take);
 
-            var resultado = await _feedbackNPSUseCase.ObterTodosAsync(skip, take);
+            var resultado = await _feedbackNPSUseCase.ObterTodosAsync(skip, take, ordenarPor, direcao);
 
             if (resultado.StatusCode == 204) return NoContent();
             if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
@@ -91,16 +92,17 @@ namespace Arkive_API.Presentation.Controllers
 
             ## Observações:
             * A nota deve estar entre 0 e 5; valores fora deste intervalo resultam em 400 (Bad Request).
+            * Ordenação: `ordenarPor` (`id`, `nota` ou `data`) e `direcao` (`asc` ou `desc`). Valor inválido ordena por `id` crescente.
             """
         )]
         [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<GetFeedbackNPSDto>>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhum feedback encontrado para esta nota")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
-        public async Task<IActionResult> GetFeedbackByNota(int nota, int skip = 0, int take = 50)
+        public async Task<IActionResult> GetFeedbackByNota(int nota, int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             _logger.LogInformation("Listando feedbacks NPS com nota {Nota} (skip {Skip}, take {Take})", nota, skip, take);
 
-            var resultado = await _feedbackNPSUseCase.ObterPorNotaAsync(nota, skip, take);
+            var resultado = await _feedbackNPSUseCase.ObterPorNotaAsync(nota, skip, take, ordenarPor, direcao);
 
             if (resultado.StatusCode == 204) return NoContent();
             if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
@@ -118,16 +120,17 @@ namespace Arkive_API.Presentation.Controllers
 
             ## Observações:
             * O ID de responsável faz referência a uma tabela sincronizada pela API Java; este endpoint não valida sua existência.
+            * Ordenação: `ordenarPor` (`id`, `nota` ou `data`) e `direcao` (`asc` ou `desc`). Valor inválido ordena por `id` crescente.
             """
         )]
         [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<GetFeedbackNPSDto>>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhum feedback encontrado para este responsável")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
-        public async Task<IActionResult> GetFeedbackByResponsavel(int idResponsavel, int skip = 0, int take = 50)
+        public async Task<IActionResult> GetFeedbackByResponsavel(int idResponsavel, int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             _logger.LogInformation("Listando feedbacks NPS do responsável {IdResponsavel} (skip {Skip}, take {Take})", idResponsavel, skip, take);
 
-            var resultado = await _feedbackNPSUseCase.ObterPorResponsavelAsync(idResponsavel, skip, take);
+            var resultado = await _feedbackNPSUseCase.ObterPorResponsavelAsync(idResponsavel, skip, take, ordenarPor, direcao);
 
             if (resultado.StatusCode == 204) return NoContent();
             if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
@@ -145,16 +148,17 @@ namespace Arkive_API.Presentation.Controllers
 
             ## Observações:
             * O ID de animal faz referência a uma tabela sincronizada pela API Java; este endpoint não valida sua existência.
+            * Ordenação: `ordenarPor` (`id`, `nota` ou `data`) e `direcao` (`asc` ou `desc`). Valor inválido ordena por `id` crescente.
             """
         )]
         [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<GetFeedbackNPSDto>>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhum feedback encontrado para este animal")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
-        public async Task<IActionResult> GetFeedbackByAnimal(int idAnimal, int skip = 0, int take = 50)
+        public async Task<IActionResult> GetFeedbackByAnimal(int idAnimal, int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             _logger.LogInformation("Listando feedbacks NPS do animal {IdAnimal} (skip {Skip}, take {Take})", idAnimal, skip, take);
 
-            var resultado = await _feedbackNPSUseCase.ObterPorAnimalAsync(idAnimal, skip, take);
+            var resultado = await _feedbackNPSUseCase.ObterPorAnimalAsync(idAnimal, skip, take, ordenarPor, direcao);
 
             if (resultado.StatusCode == 204) return NoContent();
             if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
@@ -172,16 +176,17 @@ namespace Arkive_API.Presentation.Controllers
 
             ## Observações:
             * O ID de clínica faz referência a uma tabela sincronizada pela API Java; este endpoint não valida sua existência.
+            * Ordenação: `ordenarPor` (`id`, `nota` ou `data`) e `direcao` (`asc` ou `desc`). Valor inválido ordena por `id` crescente.
             """
         )]
         [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<GetFeedbackNPSDto>>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhum feedback encontrado para esta clínica")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
-        public async Task<IActionResult> GetFeedbackByClinica(int idClinica, int skip = 0, int take = 50)
+        public async Task<IActionResult> GetFeedbackByClinica(int idClinica, int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             _logger.LogInformation("Listando feedbacks NPS da clínica {IdClinica} (skip {Skip}, take {Take})", idClinica, skip, take);
 
-            var resultado = await _feedbackNPSUseCase.ObterPorClinicaAsync(idClinica, skip, take);
+            var resultado = await _feedbackNPSUseCase.ObterPorClinicaAsync(idClinica, skip, take, ordenarPor, direcao);
 
             if (resultado.StatusCode == 204) return NoContent();
             if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
@@ -199,16 +204,17 @@ namespace Arkive_API.Presentation.Controllers
 
             ## Observações:
             * O ID de veterinário faz referência a uma tabela sincronizada pela API Java; este endpoint não valida sua existência.
+            * Ordenação: `ordenarPor` (`id`, `nota` ou `data`) e `direcao` (`asc` ou `desc`). Valor inválido ordena por `id` crescente.
             """
         )]
         [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<GetFeedbackNPSDto>>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhum feedback encontrado para este veterinário")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
-        public async Task<IActionResult> GetFeedbackByVeterinario(int idVeterinario, int skip = 0, int take = 50)
+        public async Task<IActionResult> GetFeedbackByVeterinario(int idVeterinario, int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             _logger.LogInformation("Listando feedbacks NPS do veterinário {IdVeterinario} (skip {Skip}, take {Take})", idVeterinario, skip, take);
 
-            var resultado = await _feedbackNPSUseCase.ObterPorVeterinarioAsync(idVeterinario, skip, take);
+            var resultado = await _feedbackNPSUseCase.ObterPorVeterinarioAsync(idVeterinario, skip, take, ordenarPor, direcao);
 
             if (resultado.StatusCode == 204) return NoContent();
             if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
@@ -227,12 +233,13 @@ namespace Arkive_API.Presentation.Controllers
             ## Observações:
             * O formato esperado para a data é yyyy-MM-dd.
             * A comparação considera apenas a data, ignorando a hora do registro.
+            * Ordenação: `ordenarPor` (`id`, `nota` ou `data`) e `direcao` (`asc` ou `desc`). Valor inválido ordena por `id` crescente.
             """
         )]
         [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<GetFeedbackNPSDto>>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhum feedback encontrado para esta data")]
         [SwaggerResponse(statusCode: 400, description: "Formato de data inválido ou erro ao retornar os dados", type: typeof(string))]
-        public async Task<IActionResult> GetFeedbackByData(string data, int skip = 0, int take = 50)
+        public async Task<IActionResult> GetFeedbackByData(string data, int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             _logger.LogInformation("Listando feedbacks NPS da data {Data} (skip {Skip}, take {Take})", data, skip, take);
 
@@ -244,7 +251,7 @@ namespace Arkive_API.Presentation.Controllers
                 return BadRequest("Formato de data inválido. Use o formato yyyy-MM-dd.");
             }
 
-            var resultado = await _feedbackNPSUseCase.ObterPorDataAsync(dataParsed, skip, take);
+            var resultado = await _feedbackNPSUseCase.ObterPorDataAsync(dataParsed, skip, take, ordenarPor, direcao);
 
             if (resultado.StatusCode == 204) return NoContent();
             if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);

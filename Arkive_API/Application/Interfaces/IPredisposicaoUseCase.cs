@@ -6,11 +6,11 @@ namespace Arkive_API.Application.Interfaces
 {
     public interface IPredisposicaoUseCase
     {
-        Task<OperationResult<PageResultModel<IEnumerable<GetPredisposicaoDto>>>> ObterTodasAsync(int skip = 0, int take = 50);
+        Task<OperationResult<PageResultModel<IEnumerable<GetPredisposicaoDto>>>> ObterTodasAsync(int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc");
         Task<OperationResult<GetPredisposicaoDto?>> ObterPorIdAsync(int id);
-        Task<OperationResult<PageResultModel<IEnumerable<GetPredisposicaoDto>>>> ObterPorEspecieAsync(int idEspecie, int skip = 0, int take = 50);
-        Task<OperationResult<PageResultModel<IEnumerable<GetPredisposicaoDto>>>> ObterPorRacaAsync(int idRaca, int skip = 0, int take = 50);
-        Task<OperationResult<PageResultModel<IEnumerable<GetPredisposicaoDto>>>> ObterPorDoencaAsync(int idDoenca, int skip = 0, int take = 50);
+        Task<OperationResult<PageResultModel<IEnumerable<GetPredisposicaoDto>>>> ObterPorEspecieAsync(int idEspecie, int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc");
+        Task<OperationResult<PageResultModel<IEnumerable<GetPredisposicaoDto>>>> ObterPorRacaAsync(int idRaca, int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc");
+        Task<OperationResult<PageResultModel<IEnumerable<GetPredisposicaoDto>>>> ObterPorDoencaAsync(int idDoenca, int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc");
 
         /// <summary>
         /// Retorna Failure 404 quando dto.IdEspecie, dto.IdRaca (se informado) ou dto.IdDoenca

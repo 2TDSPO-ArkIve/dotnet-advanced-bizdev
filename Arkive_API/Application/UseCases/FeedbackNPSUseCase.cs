@@ -19,19 +19,19 @@ namespace Arkive_API.Application.UseCases
             _logger = logger;
         }
 
-        public async Task<OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>> ObterTodosAsync(int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>> ObterTodosAsync(int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             _logger.LogInformation("Obtendo feedbacks NPS (skip {Skip}, take {Take})", skip, take);
 
             try
             {
                 var (s, t) = Pagination.Normalizar(skip, take);
-                var resultado = await _feedbackNPSRepository.ObterTodosAsync(s, t);
+                var resultado = await _feedbackNPSRepository.ObterTodosAsync(s, t, ordenarPor, direcao);
 
                 if (!resultado.Data.Any())
                     return OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>.Failure("Nenhum feedback NPS encontrado", 204);
 
-                resultado.Links = Pagination.Links("/api/feedbacks-nps", s, t, resultado.TotalRegistros);
+                resultado.Links = Pagination.Links("/api/feedbacks-nps", s, t, resultado.TotalRegistros, ordenarPor, direcao);
                 resultado.Links.Add(new("/api/feedbacks-nps", "create_feedback_nps", "POST"));
                 return OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>.Success(Pagination.MapearItens(resultado, x => ItemDto(x)));
             }
@@ -65,7 +65,7 @@ namespace Arkive_API.Application.UseCases
             }
         }
 
-        public async Task<OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>> ObterPorNotaAsync(int nota, int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>> ObterPorNotaAsync(int nota, int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             _logger.LogInformation("Obtendo feedbacks NPS com nota {Nota} (skip {Skip}, take {Take})", nota, skip, take);
 
@@ -78,12 +78,12 @@ namespace Arkive_API.Application.UseCases
                 }
 
                 var (s, t) = Pagination.Normalizar(skip, take);
-                var resultado = await _feedbackNPSRepository.ObterPorNotaAsync(nota, s, t);
+                var resultado = await _feedbackNPSRepository.ObterPorNotaAsync(nota, s, t, ordenarPor, direcao);
 
                 if (!resultado.Data.Any())
                     return OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>.Failure("Nenhum feedback NPS encontrado para esta nota", 204);
 
-                resultado.Links = Pagination.Links($"/api/feedbacks-nps/nota/{nota}", s, t, resultado.TotalRegistros);
+                resultado.Links = Pagination.Links($"/api/feedbacks-nps/nota/{nota}", s, t, resultado.TotalRegistros, ordenarPor, direcao);
                 return OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>.Success(Pagination.MapearItens(resultado, x => ItemDto(x)));
             }
             catch (ArgumentOutOfRangeException ex)
@@ -97,19 +97,19 @@ namespace Arkive_API.Application.UseCases
             }
         }
 
-        public async Task<OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>> ObterPorResponsavelAsync(int idResponsavel, int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>> ObterPorResponsavelAsync(int idResponsavel, int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             _logger.LogInformation("Obtendo feedbacks NPS do responsável {IdResponsavel} (skip {Skip}, take {Take})", idResponsavel, skip, take);
 
             try
             {
                 var (s, t) = Pagination.Normalizar(skip, take);
-                var resultado = await _feedbackNPSRepository.ObterPorResponsavelAsync(idResponsavel, s, t);
+                var resultado = await _feedbackNPSRepository.ObterPorResponsavelAsync(idResponsavel, s, t, ordenarPor, direcao);
 
                 if (!resultado.Data.Any())
                     return OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>.Failure("Nenhum feedback NPS encontrado para este responsável", 204);
 
-                resultado.Links = Pagination.Links($"/api/feedbacks-nps/responsavel/{idResponsavel}", s, t, resultado.TotalRegistros);
+                resultado.Links = Pagination.Links($"/api/feedbacks-nps/responsavel/{idResponsavel}", s, t, resultado.TotalRegistros, ordenarPor, direcao);
                 return OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>.Success(Pagination.MapearItens(resultado, x => ItemDto(x)));
             }
             catch (Exception ex)
@@ -119,19 +119,19 @@ namespace Arkive_API.Application.UseCases
             }
         }
 
-        public async Task<OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>> ObterPorAnimalAsync(int idAnimal, int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>> ObterPorAnimalAsync(int idAnimal, int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             _logger.LogInformation("Obtendo feedbacks NPS do animal {IdAnimal} (skip {Skip}, take {Take})", idAnimal, skip, take);
 
             try
             {
                 var (s, t) = Pagination.Normalizar(skip, take);
-                var resultado = await _feedbackNPSRepository.ObterPorAnimalAsync(idAnimal, s, t);
+                var resultado = await _feedbackNPSRepository.ObterPorAnimalAsync(idAnimal, s, t, ordenarPor, direcao);
 
                 if (!resultado.Data.Any())
                     return OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>.Failure("Nenhum feedback NPS encontrado para este animal", 204);
 
-                resultado.Links = Pagination.Links($"/api/feedbacks-nps/animal/{idAnimal}", s, t, resultado.TotalRegistros);
+                resultado.Links = Pagination.Links($"/api/feedbacks-nps/animal/{idAnimal}", s, t, resultado.TotalRegistros, ordenarPor, direcao);
                 return OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>.Success(Pagination.MapearItens(resultado, x => ItemDto(x)));
             }
             catch (Exception ex)
@@ -141,19 +141,19 @@ namespace Arkive_API.Application.UseCases
             }
         }
 
-        public async Task<OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>> ObterPorClinicaAsync(int idClinica, int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>> ObterPorClinicaAsync(int idClinica, int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             _logger.LogInformation("Obtendo feedbacks NPS da clínica {IdClinica} (skip {Skip}, take {Take})", idClinica, skip, take);
 
             try
             {
                 var (s, t) = Pagination.Normalizar(skip, take);
-                var resultado = await _feedbackNPSRepository.ObterPorClinicaAsync(idClinica, s, t);
+                var resultado = await _feedbackNPSRepository.ObterPorClinicaAsync(idClinica, s, t, ordenarPor, direcao);
 
                 if (!resultado.Data.Any())
                     return OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>.Failure("Nenhum feedback NPS encontrado para esta clínica", 204);
 
-                resultado.Links = Pagination.Links($"/api/feedbacks-nps/clinica/{idClinica}", s, t, resultado.TotalRegistros);
+                resultado.Links = Pagination.Links($"/api/feedbacks-nps/clinica/{idClinica}", s, t, resultado.TotalRegistros, ordenarPor, direcao);
                 return OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>.Success(Pagination.MapearItens(resultado, x => ItemDto(x)));
             }
             catch (Exception ex)
@@ -163,19 +163,19 @@ namespace Arkive_API.Application.UseCases
             }
         }
 
-        public async Task<OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>> ObterPorVeterinarioAsync(int idVeterinario, int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>> ObterPorVeterinarioAsync(int idVeterinario, int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             _logger.LogInformation("Obtendo feedbacks NPS do veterinário {IdVeterinario} (skip {Skip}, take {Take})", idVeterinario, skip, take);
 
             try
             {
                 var (s, t) = Pagination.Normalizar(skip, take);
-                var resultado = await _feedbackNPSRepository.ObterPorVeterinarioAsync(idVeterinario, s, t);
+                var resultado = await _feedbackNPSRepository.ObterPorVeterinarioAsync(idVeterinario, s, t, ordenarPor, direcao);
 
                 if (!resultado.Data.Any())
                     return OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>.Failure("Nenhum feedback NPS encontrado para este veterinário", 204);
 
-                resultado.Links = Pagination.Links($"/api/feedbacks-nps/veterinario/{idVeterinario}", s, t, resultado.TotalRegistros);
+                resultado.Links = Pagination.Links($"/api/feedbacks-nps/veterinario/{idVeterinario}", s, t, resultado.TotalRegistros, ordenarPor, direcao);
                 return OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>.Success(Pagination.MapearItens(resultado, x => ItemDto(x)));
             }
             catch (Exception ex)
@@ -185,19 +185,19 @@ namespace Arkive_API.Application.UseCases
             }
         }
 
-        public async Task<OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>> ObterPorDataAsync(DateTime data, int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>> ObterPorDataAsync(DateTime data, int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             _logger.LogInformation("Obtendo feedbacks NPS da data {Data:yyyy-MM-dd} (skip {Skip}, take {Take})", data, skip, take);
 
             try
             {
                 var (s, t) = Pagination.Normalizar(skip, take);
-                var resultado = await _feedbackNPSRepository.ObterPorDataAsync(data, s, t);
+                var resultado = await _feedbackNPSRepository.ObterPorDataAsync(data, s, t, ordenarPor, direcao);
 
                 if (!resultado.Data.Any())
                     return OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>.Failure("Nenhum feedback NPS encontrado para esta data", 204);
 
-                resultado.Links = Pagination.Links($"/api/feedbacks-nps/data/{data:yyyy-MM-dd}", s, t, resultado.TotalRegistros);
+                resultado.Links = Pagination.Links($"/api/feedbacks-nps/data/{data:yyyy-MM-dd}", s, t, resultado.TotalRegistros, ordenarPor, direcao);
                 return OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>.Success(Pagination.MapearItens(resultado, x => ItemDto(x)));
             }
             catch (Exception ex)

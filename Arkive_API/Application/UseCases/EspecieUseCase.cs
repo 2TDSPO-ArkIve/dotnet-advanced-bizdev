@@ -18,19 +18,19 @@ namespace Arkive_API.Application.UseCases
             _logger = logger;
         }
 
-        public async Task<OperationResult<PageResultModel<IEnumerable<GetEspecieDto>>>> ObterTodasAsync(int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<GetEspecieDto>>>> ObterTodasAsync(int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             _logger.LogInformation("Obtendo todas as espécies (skip {Skip}, take {Take})", skip, take);
 
             try
             {
                 var (s, t) = Pagination.Normalizar(skip, take);
-                var resultado = await _especieRepository.ObterTodosAsync(s, t);
+                var resultado = await _especieRepository.ObterTodosAsync(s, t, ordenarPor, direcao);
 
                 if (!resultado.Data.Any())
                     return OperationResult<PageResultModel<IEnumerable<GetEspecieDto>>>.Failure("Nenhuma espécie encontrada", 204);
 
-                resultado.Links = Pagination.Links("/api/especies", s, t, resultado.TotalRegistros);
+                resultado.Links = Pagination.Links("/api/especies", s, t, resultado.TotalRegistros, ordenarPor, direcao);
                 resultado.Links.Add(new("/api/especies", "create_especie", "POST"));
                 return OperationResult<PageResultModel<IEnumerable<GetEspecieDto>>>.Success(Pagination.MapearItens(resultado, x => ItemDto(x)));
             }
@@ -41,19 +41,19 @@ namespace Arkive_API.Application.UseCases
             }
         }
 
-        public async Task<OperationResult<PageResultModel<IEnumerable<GetEspecieDto>>>> ObterAtivasAsync(int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<GetEspecieDto>>>> ObterAtivasAsync(int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             _logger.LogInformation("Obtendo espécies ativas (skip {Skip}, take {Take})", skip, take);
 
             try
             {
                 var (s, t) = Pagination.Normalizar(skip, take);
-                var resultado = await _especieRepository.ObterAtivosAsync(s, t);
+                var resultado = await _especieRepository.ObterAtivosAsync(s, t, ordenarPor, direcao);
 
                 if (!resultado.Data.Any())
                     return OperationResult<PageResultModel<IEnumerable<GetEspecieDto>>>.Failure("Nenhuma espécie ativa encontrada", 204);
 
-                resultado.Links = Pagination.Links("/api/especies/ativos", s, t, resultado.TotalRegistros);
+                resultado.Links = Pagination.Links("/api/especies/ativos", s, t, resultado.TotalRegistros, ordenarPor, direcao);
                 return OperationResult<PageResultModel<IEnumerable<GetEspecieDto>>>.Success(Pagination.MapearItens(resultado, x => ItemDto(x)));
             }
             catch (Exception ex)
@@ -63,19 +63,19 @@ namespace Arkive_API.Application.UseCases
             }
         }
 
-        public async Task<OperationResult<PageResultModel<IEnumerable<GetEspecieDto>>>> ObterInativasAsync(int skip = 0, int take = 50)
+        public async Task<OperationResult<PageResultModel<IEnumerable<GetEspecieDto>>>> ObterInativasAsync(int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             _logger.LogInformation("Obtendo espécies inativas (skip {Skip}, take {Take})", skip, take);
 
             try
             {
                 var (s, t) = Pagination.Normalizar(skip, take);
-                var resultado = await _especieRepository.ObterInativosAsync(s, t);
+                var resultado = await _especieRepository.ObterInativosAsync(s, t, ordenarPor, direcao);
 
                 if (!resultado.Data.Any())
                     return OperationResult<PageResultModel<IEnumerable<GetEspecieDto>>>.Failure("Nenhuma espécie inativa encontrada", 204);
 
-                resultado.Links = Pagination.Links("/api/especies/inativos", s, t, resultado.TotalRegistros);
+                resultado.Links = Pagination.Links("/api/especies/inativos", s, t, resultado.TotalRegistros, ordenarPor, direcao);
                 return OperationResult<PageResultModel<IEnumerable<GetEspecieDto>>>.Success(Pagination.MapearItens(resultado, x => ItemDto(x)));
             }
             catch (Exception ex)
