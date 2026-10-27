@@ -56,17 +56,19 @@ namespace Arkive_API.Presentation.Controllers
 
         [HttpGet("db")]
         [SwaggerOperation(
-            Summary = "Readiness — o banco está on-line?",
+            Summary = "Readiness — os bancos estão on-line?",
             Description = """
-            Executa um ping leve no Oracle. Use para o load balancer anexar/desanexar
-            a instância do pool de tráfego.
+            Executa um ping leve no Oracle (dados) e no MongoDB (auditoria). Use para o load balancer
+            anexar/desanexar a instância do pool de tráfego.
 
-            * **Status 200 (OK):** banco acessível, instância pronta para tráfego.
-            * **Status 503 (Service Unavailable):** banco indisponível.
+            * **Status 200 (OK):** Oracle e MongoDB acessíveis, instância pronta para tráfego.
+            * **Status 503 (Service Unavailable):** pelo menos um dos bancos está indisponível.
+
+            O retorno lista cada check (`oracle`, `mongodb`) com seu status e, em caso de falha, a mensagem de erro.
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Banco on-line")]
-        [SwaggerResponse(statusCode: 503, description: "Banco indisponível")]
+        [SwaggerResponse(statusCode: 200, description: "Oracle e MongoDB on-line")]
+        [SwaggerResponse(statusCode: 503, description: "Oracle ou MongoDB indisponível")]
         public async Task<IActionResult> Ready(CancellationToken ct)
         {
             var report = await _healthService.CheckHealthAsync(

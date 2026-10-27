@@ -18,7 +18,7 @@ builder.Services.AddTelemetria(builder.Configuration);
 builder.Services.AddIoC(builder.Configuration);
 builder.Services.AddAutenticacao(builder.Configuration);
 
-builder.Services.AddHealthChecks()
+var healthChecks = builder.Services.AddHealthChecks()
     // Liveness: o processo está de pé? (auto-contido, sem I/O externo)
     .AddCheck(
         "self",
@@ -30,6 +30,19 @@ builder.Services.AddHealthChecks()
         name: "oracle",
         failureStatus: HealthStatus.Unhealthy,
         tags: ["db"]);
+
+// Sempre registrado (como o Oracle); sem connection string cai no MongoDB local
+var mongoConnString = builder.Configuration.GetConnectionString("Mongodb") ?? "mongodb://localhost:27017/";
+// Ping direto no driver 3.x (o pacote AspNetCore.HealthChecks.MongoDb 8.x é compilado contra o driver 2.x e quebra em runtime)
+var mongoClient = new MongoDB.Driver.MongoClient(mongoConnString);
+healthChecks.AddAsyncCheck(
+    "mongodb",
+    async ct =>
+    {
+        await mongoClient.GetDatabase("admin").RunCommandAsync<MongoDB.Bson.BsonDocument>(new MongoDB.Bson.BsonDocument("ping", 1), cancellationToken: ct);
+        return HealthCheckResult.Healthy();
+    },
+    tags: ["db"]);
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
