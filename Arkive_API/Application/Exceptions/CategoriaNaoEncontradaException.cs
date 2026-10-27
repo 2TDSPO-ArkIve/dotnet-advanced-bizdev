@@ -5,7 +5,7 @@ namespace Arkive_API.Application.Exceptions
     /// O Controller deve capturar esta exceção separadamente para retornar 404 com a mensagem,
     /// em vez de cair no catch genérico (400).
     /// </summary>
-    public class CategoriaNaoEncontradaException : Exception
+    public class CategoriaNaoEncontradaException : NaoEncontradaException
     {
         public CategoriaNaoEncontradaException(int idCategoria)
             : base($"Categoria com ID {idCategoria} não encontrada.")

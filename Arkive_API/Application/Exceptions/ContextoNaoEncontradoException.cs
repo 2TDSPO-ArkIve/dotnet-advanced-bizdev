@@ -6,7 +6,7 @@ namespace Arkive_API.Application.Exceptions
     /// A mensagem completa é passada no construtor pois cada contexto tem uma concordância de
     /// gênero diferente em português (ex: "Consulta não encontrada" vs "Animal não encontrado").
     /// </summary>
-    public class ContextoNaoEncontradoException : Exception
+    public class ContextoNaoEncontradoException : NaoEncontradaException
     {
         public ContextoNaoEncontradoException(string mensagem) : base(mensagem)
         {

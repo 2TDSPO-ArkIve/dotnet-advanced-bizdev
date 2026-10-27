@@ -1,4 +1,5 @@
 using Arkive_API.Infrastructure.IoC;
+using Arkive_API.Presentation.Handlers;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -28,6 +29,9 @@ builder.Services.AddHealthChecks()
         name: "oracle",
         failureStatus: HealthStatus.Unhealthy,
         tags: ["db"]);
+
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -96,6 +100,7 @@ builder.Services.AddRateLimiter(options => {
 var app = builder.Build();
 
 app.UseSerilogRequestLogging();
+app.UseExceptionHandler();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
