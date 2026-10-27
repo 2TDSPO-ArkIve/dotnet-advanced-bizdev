@@ -36,7 +36,9 @@ namespace Arkive_API.Application.UseCases
                     Metodo = x.Metodo,
                     Rota = x.Rota,
                     StatusCode = x.StatusCode,
-                    Data = x.Data
+                    Data = x.Data,
+                    Requisicao = x.Requisicao,
+                    Resposta = x.Resposta
                 }));
             }
             catch (Exception ex)

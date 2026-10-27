@@ -15,5 +15,7 @@ namespace Arkive_API.Domain.Entities
         public string Rota { get; set; } = string.Empty;
         public int StatusCode { get; set; }
         public DateTime Data { get; set; }
+        public string? Requisicao { get; set; }
+        public string? Resposta { get; set; }
     }
 }

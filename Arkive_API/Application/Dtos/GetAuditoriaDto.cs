@@ -8,5 +8,7 @@ namespace Arkive_API.Application.Dtos
         public string Rota { get; set; } = string.Empty;
         public int StatusCode { get; set; }
         public DateTime Data { get; set; }
+        public string? Requisicao { get; set; }
+        public string? Resposta { get; set; }
     }
 }

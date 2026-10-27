@@ -26,7 +26,7 @@ namespace Arkive_Tests.App
             var id = ObjectId.GenerateNewId();
             _repository.Setup(x => x.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new PageResultModel<IEnumerable<AuditoriaEntity>>
             {
-                Data = new List<AuditoriaEntity> { new() { Id = id, Usuario = "admin", Metodo = "POST", Rota = "/api/auth", StatusCode = 200 } },
+                Data = new List<AuditoriaEntity> { new() { Id = id, Usuario = "admin", Metodo = "POST", Rota = "/api/auth", StatusCode = 200, Requisicao = "{\"a\":1}", Resposta = "{\"b\":2}" } },
                 TotalRegistros = 1
             });
 
@@ -36,6 +36,8 @@ namespace Arkive_Tests.App
             // Assert
             Assert.True(resultado.IsSuccess);
             Assert.Equal(id.ToString(), resultado.Value!.Data.Single().Id);
+            Assert.Equal("{\"a\":1}", resultado.Value.Data.Single().Requisicao);
+            Assert.Equal("{\"b\":2}", resultado.Value.Data.Single().Resposta);
             Assert.Contains(resultado.Value.Links, l => l.Rel == "self");
         }
 

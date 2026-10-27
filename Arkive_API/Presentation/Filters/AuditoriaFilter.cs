@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using System.Text.Json;
 
 namespace Arkive_API.Presentation.Filters
 {
@@ -39,19 +40,34 @@ namespace Arkive_API.Presentation.Filters
                 var status = (executado.Result as IStatusCodeActionResult)?.StatusCode
                     ?? context.HttpContext.Response.StatusCode;
 
+                // Só DTOs do body (ids de rota já estão em Rota). Login fica de fora: senha e JWT nunca vão para o Mongo
+                var corpo = context.ActionArguments.Values
+                    .Where(v => v is not null and not PostAuthDto && v is not string && !v.GetType().IsPrimitive)
+                    .ToList();
+                var resposta = (executado.Result as ObjectResult)?.Value;
+
                 await _auditoriaRepository.AdicionarAsync(new AuditoriaEntity
                 {
                     Usuario = usuario,
                     Metodo = request.Method,
                     Rota = request.Path,
                     StatusCode = status,
-                    Data = DateTime.UtcNow
+                    Data = DateTime.UtcNow,
+                    Requisicao = corpo.Count == 0 ? null : Serializar(corpo.Count == 1 ? corpo[0] : corpo),
+                    Resposta = resposta is null or GetAuthDto ? null : Serializar(resposta)
                 });
             }
             catch (Exception ex)
             {
                 _logger.LogWarning(ex, "Falha ao gravar auditoria de {Metodo} {Rota}", request.Method, request.Path);
             }
+        }
+
+        // ponytail: trunca em 4000 chars (JSON cortado no fim); sem teto o documento pode crescer sem limite
+        private static string Serializar(object valor)
+        {
+            var json = JsonSerializer.Serialize(valor);
+            return json.Length <= 4000 ? json : json[..4000];
         }
     }
 }

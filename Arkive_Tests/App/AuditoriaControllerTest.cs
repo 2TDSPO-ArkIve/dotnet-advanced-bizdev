@@ -70,8 +70,25 @@ namespace Arkive_Tests.App
             var response = await _factory.CreateClient().PostAsJsonAsync("/api/auth", new PostAuthDto { Login = "vet@arkive.com", Senha = "123" });
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            // Sem senha na requisição e sem JWT na resposta
             _repository.Verify(x => x.AdicionarAsync(It.Is<AuditoriaEntity>(a =>
-                a.Usuario == "vet@arkive.com" && a.Metodo == "POST" && a.Rota == "/api/auth" && a.StatusCode == 200)), Times.Once);
+                a.Usuario == "vet@arkive.com" && a.Metodo == "POST" && a.Rota == "/api/auth" && a.StatusCode == 200
+                && a.Requisicao == null && a.Resposta == null)), Times.Once);
+        }
+
+        [Fact]
+        [Trait("Filter", "Auditoria")]
+        public async Task PostRaca_DeveGravarDadoEnviadoEDadoRetornado()
+        {
+            _factory.RacaUseCaseMock.Reset();
+            _factory.RacaUseCaseMock.Setup(x => x.AdicionarAsync(It.IsAny<RacaRequestDto>()))
+                .ReturnsAsync(OperationResult<RacaEntity?>.Success(new RacaEntity { Id = 7, Raca = "Labrador", IdEspecie = 1, StAtivo = "S" }, 201));
+
+            var response = await _factory.CreateAuthenticatedClient().PostAsJsonAsync("/api/racas", new { Raca = "Labrador", IdEspecie = 1 });
+
+            Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+            _repository.Verify(x => x.AdicionarAsync(It.Is<AuditoriaEntity>(a =>
+                a.Requisicao!.Contains("Labrador") && a.Resposta!.Contains("\"Id\":7"))), Times.Once);
         }
 
         [Fact]
