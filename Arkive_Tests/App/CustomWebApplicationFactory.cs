@@ -1,5 +1,6 @@
 using Arkive_API.Application.Interfaces;
 using Arkive_API.Application.UseCases;
+using Arkive_API.Domain.Interfaces;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,6 +26,8 @@ namespace Arkive_Tests.App
         public Mock<IPredisposicaoUseCase> PredisposicaoUseCaseMock { get; } = new();
         public Mock<IFeedbackNPSUseCase> FeedbackNPSUseCaseMock { get; } = new();
         public Mock<IAuthUseCase> AuthUseCaseMock { get; } = new();
+        public Mock<IAuditoriaUseCase> AuditoriaUseCaseMock { get; } = new();
+        public Mock<IAuditoriaRepository> AuditoriaRepositoryMock { get; } = new();
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
@@ -41,6 +44,8 @@ namespace Arkive_Tests.App
                 services.RemoveAll(typeof(IPredisposicaoUseCase));
                 services.RemoveAll(typeof(IFeedbackNPSUseCase));
                 services.RemoveAll(typeof(IAuthUseCase));
+                services.RemoveAll(typeof(IAuditoriaUseCase));
+                services.RemoveAll(typeof(IAuditoriaRepository));
 
                 services.AddSingleton(CategoriaDoencaUseCaseMock.Object);
                 services.AddSingleton(EspecieUseCaseMock.Object);
@@ -49,6 +54,8 @@ namespace Arkive_Tests.App
                 services.AddSingleton(PredisposicaoUseCaseMock.Object);
                 services.AddSingleton(FeedbackNPSUseCaseMock.Object);
                 services.AddSingleton(AuthUseCaseMock.Object);
+                services.AddSingleton(AuditoriaUseCaseMock.Object);
+                services.AddSingleton(AuditoriaRepositoryMock.Object);
             });
         }
 

@@ -1,4 +1,5 @@
 using Arkive_API.Infrastructure.IoC;
+using Arkive_API.Presentation.Filters;
 using Arkive_API.Presentation.Handlers;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.RateLimiting;
@@ -33,7 +34,7 @@ builder.Services.AddHealthChecks()
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(o => o.Filters.Add<AuditoriaFilter>());
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c => {

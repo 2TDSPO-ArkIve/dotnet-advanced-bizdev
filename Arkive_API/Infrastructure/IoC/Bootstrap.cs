@@ -50,7 +50,13 @@ namespace Arkive_API.Infrastructure.IoC
                 options.UseOracle(configuration.GetConnectionString("Oracle"));
             });
 
-            services.AddScoped<ICategoriaDoencaRepository, CategoriaDoencaRepository>();
+            services.AddDbContext<MongoApplicationContext>(options => {
+                options.UseMongoDB(configuration.GetConnectionString("Mongodb") ?? "", "Arkive");
+            });
+
+            services.AddScoped<IAuditoriaRepository, AuditoriaRepository>();
+            services.AddScoped<IAuditoriaUseCase, AuditoriaUseCase>();
+            services.AddScoped<ICategoriaDoencaRepository,CategoriaDoencaRepository>();
             services.AddScoped<ICategoriaDoencaUseCase, CategoriaDoencaUseCase>();
             services.AddScoped<IEspecieRepository, EspecieRepository>();
             services.AddScoped<IEspecieUseCase, EspecieUseCase>();
