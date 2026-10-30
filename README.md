@@ -61,6 +61,12 @@ dotnet-advanced-bizdev/
 └── prints/                            # evidências dos testes por endpoint
 ```
 
+### Diagrama de Arquitetura
+
+![Diagrama de arquitetura](docs/arquitetura.svg)
+
+> Fonte editável: [`docs/arquitetura.drawio`](docs/arquitetura.drawio) (abrir em [app.diagrams.net](https://app.diagrams.net)).
+
 Dependências entre projetos: `API` → `IoC` → (`Application`, `Infrastructure`) → `Domain`. O `Domain` não referencia ninguém.
 
 Divisão em camadas:
@@ -202,6 +208,16 @@ dotnet test --filter "Helper=Pagination"
 dotnet test --collect:"XPlat Code Coverage"
 ```
 
+Cobertura de linhas medida (coverlet, 291 testes):
+
+| Camada | Linhas | Branches |
+|--------|:------:|:--------:|
+| `Arkive_Domain` | 94,2% | 100% |
+| `Arkive_Application` | 79,7% | 82,4% |
+| `Arkive_IoC` | 90,9% | 33,3% |
+| `Arkive_API` | 40,0% | 44,3% |
+| `Arkive_Infrastructure` | 26,4% | 79,7% |
+
 ---
 
 ## Comportamentos Transversais
@@ -299,7 +315,7 @@ Um filtro global (`AuditoriaFilter`) grava na coleção `auditoria` do MongoDB t
 ### Logging (Serilog)
 
 O logging usa **Serilog** com saída para console e para arquivo em disco. A configuração
-fica no topo do `Program.cs`:
+fica em `Arkive_IoC/Bootstrap.cs` (`AddLogApi`):
 
 - Nível mínimo global: `Information`. Logs de `Microsoft.AspNetCore` só a partir de `Warning`.
 - **Console** - formato padrão do Serilog.
