@@ -1,4 +1,18 @@
 <Solution>
-  <Project Path="Arkive_API/Arkive_API.csproj" />
-  <Project Path="Arkive_Tests/Arkive_Tests.csproj" Id="911d7127-7b22-4b71-9fcb-1a59cd6a477c" />
+  <Folder Name="/0 - Presentation/">
+    <Project Path="Arkive_API/Arkive_API.csproj" />
+  </Folder>
+  <Folder Name="/1 - Application/">
+    <Project Path="Arkive_Application/Arkive_Application.csproj" />
+  </Folder>
+  <Folder Name="/2 - Domain/">
+    <Project Path="Arkive_Domain/Arkive_Domain.csproj" />
+  </Folder>
+  <Folder Name="/3 - Infrastructure/">
+    <Project Path="Arkive_Infrastructure/Arkive_Infrastructure.csproj" />
+    <Project Path="Arkive_IoC/Arkive_IoC.csproj" />
+  </Folder>
+  <Folder Name="/4 - Tests/">
+    <Project Path="Arkive_Tests/Arkive_Tests.csproj" Id="911d7127-7b22-4b71-9fcb-1a59cd6a477c" />
+  </Folder>
 </Solution>

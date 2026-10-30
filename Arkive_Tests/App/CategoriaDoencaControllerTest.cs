@@ -1,7 +1,8 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
-using Arkive_API.Application.Dtos;
-using Arkive_API.Domain.Entities;
+using Arkive_Application.Dtos;
+using Arkive_Domain.Entities;
+using Arkive_Domain.Models;
 using Moq;
 
 namespace Arkive_Tests.App
@@ -10,7 +11,7 @@ namespace Arkive_Tests.App
     public class CategoriaDoencaControllerTest
     {
         private readonly CustomWebApplicationFactory _factory;
-        private readonly Mock<Arkive_API.Application.Interfaces.ICategoriaDoencaUseCase> _useCase;
+        private readonly Mock<Arkive_Application.Interfaces.ICategoriaDoencaUseCase> _useCase;
         private readonly HttpClient _client;
 
         public CategoriaDoencaControllerTest(CustomWebApplicationFactory factory)
@@ -18,10 +19,7 @@ namespace Arkive_Tests.App
             _factory = factory;
             _useCase = factory.CategoriaDoencaUseCaseMock;
             _useCase.Reset();
-            _client = factory.CreateClient(new Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactoryClientOptions
-            {
-                AllowAutoRedirect = false
-            });
+            _client = factory.CreateAuthenticatedClient();
         }
 
         [Fact]
@@ -29,21 +27,21 @@ namespace Arkive_Tests.App
         public async Task GetAll_ComListaDeCategorias_DeveRetornar200()
         {
             // Arrange
-            var categorias = new List<CategoriaDoencaEntity>
+            var categorias = new List<GetCategoriaDoencaDto>
             {
-                new CategoriaDoencaEntity { Id = 1, Nome = "Viral", StAtivo = "S" },
-                new CategoriaDoencaEntity { Id = 2, Nome = "Bacteriana", StAtivo = "S" }
+                new GetCategoriaDoencaDto { Id = 1, Nome = "Viral", StAtivo = "S" },
+                new GetCategoriaDoencaDto { Id = 2, Nome = "Bacteriana", StAtivo = "S" }
             };
-            _useCase.Setup(x => x.ObterTodasAsync()).ReturnsAsync(categorias);
+            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(OperationResult<PageResultModel<IEnumerable<GetCategoriaDoencaDto>>>.Success(new PageResultModel<IEnumerable<GetCategoriaDoencaDto>> { Data = categorias }));
 
             // Act
             var response = await _client.GetAsync("/api/categorias-doenca");
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var body = await response.Content.ReadFromJsonAsync<List<CategoriaDoencaEntity>>();
+            var body = await response.Content.ReadFromJsonAsync<PageResultModel<List<GetCategoriaDoencaDto>>>();
             Assert.NotNull(body);
-            Assert.Equal(2, body!.Count);
+            Assert.Equal(2, body!.Data.Count);
         }
 
         [Fact]
@@ -51,7 +49,7 @@ namespace Arkive_Tests.App
         public async Task GetAll_QuandoNaoHaCategorias_DeveRetornar204()
         {
             // Arrange
-            _useCase.Setup(x => x.ObterTodasAsync()).ReturnsAsync(new List<CategoriaDoencaEntity>());
+            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(OperationResult<PageResultModel<IEnumerable<GetCategoriaDoencaDto>>>.Failure("Nenhuma categoria de doença encontrada", 204));
 
             // Act
             var response = await _client.GetAsync("/api/categorias-doenca");
@@ -65,15 +63,15 @@ namespace Arkive_Tests.App
         public async Task GetById_QuandoCategoriaExiste_DeveRetornar200()
         {
             // Arrange
-            var categoria = new CategoriaDoencaEntity { Id = 5, Nome = "Viral", StAtivo = "S" };
-            _useCase.Setup(x => x.ObterPorIdAsync(5)).ReturnsAsync(categoria);
+            var categoria = new GetCategoriaDoencaDto { Id = 5, Nome = "Viral", StAtivo = "S" };
+            _useCase.Setup(x => x.ObterPorIdAsync(5)).ReturnsAsync(OperationResult<GetCategoriaDoencaDto?>.Success(categoria));
 
             // Act
             var response = await _client.GetAsync("/api/categorias-doenca/5");
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var body = await response.Content.ReadFromJsonAsync<CategoriaDoencaEntity>();
+            var body = await response.Content.ReadFromJsonAsync<GetCategoriaDoencaDto>();
             Assert.Equal(5, body!.Id);
             Assert.Equal("Viral", body.Nome);
         }
@@ -83,7 +81,7 @@ namespace Arkive_Tests.App
         public async Task GetById_QuandoCategoriaNaoExiste_DeveRetornar404()
         {
             // Arrange
-            _useCase.Setup(x => x.ObterPorIdAsync(It.IsAny<int>())).ReturnsAsync((CategoriaDoencaEntity?)null);
+            _useCase.Setup(x => x.ObterPorIdAsync(It.IsAny<int>())).ReturnsAsync(OperationResult<GetCategoriaDoencaDto?>.Failure("Categoria de doença não encontrada", 404));
 
             // Act
             var response = await _client.GetAsync("/api/categorias-doenca/999");
@@ -99,7 +97,7 @@ namespace Arkive_Tests.App
             // Arrange
             var dto = new CategoriaDoencaRequestDto { Nome = "Parasitária" };
             var criada = new CategoriaDoencaEntity { Id = 10, Nome = "Parasitária", StAtivo = "S" };
-            _useCase.Setup(x => x.AdicionarAsync(It.IsAny<CategoriaDoencaRequestDto>())).ReturnsAsync(criada);
+            _useCase.Setup(x => x.AdicionarAsync(It.IsAny<CategoriaDoencaRequestDto>())).ReturnsAsync(OperationResult<CategoriaDoencaEntity?>.Success(criada, 201));
 
             // Act
             var response = await _client.PostAsJsonAsync("/api/categorias-doenca", dto);
@@ -116,7 +114,7 @@ namespace Arkive_Tests.App
         {
             // Arrange
             _useCase.Setup(x => x.EditarAsync(It.IsAny<int>(), It.IsAny<CategoriaDoencaRequestDto>()))
-                .ReturnsAsync((CategoriaDoencaEntity?)null);
+                .ReturnsAsync(OperationResult<CategoriaDoencaEntity?>.Failure("Categoria de doença não encontrada", 404));
 
             // Act
             var response = await _client.PutAsJsonAsync("/api/categorias-doenca/999",
@@ -132,13 +130,27 @@ namespace Arkive_Tests.App
         {
             // Arrange
             var inativada = new CategoriaDoencaEntity { Id = 3, Nome = "Viral", StAtivo = "N" };
-            _useCase.Setup(x => x.InativarAsync(3)).ReturnsAsync(inativada);
+            _useCase.Setup(x => x.InativarAsync(3)).ReturnsAsync(OperationResult<CategoriaDoencaEntity?>.Success(inativada));
 
             // Act
             var response = await _client.DeleteAsync("/api/categorias-doenca/3");
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+
+        [Fact]
+        [Trait("Controller", "CategoriaDoenca")]
+        public async Task Create_PerfilVeterinario_DeveRetornar403()
+        {
+            // Arrange
+            using var client = _factory.CreateAuthenticatedClient("VETERINARIO");
+
+            // Act
+            var response = await client.PostAsJsonAsync("/api/categorias-doenca", new CategoriaDoencaRequestDto { Nome = "Parasitária" });
+
+            // Assert
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
         }
     }
 }

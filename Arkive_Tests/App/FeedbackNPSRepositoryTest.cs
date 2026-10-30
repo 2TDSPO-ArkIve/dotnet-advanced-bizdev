@@ -1,7 +1,7 @@
-﻿using Arkive_API.Domain.Entities;
-using Arkive_API.Domain.Entities.External;
-using Arkive_API.Infrastructure.Data;
-using Arkive_API.Infrastructure.Data.Repositories;
+﻿using Arkive_Domain.Entities;
+using Arkive_Domain.Entities.External;
+using Arkive_Infrastructure;
+using Arkive_Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace Arkive_Tests.App
@@ -25,6 +25,25 @@ namespace Arkive_Tests.App
 
             // Isso é o que vamos testar
             _feedbackNPSRepository = new FeedbackNPSRepository(_applicationContext);
+        }
+
+        [Fact]
+        [Trait("Repository", "FeedbackNPS")]
+        public async Task ObterTodosAsync_OrdenandoPorNotaDesc_DeveDesempatarPorIdCrescente()
+        {
+            // Arrange: notas repetidas; o desempate por Id mantém a paginação estável
+            _applicationContext.FeedbackNPS.AddRange(
+                new FeedbackNPSEntity { Id = 1, Nota = 3 },
+                new FeedbackNPSEntity { Id = 2, Nota = 5 },
+                new FeedbackNPSEntity { Id = 3, Nota = 5 },
+                new FeedbackNPSEntity { Id = 4, Nota = 3 });
+            _applicationContext.SaveChanges();
+
+            // Act
+            var resultado = await _feedbackNPSRepository.ObterTodosAsync(0, 50, "nota", "desc");
+
+            // Assert
+            Assert.Equal(new[] { 2, 3, 1, 4 }, resultado.Data.Select(x => x.Id));
         }
 
         [Fact]

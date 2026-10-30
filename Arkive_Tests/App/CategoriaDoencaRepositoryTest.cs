@@ -1,6 +1,6 @@
-﻿using Arkive_API.Domain.Entities;
-using Arkive_API.Infrastructure.Data;
-using Arkive_API.Infrastructure.Data.Repositories;
+﻿using Arkive_Domain.Entities;
+using Arkive_Infrastructure;
+using Arkive_Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace Arkive_Tests.App
@@ -46,7 +46,7 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Collection(resultado,
+            Assert.Collection(resultado.Data,
                 item => { Assert.Equal("Viral", item.Nome); Assert.Equal("S", item.StAtivo); },
                 item => { Assert.Equal("Bacteriana", item.Nome); Assert.Equal("N", item.StAtivo); },
                 item => { Assert.Equal("Genética", item.Nome); Assert.Equal("S", item.StAtivo); });
@@ -71,7 +71,7 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Collection(resultado,
+            Assert.Collection(resultado.Data,
                 item => { Assert.Equal("Viral", item.Nome); Assert.Equal("S", item.StAtivo); });
         }
 
@@ -94,7 +94,7 @@ namespace Arkive_Tests.App
 
             // Assert
             Assert.NotNull(resultado);
-            Assert.Collection(resultado,
+            Assert.Collection(resultado.Data,
                 item => { Assert.Equal("Bacteriana", item.Nome); Assert.Equal("N", item.StAtivo); });
         }
 

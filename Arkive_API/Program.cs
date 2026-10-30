@@ -1,80 +1,76 @@
-using Arkive_API.Application.Interfaces;
-using Arkive_API.Application.UseCases;
-using Arkive_API.Domain.Interfaces;
-using Arkive_API.Infrastructure.Data;
-using Arkive_API.Infrastructure.Data.Repositories;
-using Azure.Monitor.OpenTelemetry.AspNetCore;
+using Arkive_IoC;
+using Arkive_API.Presentation.Filters;
+using Arkive_API.Presentation.Handlers;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.ResponseCompression;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.OpenApi.Models;
 using Serilog;
-using Serilog.Events;
 using Swashbuckle.AspNetCore.Filters;
+using System.Reflection;
 using System.Threading.RateLimiting;
-
-Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Information()
-    .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
-    .Enrich.FromLogContext()
-    .WriteTo.Console()
-    .WriteTo.File(
-        path: Path.Combine(AppContext.BaseDirectory, "logs", "api-.log"),
-        rollingInterval: RollingInterval.Day,
-        retainedFileCountLimit: 7,
-        outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:u3}] {SourceContext}{NewLine}    {Message:lj}{NewLine}{Exception}")
-    .CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSerilog();
+builder.Services.AddLogApi();
+builder.Services.AddTelemetria(builder.Configuration);
+builder.Services.AddIoC(builder.Configuration);
+builder.Services.AddAutenticacao(builder.Configuration);
 
-// Application Insights via OpenTelemetry. Só liga quando há connection string configurada
-// (env de teste / dev sem Azure ficam sem telemetria em vez de quebrar no boot).
-var connString = builder.Configuration["ApplicationInsights:ConnectionString"];
-if (!string.IsNullOrWhiteSpace(connString))
-{
-    builder.Services.AddOpenTelemetry()
-        .UseAzureMonitor(options => options.ConnectionString = connString);
-}
-
-builder.Services.AddDbContext<ApplicationContext>(options => {
-    options.UseOracle(builder.Configuration.GetConnectionString("Oracle"));
-});
-
-builder.Services.AddScoped<ICategoriaDoencaRepository, CategoriaDoencaRepository>();
-builder.Services.AddScoped<ICategoriaDoencaUseCase, CategoriaDoencaUseCase>();
-builder.Services.AddScoped<IEspecieRepository, EspecieRepository>();
-builder.Services.AddScoped<IEspecieUseCase, EspecieUseCase>();
-builder.Services.AddScoped<IDoencaRepository, DoencaRepository>();
-builder.Services.AddScoped<IDoencaUseCase, DoencaUseCase>();
-builder.Services.AddScoped<IRacaRepository, RacaRepository>();
-builder.Services.AddScoped<IRacaUseCase, RacaUseCase>();
-builder.Services.AddScoped<IPredisposicaoRepository, PredisposicaoRepository>();
-builder.Services.AddScoped<IPredisposicaoUseCase, PredisposicaoUseCase>();
-builder.Services.AddScoped<IFeedbackNPSRepository, FeedbackNPSRepository>();
-builder.Services.AddScoped<IFeedbackNPSUseCase, FeedbackNPSUseCase>();
-
-builder.Services.AddHealthChecks()
-    // Liveness: o processo está de pé? (auto-contido, sem I/O externo)
+var healthChecks = builder.Services.AddHealthChecks()
     .AddCheck(
         "self",
         () => HealthCheckResult.Healthy(),
         tags: ["live"])
-    // Readiness: o banco responde?
     .AddOracle(
         connectionString: builder.Configuration.GetConnectionString("Oracle") ?? "",
         name: "oracle",
         failureStatus: HealthStatus.Unhealthy,
         tags: ["db"]);
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Sempre registrado (como o Oracle); sem connection string cai no MongoDB local
+var mongoConnString = builder.Configuration.GetConnectionString("Mongodb") ?? "mongodb://localhost:27017/";
+// Ping direto no driver 3.x (o pacote AspNetCore.HealthChecks.MongoDb 8.x é compilado contra o driver 2.x e quebra em runtime)
+var mongoClient = new MongoDB.Driver.MongoClient(mongoConnString);
+healthChecks.AddAsyncCheck(
+    "mongodb",
+    async ct =>
+    {
+        await mongoClient.GetDatabase("admin").RunCommandAsync<MongoDB.Bson.BsonDocument>(new MongoDB.Bson.BsonDocument("ping", 1), cancellationToken: ct);
+        return HealthCheckResult.Healthy();
+    },
+    tags: ["db"]);
+
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
+
+builder.Services.AddControllers(o => o.Filters.Add<AuditoriaFilter>());
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c => {
     c.EnableAnnotations();
     c.ExampleFilters();
+    c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
+
+    var securitySchema = new OpenApiSecurityScheme
+    {
+        Description = "Cole o token JWT retornado por POST /api/auth.",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        Reference = new OpenApiReference
+        {
+            Type = ReferenceType.SecurityScheme,
+            Id = "Bearer"
+        }
+    };
+    c.AddSecurityDefinition("Bearer", securitySchema);
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        { securitySchema, new[] { "Bearer" } }
+    });
 });
 
 builder.Services.AddSwaggerExamplesFromAssemblyOf<Program>();
@@ -114,8 +110,8 @@ builder.Services.AddRateLimiter(options => {
 var app = builder.Build();
 
 app.UseSerilogRequestLogging();
+app.UseExceptionHandler();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -124,9 +120,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseRateLimiter();
+if (!app.Environment.IsEnvironment("Testing"))
+    app.UseRateLimiter();
 app.UseResponseCompression();
 
 app.MapControllers();

@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Arkive_API.Domain.Entities;
+using Arkive_Domain.Entities;
 
 namespace Arkive_Tests.App
 {

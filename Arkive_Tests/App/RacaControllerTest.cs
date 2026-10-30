@@ -1,9 +1,9 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
-using Arkive_API.Application.Dtos;
-using Arkive_API.Application.Exceptions;
-using Arkive_API.Application.Interfaces;
-using Arkive_API.Domain.Entities;
+using Arkive_Application.Dtos;
+using Arkive_Application.Interfaces;
+using Arkive_Domain.Entities;
+using Arkive_Domain.Models;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Moq;
 
@@ -19,7 +19,7 @@ namespace Arkive_Tests.App
         {
             _useCase = factory.RacaUseCaseMock;
             _useCase.Reset();
-            _client = factory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
+            _client = factory.CreateAuthenticatedClient();
         }
 
         [Fact]
@@ -27,19 +27,19 @@ namespace Arkive_Tests.App
         public async Task GetAll_ComListaDeRacas_DeveRetornar200()
         {
             // Arrange
-            _useCase.Setup(x => x.ObterTodasAsync()).ReturnsAsync(new List<RacaEntity>
+            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(OperationResult<PageResultModel<IEnumerable<GetRacaDto>>>.Success(new PageResultModel<IEnumerable<GetRacaDto>> { Data = new List<GetRacaDto>
             {
-                new RacaEntity { Id = 1, Raca = "Poodle", IdEspecie = 1, StAtivo = "S" },
-                new RacaEntity { Id = 2, Raca = "Siamês", IdEspecie = 2, StAtivo = "S" }
-            });
+                new GetRacaDto { Id = 1, Raca = "Poodle", IdEspecie = 1, StAtivo = "S" },
+                new GetRacaDto { Id = 2, Raca = "Siamês", IdEspecie = 2, StAtivo = "S" }
+            } }));
 
             // Act
             var response = await _client.GetAsync("/api/racas");
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var body = await response.Content.ReadFromJsonAsync<List<RacaEntity>>();
-            Assert.Equal(2, body!.Count);
+            var body = await response.Content.ReadFromJsonAsync<PageResultModel<List<GetRacaDto>>>();
+            Assert.Equal(2, body!.Data.Count);
         }
 
         [Fact]
@@ -47,7 +47,7 @@ namespace Arkive_Tests.App
         public async Task GetAll_QuandoNaoHaRacas_DeveRetornar204()
         {
             // Arrange
-            _useCase.Setup(x => x.ObterTodasAsync()).ReturnsAsync(new List<RacaEntity>());
+            _useCase.Setup(x => x.ObterTodasAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(OperationResult<PageResultModel<IEnumerable<GetRacaDto>>>.Failure("Nenhuma raça encontrada", 204));
 
             // Act
             var response = await _client.GetAsync("/api/racas");
@@ -62,14 +62,14 @@ namespace Arkive_Tests.App
         {
             // Arrange
             _useCase.Setup(x => x.ObterPorIdAsync(3))
-                .ReturnsAsync(new RacaEntity { Id = 3, Raca = "Bulldog", IdEspecie = 1, StAtivo = "S" });
+                .ReturnsAsync(OperationResult<GetRacaDto?>.Success(new GetRacaDto { Id = 3, Raca = "Bulldog", IdEspecie = 1, StAtivo = "S" }));
 
             // Act
             var response = await _client.GetAsync("/api/racas/3");
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var body = await response.Content.ReadFromJsonAsync<RacaEntity>();
+            var body = await response.Content.ReadFromJsonAsync<GetRacaDto>();
             Assert.Equal("Bulldog", body!.Raca);
         }
 
@@ -78,7 +78,7 @@ namespace Arkive_Tests.App
         public async Task GetById_QuandoRacaNaoExiste_DeveRetornar404()
         {
             // Arrange
-            _useCase.Setup(x => x.ObterPorIdAsync(It.IsAny<int>())).ReturnsAsync((RacaEntity?)null);
+            _useCase.Setup(x => x.ObterPorIdAsync(It.IsAny<int>())).ReturnsAsync(OperationResult<GetRacaDto?>.Failure("Raça não encontrada", 404));
 
             // Act
             var response = await _client.GetAsync("/api/racas/999");
@@ -93,7 +93,7 @@ namespace Arkive_Tests.App
         {
             // Arrange
             _useCase.Setup(x => x.AdicionarAsync(It.IsAny<RacaRequestDto>()))
-                .ReturnsAsync(new RacaEntity { Id = 15, Raca = "Beagle", IdEspecie = 1, StAtivo = "S" });
+                .ReturnsAsync(OperationResult<RacaEntity?>.Success(new RacaEntity { Id = 15, Raca = "Beagle", IdEspecie = 1, StAtivo = "S" }, 201));
 
             // Act
             var response = await _client.PostAsJsonAsync("/api/racas",
@@ -109,7 +109,7 @@ namespace Arkive_Tests.App
         {
             // Arrange
             _useCase.Setup(x => x.AdicionarAsync(It.IsAny<RacaRequestDto>()))
-                .ThrowsAsync(new EspecieNaoEncontradaException(999));
+                .ReturnsAsync(OperationResult<RacaEntity?>.Failure(new Arkive_Application.Exceptions.EspecieNaoEncontradaException(999).Message, 404));
 
             // Act
             var response = await _client.PostAsJsonAsync("/api/racas",
@@ -125,7 +125,7 @@ namespace Arkive_Tests.App
         {
             // Arrange
             _useCase.Setup(x => x.EditarAsync(It.IsAny<int>(), It.IsAny<RacaRequestDto>()))
-                .ReturnsAsync((RacaEntity?)null);
+                .ReturnsAsync(OperationResult<RacaEntity?>.Failure("Raça não encontrada", 404));
 
             // Act
             var response = await _client.PutAsJsonAsync("/api/racas/999",
@@ -141,7 +141,7 @@ namespace Arkive_Tests.App
         {
             // Arrange
             _useCase.Setup(x => x.InativarAsync(3))
-                .ReturnsAsync(new RacaEntity { Id = 3, Raca = "Bulldog", IdEspecie = 1, StAtivo = "N" });
+                .ReturnsAsync(OperationResult<RacaEntity?>.Success(new RacaEntity { Id = 3, Raca = "Bulldog", IdEspecie = 1, StAtivo = "N" }));
 
             // Act
             var response = await _client.DeleteAsync("/api/racas/3");

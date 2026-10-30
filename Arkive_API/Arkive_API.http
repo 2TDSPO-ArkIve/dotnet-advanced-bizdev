@@ -1,6 +1,167 @@
 @Arkive_API_HostAddress = http://localhost:5205
+# Usuário existente na TB_ARKIVE_USUARIO (cadastrado pela API Java)
+@login = admin@arkive.com
+@senha = SenhaForte@123
 
-GET {{Arkive_API_HostAddress}}/weatherforecast/
-Accept: application/json
+### Health (públicos)
+GET {{Arkive_API_HostAddress}}/health/live
 
 ###
+GET {{Arkive_API_HostAddress}}/health/db
+
+### Login: devolve o JWT usado nas chamadas abaixo
+# @name auth
+POST {{Arkive_API_HostAddress}}/api/auth
+Content-Type: application/json
+
+{
+  "login": "{{login}}",
+  "senha": "{{senha}}"
+}
+
+###
+@token = {{auth.response.body.$.jwt}}
+
+### Espécies
+GET {{Arkive_API_HostAddress}}/api/especies?skip=0&take=10&ordenarPor=nome&direcao=asc
+Authorization: Bearer {{token}}
+
+###
+GET {{Arkive_API_HostAddress}}/api/especies/ativos
+Authorization: Bearer {{token}}
+
+###
+GET {{Arkive_API_HostAddress}}/api/especies/1
+Authorization: Bearer {{token}}
+
+###
+POST {{Arkive_API_HostAddress}}/api/especies
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "especie": "Canina"
+}
+
+###
+PUT {{Arkive_API_HostAddress}}/api/especies/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "especie": "Canina"
+}
+
+###
+DELETE {{Arkive_API_HostAddress}}/api/especies/1
+Authorization: Bearer {{token}}
+
+###
+PUT {{Arkive_API_HostAddress}}/api/especies/reativar/1
+Authorization: Bearer {{token}}
+
+### Raças
+GET {{Arkive_API_HostAddress}}/api/racas?skip=0&take=10
+Authorization: Bearer {{token}}
+
+###
+GET {{Arkive_API_HostAddress}}/api/racas/especie/1
+Authorization: Bearer {{token}}
+
+###
+POST {{Arkive_API_HostAddress}}/api/racas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "raca": "Labrador Retriever",
+  "idEspecie": 1,
+  "porte": "GRANDE"
+}
+
+### Categorias de doença (escrita só SYSADMIN)
+GET {{Arkive_API_HostAddress}}/api/categorias-doenca?skip=0&take=10
+Authorization: Bearer {{token}}
+
+###
+POST {{Arkive_API_HostAddress}}/api/categorias-doenca
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nome": "Doenças Ortopédicas"
+}
+
+### Doenças
+GET {{Arkive_API_HostAddress}}/api/doencas?skip=0&take=10
+Authorization: Bearer {{token}}
+
+###
+GET {{Arkive_API_HostAddress}}/api/doencas/1
+Authorization: Bearer {{token}}
+
+###
+GET {{Arkive_API_HostAddress}}/api/doencas/nome/displasia
+Authorization: Bearer {{token}}
+
+###
+GET {{Arkive_API_HostAddress}}/api/doencas/categoria/1
+Authorization: Bearer {{token}}
+
+###
+POST {{Arkive_API_HostAddress}}/api/doencas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nome": "Displasia Coxofemoral",
+  "idCategoria": 1,
+  "descricao": "Malformação da articulação do quadril, comum em raças de grande porte.",
+  "cid": "M16",
+  "sintomas": "Dificuldade para subir escadas, claudicação, dor ao levantar."
+}
+
+### Predisposições
+GET {{Arkive_API_HostAddress}}/api/predisposicoes/especie/1
+Authorization: Bearer {{token}}
+
+###
+GET {{Arkive_API_HostAddress}}/api/predisposicoes/raca/1
+Authorization: Bearer {{token}}
+
+###
+POST {{Arkive_API_HostAddress}}/api/predisposicoes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "idEspecie": 1,
+  "idRaca": 1,
+  "idDoenca": 1
+}
+
+### Feedbacks NPS
+GET {{Arkive_API_HostAddress}}/api/feedbacks-nps?skip=0&take=10&ordenarPor=nota&direcao=desc
+Authorization: Bearer {{token}}
+
+###
+GET {{Arkive_API_HostAddress}}/api/feedbacks-nps/nota/5
+Authorization: Bearer {{token}}
+
+###
+POST {{Arkive_API_HostAddress}}/api/feedbacks-nps
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "idResponsavel": 1,
+  "idAnimal": 1,
+  "idClinica": 1,
+  "idConsulta": 1,
+  "nota": 5,
+  "comentario": "Atendimento excelente, equipe muito atenciosa."
+}
+
+### Auditoria no MongoDB (SYSADMIN)
+GET {{Arkive_API_HostAddress}}/api/auditoria?skip=0&take=10
+Authorization: Bearer {{token}}

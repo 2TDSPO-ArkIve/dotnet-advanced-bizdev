@@ -1,9 +1,10 @@
-using Arkive_API.Application.Dtos;
-using Arkive_API.Application.Exceptions;
-using Arkive_API.Application.Interfaces;
+using Arkive_Application;
+using Arkive_Application.Dtos;
+using Arkive_Application.Interfaces;
 using Arkive_API.Doc.Samples;
-using Arkive_API.Domain.Entities;
-using Arkive_API.Domain.Models;
+using Arkive_Domain.Entities;
+using Arkive_Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Swashbuckle.AspNetCore.Annotations;
@@ -13,6 +14,8 @@ namespace Arkive_API.Presentation.Controllers
 {
     [Route("api/doencas")]
     [ApiController]
+    [Authorize]
+    [SwaggerResponse(statusCode: 401, description: "Token ausente, inválido ou expirado")]
     [EnableRateLimiting("leitura")]
     public class DoencaController : ControllerBase
     {
@@ -37,30 +40,22 @@ namespace Arkive_API.Presentation.Controllers
             ## Observações:
             * Os dados incluem a entidade relacionada (**Categoria**), quando informada.
             * Este endpoint não filtra por status; use `/ativos` ou `/inativos` para isso.
+            * Ordenação: `ordenarPor` (`id` ou `nome`) e `direcao` (`asc` ou `desc`). Valor inválido ordena por `id` crescente.
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<DoencaEntity>>))]
+        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<GetDoencaDto>>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma doença encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
         [SwaggerResponseExample(statusCode: 200, typeof(DoencaResponseListSample))]
-        public async Task<IActionResult> GetAllDoencas(int skip = 0, int take = 50)
+        public async Task<IActionResult> GetAllDoencas(int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             _logger.LogInformation("Listando doenças (skip {Skip}, take {Take})", skip, take);
 
-            try
-            {
-                var resultado = await _doencaUseCase.ObterTodasAsync(skip, take);
+            var resultado = await _doencaUseCase.ObterTodasAsync(skip, take, ordenarPor, direcao);
 
-                if (!resultado.Data.Any())
-                    return NoContent();
-
-                return Ok(resultado);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (resultado.StatusCode == 204) return NoContent();
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpGet("ativos")]
@@ -75,29 +70,21 @@ namespace Arkive_API.Presentation.Controllers
             ## Observações:
             * Os dados incluem a entidade relacionada (**Categoria**), quando informada.
             * Doenças inativas (excluídas logicamente) não aparecem neste retorno.
+            * Ordenação: `ordenarPor` (`id` ou `nome`) e `direcao` (`asc` ou `desc`). Valor inválido ordena por `id` crescente.
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<DoencaEntity>>))]
+        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<GetDoencaDto>>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma doença ativa encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
-        public async Task<IActionResult> GetDoencasAtivas(int skip = 0, int take = 50)
+        public async Task<IActionResult> GetDoencasAtivas(int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             _logger.LogInformation("Listando doenças ativas (skip {Skip}, take {Take})", skip, take);
 
-            try
-            {
-                var resultado = await _doencaUseCase.ObterAtivasAsync(skip, take);
+            var resultado = await _doencaUseCase.ObterAtivasAsync(skip, take, ordenarPor, direcao);
 
-                if (!resultado.Data.Any())
-                    return NoContent();
-
-                return Ok(resultado);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (resultado.StatusCode == 204) return NoContent();
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpGet("inativos")]
@@ -112,29 +99,21 @@ namespace Arkive_API.Presentation.Controllers
             ## Observações:
             * Os dados incluem a entidade relacionada (**Categoria**), quando informada.
             * Doenças inativas são registros excluídos logicamente (soft delete), não removidos fisicamente.
+            * Ordenação: `ordenarPor` (`id` ou `nome`) e `direcao` (`asc` ou `desc`). Valor inválido ordena por `id` crescente.
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<DoencaEntity>>))]
+        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<GetDoencaDto>>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma doença inativa encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
-        public async Task<IActionResult> GetDoencasInativas(int skip = 0, int take = 50)
+        public async Task<IActionResult> GetDoencasInativas(int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
             _logger.LogInformation("Listando doenças inativas (skip {Skip}, take {Take})", skip, take);
 
-            try
-            {
-                var resultado = await _doencaUseCase.ObterInativasAsync(skip, take);
+            var resultado = await _doencaUseCase.ObterInativasAsync(skip, take, ordenarPor, direcao);
 
-                if (!resultado.Data.Any())
-                    return NoContent();
-
-                return Ok(resultado);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (resultado.StatusCode == 204) return NoContent();
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpGet("{id}")]
@@ -151,31 +130,18 @@ namespace Arkive_API.Presentation.Controllers
             * A busca por ID retorna a doença independente do status (ativa ou inativa).
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Doença retornada com sucesso", type: typeof(DoencaEntity))]
+        [SwaggerResponse(statusCode: 200, description: "Doença retornada com sucesso", type: typeof(GetDoencaDto))]
         [SwaggerResponse(statusCode: 404, description: "Doença não encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
-        [SwaggerResponseExample(statusCode: 200, typeof(DoencaResponseSample))]
+        [SwaggerResponseExample(statusCode: 200, typeof(DoencaByIdResponseSample))]
         public async Task<IActionResult> GetDoencaById(int id)
         {
             _logger.LogInformation("Buscando doença {Id}", id);
 
-            try
-            {
-                var doenca = await _doencaUseCase.ObterPorIdAsync(id);
+            var resultado = await _doencaUseCase.ObterPorIdAsync(id);
 
-                if (doenca is null)
-                {
-                    _logger.LogWarning("Doença {Id} não encontrada", id);
-                    return NotFound();
-                }
-
-                return Ok(doenca);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpGet("nome/{nome}")]
@@ -192,27 +158,18 @@ namespace Arkive_API.Presentation.Controllers
             * Somente doenças ativas são retornadas por este endpoint.
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<DoencaEntity>))]
+        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<GetDoencaDto>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma doença encontrada com esse nome")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
         public async Task<IActionResult> GetDoencaByNome(string nome)
         {
             _logger.LogInformation("Buscando doenças por nome {Nome}", nome);
 
-            try
-            {
-                var resultado = await _doencaUseCase.ObterPorNomeAsync(nome);
+            var resultado = await _doencaUseCase.ObterPorNomeAsync(nome);
 
-                if (!resultado.Any())
-                    return NoContent();
-
-                return Ok(resultado);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (resultado.StatusCode == 204) return NoContent();
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpGet("categoria/{idCategoria}")]
@@ -228,30 +185,23 @@ namespace Arkive_API.Presentation.Controllers
             * Somente doenças ativas são retornadas por este endpoint.
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<DoencaEntity>))]
+        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<GetDoencaDto>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma doença encontrada para esta categoria")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
         public async Task<IActionResult> GetDoencaByCategoria(int idCategoria)
         {
             _logger.LogInformation("Listando doenças da categoria {IdCategoria}", idCategoria);
 
-            try
-            {
-                var resultado = await _doencaUseCase.ObterPorCategoriaAsync(idCategoria);
+            var resultado = await _doencaUseCase.ObterPorCategoriaAsync(idCategoria);
 
-                if (!resultado.Any())
-                    return NoContent();
-
-                return Ok(resultado);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (resultado.StatusCode == 204) return NoContent();
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpPost]
+        [Authorize(Roles = Roles.SysAdminOuVeterinario)]
+        [SwaggerResponse(statusCode: 403, description: "Perfil sem permissão para esta operação")]
         [EnableRateLimiting("escrita")]
         [SwaggerOperation(
             Summary = "Cria uma nova doença",
@@ -276,26 +226,17 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Criando doença {Nome}", model.Nome);
 
-            try
-            {
-                var doenca = await _doencaUseCase.AdicionarAsync(model);
+            var resultado = await _doencaUseCase.AdicionarAsync(model);
 
-                _logger.LogInformation("Doença criada com sucesso: {Id}", doenca?.Id ?? 0);
-                return CreatedAtAction(nameof(GetDoencaById), new { id = doenca?.Id ?? 0 }, doenca);
-            }
-            catch (CategoriaNaoEncontradaException ex)
-            {
-                _logger.LogWarning(ex, "Validação falhou ao criar doença: {Mensagem}", ex.Message);
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+
+            _logger.LogInformation("Doença criada com sucesso: {Id}", resultado.Value?.Id ?? 0);
+            return CreatedAtAction(nameof(GetDoencaById), new { id = resultado.Value?.Id ?? 0 }, resultado.Value);
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = Roles.SysAdminOuVeterinario)]
+        [SwaggerResponse(statusCode: 403, description: "Perfil sem permissão para esta operação")]
         [EnableRateLimiting("escrita")]
         [SwaggerOperation(
             Summary = "Atualiza uma doença",
@@ -317,31 +258,15 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Atualizando doença {Id}", id);
 
-            try
-            {
-                var doenca = await _doencaUseCase.EditarAsync(id, model);
+            var resultado = await _doencaUseCase.EditarAsync(id, model);
 
-                if (doenca is null)
-                {
-                    _logger.LogWarning("Doença {Id} não encontrada", id);
-                    return NotFound();
-                }
-
-                return Ok(doenca);
-            }
-            catch (CategoriaNaoEncontradaException ex)
-            {
-                _logger.LogWarning(ex, "Validação falhou ao atualizar doença: {Mensagem}", ex.Message);
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpPut("reativar/{id}")]
+        [Authorize(Roles = Roles.SysAdminOuVeterinario)]
+        [SwaggerResponse(statusCode: 403, description: "Perfil sem permissão para esta operação")]
         [EnableRateLimiting("escrita")]
         [SwaggerOperation(
             Summary = "Reativa uma doença",
@@ -362,26 +287,15 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Reativando doença {Id}", id);
 
-            try
-            {
-                var doenca = await _doencaUseCase.ReativarAsync(id);
+            var resultado = await _doencaUseCase.ReativarAsync(id);
 
-                if (doenca is null)
-                {
-                    _logger.LogWarning("Doença {Id} não encontrada", id);
-                    return NotFound();
-                }
-
-                return Ok(doenca);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = Roles.SysAdminOuVeterinario)]
+        [SwaggerResponse(statusCode: 403, description: "Perfil sem permissão para esta operação")]
         [EnableRateLimiting("escrita")]
         [SwaggerOperation(
             Summary = "Inativa uma doença",
@@ -403,23 +317,10 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Inativando doença {Id}", id);
 
-            try
-            {
-                var doenca = await _doencaUseCase.InativarAsync(id);
+            var resultado = await _doencaUseCase.InativarAsync(id);
 
-                if (doenca is null)
-                {
-                    _logger.LogWarning("Doença {Id} não encontrada", id);
-                    return NotFound();
-                }
-
-                return Ok(doenca);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
     }
 }

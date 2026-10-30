@@ -4,17 +4,24 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Gera o XML dos comentários /// para o Swagger; 1591 silencia aviso de membro público sem doc -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="AspNetCore.HealthChecks.Oracle" Version="8.0.1" />
     <PackageReference Include="Azure.Monitor.OpenTelemetry.AspNetCore" Version="1.6.0" />
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="Microsoft.ApplicationInsights" Version="3.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.31" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.26" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.26">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="MongoDB.Bson" Version="3.12.0" />
+    <PackageReference Include="MongoDB.EntityFrameworkCore" Version="8.3.4" />
     <PackageReference Include="Oracle.EntityFrameworkCore" Version="8.23.26200" />
     <PackageReference Include="Serilog.AspNetCore" Version="8.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
@@ -26,16 +33,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Application\Dtos\" />
-    <Folder Include="Application\Mappers\" />
-    <Folder Include="Application\Mappers\" />
-    <Folder Include="Application\Dtos\" />
-    <Folder Include="Application\UseCases\" />
-    <Folder Include="Doc\Samples\" />
-    <Folder Include="Doc\Samples\" />
-    <Folder Include="Domain\Interfaces\" />
-    <Folder Include="Domain\Interfaces\" />
-    <Folder Include="Infrastructure\Data\Repositories\" />
+    <ProjectReference Include="..\Arkive_Application\Arkive_Application.csproj" />
+    <ProjectReference Include="..\Arkive_Domain\Arkive_Domain.csproj" />
+    <ProjectReference Include="..\Arkive_IoC\Arkive_IoC.csproj" />
   </ItemGroup>
 
 </Project>

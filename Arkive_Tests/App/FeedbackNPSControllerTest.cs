@@ -1,10 +1,9 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
-using Arkive_API.Application.Dtos;
-using Arkive_API.Application.Exceptions;
-using Arkive_API.Application.Interfaces;
-using Arkive_API.Domain.Entities;
-using Arkive_API.Domain.Models;
+using Arkive_Application.Dtos;
+using Arkive_Application.Interfaces;
+using Arkive_Domain.Entities;
+using Arkive_Domain.Models;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Moq;
 
@@ -20,7 +19,7 @@ namespace Arkive_Tests.App
         {
             _useCase = factory.FeedbackNPSUseCaseMock;
             _useCase.Reset();
-            _client = factory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
+            _client = factory.CreateAuthenticatedClient();
         }
 
         [Fact]
@@ -28,20 +27,20 @@ namespace Arkive_Tests.App
         public async Task GetAll_ComListaDeFeedbacks_DeveRetornar200()
         {
             // Arrange
-            var feedbacks = new List<FeedbackNPSEntity>
+            var feedbacks = new List<GetFeedbackNPSDto>
             {
-                new FeedbackNPSEntity { Id = 1, Nota = 10, IdResponsavel = 1 },
-                new FeedbackNPSEntity { Id = 2, Nota = 7, IdAnimal = 5 }
+                new GetFeedbackNPSDto { Id = 1, Nota = 10, IdResponsavel = 1 },
+                new GetFeedbackNPSDto { Id = 2, Nota = 7, IdAnimal = 5 }
             };
-            _useCase.Setup(x => x.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>()))
-                .ReturnsAsync(new PageResultModel<IEnumerable<FeedbackNPSEntity>> { Data = feedbacks, TotalRegistros = feedbacks.Count });
+            _useCase.Setup(x => x.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
+                .ReturnsAsync(OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>.Success(new PageResultModel<IEnumerable<GetFeedbackNPSDto>> { Data = feedbacks, TotalRegistros = feedbacks.Count }));
 
             // Act
             var response = await _client.GetAsync("/api/feedbacks-nps");
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var body = await response.Content.ReadFromJsonAsync<PageResultModel<List<FeedbackNPSEntity>>>();
+            var body = await response.Content.ReadFromJsonAsync<PageResultModel<List<GetFeedbackNPSDto>>>();
             Assert.Equal(2, body!.Data.Count);
         }
 
@@ -50,8 +49,8 @@ namespace Arkive_Tests.App
         public async Task GetAll_QuandoNaoHaFeedbacks_DeveRetornar204()
         {
             // Arrange
-            _useCase.Setup(x => x.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>()))
-                .ReturnsAsync(new PageResultModel<IEnumerable<FeedbackNPSEntity>> { Data = new List<FeedbackNPSEntity>() });
+            _useCase.Setup(x => x.ObterTodosAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
+                .ReturnsAsync(OperationResult<PageResultModel<IEnumerable<GetFeedbackNPSDto>>>.Failure("Nenhum feedback NPS encontrado", 204));
 
             // Act
             var response = await _client.GetAsync("/api/feedbacks-nps");
@@ -66,14 +65,14 @@ namespace Arkive_Tests.App
         {
             // Arrange
             _useCase.Setup(x => x.ObterPorIdAsync(8))
-                .ReturnsAsync(new FeedbackNPSEntity { Id = 8, Nota = 9, IdResponsavel = 2 });
+                .ReturnsAsync(OperationResult<GetFeedbackNPSDto?>.Success(new GetFeedbackNPSDto { Id = 8, Nota = 9, IdResponsavel = 2 }));
 
             // Act
             var response = await _client.GetAsync("/api/feedbacks-nps/8");
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var body = await response.Content.ReadFromJsonAsync<FeedbackNPSEntity>();
+            var body = await response.Content.ReadFromJsonAsync<GetFeedbackNPSDto>();
             Assert.Equal(9, body!.Nota);
         }
 
@@ -82,7 +81,7 @@ namespace Arkive_Tests.App
         public async Task GetById_QuandoFeedbackNaoExiste_DeveRetornar404()
         {
             // Arrange
-            _useCase.Setup(x => x.ObterPorIdAsync(It.IsAny<int>())).ReturnsAsync((FeedbackNPSEntity?)null);
+            _useCase.Setup(x => x.ObterPorIdAsync(It.IsAny<int>())).ReturnsAsync(OperationResult<GetFeedbackNPSDto?>.Failure("Feedback NPS não encontrado", 404));
 
             // Act
             var response = await _client.GetAsync("/api/feedbacks-nps/999");
@@ -97,7 +96,7 @@ namespace Arkive_Tests.App
         {
             // Arrange
             _useCase.Setup(x => x.AdicionarAsync(It.IsAny<FeedbackNPSRequestDto>()))
-                .ReturnsAsync(new FeedbackNPSEntity { Id = 40, Nota = 5, IdResponsavel = 1 });
+                .ReturnsAsync(OperationResult<FeedbackNPSEntity?>.Success(new FeedbackNPSEntity { Id = 40, Nota = 5, IdResponsavel = 1 }, 201));
 
             // Act
             var response = await _client.PostAsJsonAsync("/api/feedbacks-nps",
@@ -113,7 +112,7 @@ namespace Arkive_Tests.App
         {
             // Arrange
             _useCase.Setup(x => x.AdicionarAsync(It.IsAny<FeedbackNPSRequestDto>()))
-                .ThrowsAsync(new ContextoNaoEncontradoException("Responsável com ID 999 não encontrado."));
+                .ReturnsAsync(OperationResult<FeedbackNPSEntity?>.Failure("Responsável com ID 999 não encontrado.", 404));
 
             // Act
             var response = await _client.PostAsJsonAsync("/api/feedbacks-nps",
@@ -129,7 +128,7 @@ namespace Arkive_Tests.App
         {
             // Arrange
             _useCase.Setup(x => x.AdicionarAsync(It.IsAny<FeedbackNPSRequestDto>()))
-                .ThrowsAsync(new ArgumentException("Informe ao menos um contexto."));
+                .ReturnsAsync(OperationResult<FeedbackNPSEntity?>.Failure("Informe ao menos um contexto.", 400));
 
             // Act
             var response = await _client.PostAsJsonAsync("/api/feedbacks-nps",
@@ -145,7 +144,7 @@ namespace Arkive_Tests.App
         {
             // Arrange
             _useCase.Setup(x => x.DeletarAsync(4))
-                .ReturnsAsync(new FeedbackNPSEntity { Id = 4, Nota = 8 });
+                .ReturnsAsync(OperationResult<FeedbackNPSEntity?>.Success(new FeedbackNPSEntity { Id = 4, Nota = 8 }));
 
             // Act
             var response = await _client.DeleteAsync("/api/feedbacks-nps/4");
@@ -159,7 +158,7 @@ namespace Arkive_Tests.App
         public async Task Delete_QuandoFeedbackNaoExiste_DeveRetornar404()
         {
             // Arrange
-            _useCase.Setup(x => x.DeletarAsync(It.IsAny<int>())).ReturnsAsync((FeedbackNPSEntity?)null);
+            _useCase.Setup(x => x.DeletarAsync(It.IsAny<int>())).ReturnsAsync(OperationResult<FeedbackNPSEntity?>.Failure("Feedback NPS não encontrado", 404));
 
             // Act
             var response = await _client.DeleteAsync("/api/feedbacks-nps/999");

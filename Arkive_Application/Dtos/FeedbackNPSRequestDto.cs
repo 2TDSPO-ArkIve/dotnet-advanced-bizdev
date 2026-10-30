@@ -1,0 +1,23 @@
+using System.ComponentModel.DataAnnotations;
+
+namespace Arkive_Application.Dtos
+{
+    public class FeedbackNPSRequestDto
+    {
+        public int? IdResponsavel { get; set; }
+
+        public int? IdAnimal { get; set; }
+
+        public int? IdClinica { get; set; }
+
+        public int? IdConsulta { get; set; }
+
+        public int? IdVeterinario { get; set; }
+
+        [Required(ErrorMessage = "A Nota é obrigatória.")]
+        [Range(0, 5, ErrorMessage = "A Nota deve estar entre 0 e 5")]
+        public int Nota { get; set; }
+
+        public string? Comentario { get; set; }
+    }
+}

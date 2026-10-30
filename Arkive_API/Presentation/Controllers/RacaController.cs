@@ -1,8 +1,10 @@
-using Arkive_API.Application.Dtos;
-using Arkive_API.Application.Exceptions;
-using Arkive_API.Application.Interfaces;
+using Arkive_Application;
+using Arkive_Application.Dtos;
+using Arkive_Application.Interfaces;
 using Arkive_API.Doc.Samples;
-using Arkive_API.Domain.Entities;
+using Arkive_Domain.Entities;
+using Arkive_Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Swashbuckle.AspNetCore.Annotations;
@@ -12,6 +14,8 @@ namespace Arkive_API.Presentation.Controllers
 {
     [Route("api/racas")]
     [ApiController]
+    [Authorize]
+    [SwaggerResponse(statusCode: 401, description: "Token ausente, inválido ou expirado")]
     [EnableRateLimiting("leitura")]
     public class RacaController : ControllerBase
     {
@@ -36,30 +40,22 @@ namespace Arkive_API.Presentation.Controllers
             ## Observações:
             * Os dados incluem a entidade relacionada (**Espécie**).
             * Este endpoint não filtra por status; use `/ativos` ou `/inativos` para isso.
+            * Ordenação: `ordenarPor` (`id` ou `nome`) e `direcao` (`asc` ou `desc`). Valor inválido ordena por `id` crescente.
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<RacaEntity>))]
+        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<GetRacaDto>>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma raça encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
         [SwaggerResponseExample(statusCode: 200, typeof(RacaResponseListSample))]
-        public async Task<IActionResult> GetAllRacas()
+        public async Task<IActionResult> GetAllRacas(int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
-            _logger.LogInformation("Listando todas as raças");
+            _logger.LogInformation("Listando todas as raças (skip {Skip}, take {Take})", skip, take);
 
-            try
-            {
-                var resultado = await _racaUseCase.ObterTodasAsync();
+            var resultado = await _racaUseCase.ObterTodasAsync(skip, take, ordenarPor, direcao);
 
-                if (!resultado.Any())
-                    return NoContent();
-
-                return Ok(resultado);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (resultado.StatusCode == 204) return NoContent();
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpGet("ativos")]
@@ -74,29 +70,21 @@ namespace Arkive_API.Presentation.Controllers
             ## Observações:
             * Os dados incluem a entidade relacionada (**Espécie**).
             * Raças inativas (excluídas logicamente) não aparecem neste retorno.
+            * Ordenação: `ordenarPor` (`id` ou `nome`) e `direcao` (`asc` ou `desc`). Valor inválido ordena por `id` crescente.
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<RacaEntity>))]
+        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<GetRacaDto>>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma raça ativa encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
-        public async Task<IActionResult> GetRacasAtivas()
+        public async Task<IActionResult> GetRacasAtivas(int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
-            _logger.LogInformation("Listando raças ativas");
+            _logger.LogInformation("Listando raças ativas (skip {Skip}, take {Take})", skip, take);
 
-            try
-            {
-                var resultado = await _racaUseCase.ObterAtivasAsync();
+            var resultado = await _racaUseCase.ObterAtivasAsync(skip, take, ordenarPor, direcao);
 
-                if (!resultado.Any())
-                    return NoContent();
-
-                return Ok(resultado);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (resultado.StatusCode == 204) return NoContent();
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpGet("inativos")]
@@ -111,29 +99,21 @@ namespace Arkive_API.Presentation.Controllers
             ## Observações:
             * Os dados incluem a entidade relacionada (**Espécie**).
             * Raças inativas são registros excluídos logicamente (soft delete), não removidos fisicamente.
+            * Ordenação: `ordenarPor` (`id` ou `nome`) e `direcao` (`asc` ou `desc`). Valor inválido ordena por `id` crescente.
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<RacaEntity>))]
+        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<GetRacaDto>>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma raça inativa encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
-        public async Task<IActionResult> GetRacasInativas()
+        public async Task<IActionResult> GetRacasInativas(int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
-            _logger.LogInformation("Listando raças inativas");
+            _logger.LogInformation("Listando raças inativas (skip {Skip}, take {Take})", skip, take);
 
-            try
-            {
-                var resultado = await _racaUseCase.ObterInativasAsync();
+            var resultado = await _racaUseCase.ObterInativasAsync(skip, take, ordenarPor, direcao);
 
-                if (!resultado.Any())
-                    return NoContent();
-
-                return Ok(resultado);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (resultado.StatusCode == 204) return NoContent();
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpGet("{id}")]
@@ -150,31 +130,18 @@ namespace Arkive_API.Presentation.Controllers
             * A busca por ID retorna a raça independente do status (ativa ou inativa).
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Raça retornada com sucesso", type: typeof(RacaEntity))]
+        [SwaggerResponse(statusCode: 200, description: "Raça retornada com sucesso", type: typeof(GetRacaDto))]
         [SwaggerResponse(statusCode: 404, description: "Raça não encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
-        [SwaggerResponseExample(statusCode: 200, typeof(RacaResponseSample))]
+        [SwaggerResponseExample(statusCode: 200, typeof(RacaByIdResponseSample))]
         public async Task<IActionResult> GetRacaById(int id)
         {
             _logger.LogInformation("Buscando raça {Id}", id);
 
-            try
-            {
-                var raca = await _racaUseCase.ObterPorIdAsync(id);
+            var resultado = await _racaUseCase.ObterPorIdAsync(id);
 
-                if (raca is null)
-                {
-                    _logger.LogWarning("Raça {Id} não encontrada", id);
-                    return NotFound();
-                }
-
-                return Ok(raca);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpGet("especie/{idEspecie}")]
@@ -190,30 +157,23 @@ namespace Arkive_API.Presentation.Controllers
             * Somente raças ativas são retornadas por este endpoint.
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<RacaEntity>))]
+        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<GetRacaDto>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma raça encontrada para esta espécie")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
         public async Task<IActionResult> GetRacasByEspecie(int idEspecie)
         {
             _logger.LogInformation("Listando raças da espécie {IdEspecie}", idEspecie);
 
-            try
-            {
-                var resultado = await _racaUseCase.ObterPorEspecieAsync(idEspecie);
+            var resultado = await _racaUseCase.ObterPorEspecieAsync(idEspecie);
 
-                if (!resultado.Any())
-                    return NoContent();
-
-                return Ok(resultado);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (resultado.StatusCode == 204) return NoContent();
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpPost]
+        [Authorize(Roles = Roles.SysAdminOuVeterinario)]
+        [SwaggerResponse(statusCode: 403, description: "Perfil sem permissão para esta operação")]
         [EnableRateLimiting("escrita")]
         [SwaggerOperation(
             Summary = "Cria uma nova raça",
@@ -238,26 +198,17 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Criando raça {Nome} para espécie {IdEspecie}", model.Raca, model.IdEspecie);
 
-            try
-            {
-                var raca = await _racaUseCase.AdicionarAsync(model);
+            var resultado = await _racaUseCase.AdicionarAsync(model);
 
-                _logger.LogInformation("Raça criada com sucesso: {Id}", raca?.Id ?? 0);
-                return CreatedAtAction(nameof(GetRacaById), new { id = raca?.Id ?? 0 }, raca);
-            }
-            catch (EspecieNaoEncontradaException ex)
-            {
-                _logger.LogWarning(ex, "Validação falhou ao criar raça: {Mensagem}", ex.Message);
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+
+            _logger.LogInformation("Raça criada com sucesso: {Id}", resultado.Value?.Id ?? 0);
+            return CreatedAtAction(nameof(GetRacaById), new { id = resultado.Value?.Id ?? 0 }, resultado.Value);
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = Roles.SysAdminOuVeterinario)]
+        [SwaggerResponse(statusCode: 403, description: "Perfil sem permissão para esta operação")]
         [EnableRateLimiting("escrita")]
         [SwaggerOperation(
             Summary = "Atualiza uma raça",
@@ -279,31 +230,15 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Atualizando raça {Id}", id);
 
-            try
-            {
-                var raca = await _racaUseCase.EditarAsync(id, model);
+            var resultado = await _racaUseCase.EditarAsync(id, model);
 
-                if (raca is null)
-                {
-                    _logger.LogWarning("Raça {Id} não encontrada", id);
-                    return NotFound();
-                }
-
-                return Ok(raca);
-            }
-            catch (EspecieNaoEncontradaException ex)
-            {
-                _logger.LogWarning(ex, "Validação falhou ao atualizar raça: {Mensagem}", ex.Message);
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpPut("reativar/{id}")]
+        [Authorize(Roles = Roles.SysAdminOuVeterinario)]
+        [SwaggerResponse(statusCode: 403, description: "Perfil sem permissão para esta operação")]
         [EnableRateLimiting("escrita")]
         [SwaggerOperation(
             Summary = "Reativa uma raça",
@@ -324,26 +259,15 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Reativando raça {Id}", id);
 
-            try
-            {
-                var raca = await _racaUseCase.ReativarAsync(id);
+            var resultado = await _racaUseCase.ReativarAsync(id);
 
-                if (raca is null)
-                {
-                    _logger.LogWarning("Raça {Id} não encontrada", id);
-                    return NotFound();
-                }
-
-                return Ok(raca);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = Roles.SysAdminOuVeterinario)]
+        [SwaggerResponse(statusCode: 403, description: "Perfil sem permissão para esta operação")]
         [EnableRateLimiting("escrita")]
         [SwaggerOperation(
             Summary = "Inativa uma raça",
@@ -365,23 +289,10 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Inativando raça {Id}", id);
 
-            try
-            {
-                var raca = await _racaUseCase.InativarAsync(id);
+            var resultado = await _racaUseCase.InativarAsync(id);
 
-                if (raca is null)
-                {
-                    _logger.LogWarning("Raça {Id} não encontrada", id);
-                    return NotFound();
-                }
-
-                return Ok(raca);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
     }
 }

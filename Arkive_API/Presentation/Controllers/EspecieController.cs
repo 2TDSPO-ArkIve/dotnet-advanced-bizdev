@@ -1,7 +1,10 @@
-using Arkive_API.Application.Dtos;
-using Arkive_API.Application.Interfaces;
+using Arkive_Application;
+using Arkive_Application.Dtos;
+using Arkive_Application.Interfaces;
 using Arkive_API.Doc.Samples;
-using Arkive_API.Domain.Entities;
+using Arkive_Domain.Entities;
+using Arkive_Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Swashbuckle.AspNetCore.Annotations;
@@ -11,6 +14,8 @@ namespace Arkive_API.Presentation.Controllers
 {
     [Route("api/especies")]
     [ApiController]
+    [Authorize]
+    [SwaggerResponse(statusCode: 401, description: "Token ausente, inválido ou expirado")]
     [EnableRateLimiting("leitura")]
     public class EspecieController : ControllerBase
     {
@@ -34,30 +39,22 @@ namespace Arkive_API.Presentation.Controllers
 
             ## Observações:
             * Este endpoint não filtra por status; use `/ativos` ou `/inativos` para isso.
+            * Ordenação: `ordenarPor` (`id` ou `nome`) e `direcao` (`asc` ou `desc`). Valor inválido ordena por `id` crescente.
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<EspecieEntity>))]
+        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<GetEspecieDto>>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma espécie encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
         [SwaggerResponseExample(statusCode: 200, typeof(EspecieResponseListSample))]
-        public async Task<IActionResult> GetAllEspecies()
+        public async Task<IActionResult> GetAllEspecies(int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
-            _logger.LogInformation("Listando todas as espécies");
+            _logger.LogInformation("Listando todas as espécies (skip {Skip}, take {Take})", skip, take);
 
-            try
-            {
-                var resultado = await _especieUseCase.ObterTodasAsync();
+            var resultado = await _especieUseCase.ObterTodasAsync(skip, take, ordenarPor, direcao);
 
-                if (!resultado.Any())
-                    return NoContent();
-
-                return Ok(resultado);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (resultado.StatusCode == 204) return NoContent();
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpGet("ativos")]
@@ -71,29 +68,21 @@ namespace Arkive_API.Presentation.Controllers
 
             ## Observações:
             * Espécies inativas (excluídas logicamente) não aparecem neste retorno.
+            * Ordenação: `ordenarPor` (`id` ou `nome`) e `direcao` (`asc` ou `desc`). Valor inválido ordena por `id` crescente.
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<EspecieEntity>))]
+        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<GetEspecieDto>>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma espécie ativa encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
-        public async Task<IActionResult> GetEspeciesAtivas()
+        public async Task<IActionResult> GetEspeciesAtivas(int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
-            _logger.LogInformation("Listando espécies ativas");
+            _logger.LogInformation("Listando espécies ativas (skip {Skip}, take {Take})", skip, take);
 
-            try
-            {
-                var resultado = await _especieUseCase.ObterAtivasAsync();
+            var resultado = await _especieUseCase.ObterAtivasAsync(skip, take, ordenarPor, direcao);
 
-                if (!resultado.Any())
-                    return NoContent();
-
-                return Ok(resultado);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (resultado.StatusCode == 204) return NoContent();
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpGet("inativos")]
@@ -107,29 +96,21 @@ namespace Arkive_API.Presentation.Controllers
 
             ## Observações:
             * Espécies inativas são registros excluídos logicamente (soft delete), não removidos fisicamente.
+            * Ordenação: `ordenarPor` (`id` ou `nome`) e `direcao` (`asc` ou `desc`). Valor inválido ordena por `id` crescente.
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(IEnumerable<EspecieEntity>))]
+        [SwaggerResponse(statusCode: 200, description: "Listagem de dados retornada com sucesso", type: typeof(PageResultModel<IEnumerable<GetEspecieDto>>))]
         [SwaggerResponse(statusCode: 204, description: "Nenhuma espécie inativa encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
-        public async Task<IActionResult> GetEspeciesInativas()
+        public async Task<IActionResult> GetEspeciesInativas(int skip = 0, int take = 50, string? ordenarPor = null, string direcao = "asc")
         {
-            _logger.LogInformation("Listando espécies inativas");
+            _logger.LogInformation("Listando espécies inativas (skip {Skip}, take {Take})", skip, take);
 
-            try
-            {
-                var resultado = await _especieUseCase.ObterInativasAsync();
+            var resultado = await _especieUseCase.ObterInativasAsync(skip, take, ordenarPor, direcao);
 
-                if (!resultado.Any())
-                    return NoContent();
-
-                return Ok(resultado);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (resultado.StatusCode == 204) return NoContent();
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpGet("{id}")]
@@ -145,34 +126,23 @@ namespace Arkive_API.Presentation.Controllers
             * A busca por ID retorna a espécie independente do status (ativa ou inativa).
             """
         )]
-        [SwaggerResponse(statusCode: 200, description: "Espécie retornada com sucesso", type: typeof(EspecieEntity))]
+        [SwaggerResponse(statusCode: 200, description: "Espécie retornada com sucesso", type: typeof(GetEspecieDto))]
         [SwaggerResponse(statusCode: 404, description: "Espécie não encontrada")]
         [SwaggerResponse(statusCode: 400, description: "Ocorreu um erro ao retornar os dados", type: typeof(string))]
-        [SwaggerResponseExample(statusCode: 200, typeof(EspecieResponseSample))]
+        [SwaggerResponseExample(statusCode: 200, typeof(EspecieByIdResponseSample))]
         public async Task<IActionResult> GetEspecieById(int id)
         {
             _logger.LogInformation("Buscando espécie {Id}", id);
 
-            try
-            {
-                var especie = await _especieUseCase.ObterPorIdAsync(id);
+            var resultado = await _especieUseCase.ObterPorIdAsync(id);
 
-                if (especie is null)
-                {
-                    _logger.LogWarning("Espécie {Id} não encontrada", id);
-                    return NotFound();
-                }
-
-                return Ok(especie);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpPost]
+        [Authorize(Roles = Roles.SysAdminOuVeterinario)]
+        [SwaggerResponse(statusCode: 403, description: "Perfil sem permissão para esta operação")]
         [EnableRateLimiting("escrita")]
         [SwaggerOperation(
             Summary = "Cria uma nova espécie",
@@ -194,21 +164,17 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Criando espécie {Nome}", model.Especie);
 
-            try
-            {
-                var especie = await _especieUseCase.AdicionarAsync(model);
+            var resultado = await _especieUseCase.AdicionarAsync(model);
 
-                _logger.LogInformation("Espécie criada com sucesso: {Id}", especie?.Id ?? 0);
-                return CreatedAtAction(nameof(GetEspecieById), new { id = especie?.Id ?? 0 }, especie);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+
+            _logger.LogInformation("Espécie criada com sucesso: {Id}", resultado.Value?.Id ?? 0);
+            return CreatedAtAction(nameof(GetEspecieById), new { id = resultado.Value?.Id ?? 0 }, resultado.Value);
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = Roles.SysAdminOuVeterinario)]
+        [SwaggerResponse(statusCode: 403, description: "Perfil sem permissão para esta operação")]
         [EnableRateLimiting("escrita")]
         [SwaggerOperation(
             Summary = "Atualiza uma espécie",
@@ -230,26 +196,15 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Atualizando espécie {Id}", id);
 
-            try
-            {
-                var especie = await _especieUseCase.EditarAsync(id, model);
+            var resultado = await _especieUseCase.EditarAsync(id, model);
 
-                if (especie is null)
-                {
-                    _logger.LogWarning("Espécie {Id} não encontrada", id);
-                    return NotFound();
-                }
-
-                return Ok(especie);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpPut("reativar/{id}")]
+        [Authorize(Roles = Roles.SysAdminOuVeterinario)]
+        [SwaggerResponse(statusCode: 403, description: "Perfil sem permissão para esta operação")]
         [EnableRateLimiting("escrita")]
         [SwaggerOperation(
             Summary = "Reativa uma espécie",
@@ -270,26 +225,15 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Reativando espécie {Id}", id);
 
-            try
-            {
-                var especie = await _especieUseCase.ReativarAsync(id);
+            var resultado = await _especieUseCase.ReativarAsync(id);
 
-                if (especie is null)
-                {
-                    _logger.LogWarning("Espécie {Id} não encontrada", id);
-                    return NotFound();
-                }
-
-                return Ok(especie);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = Roles.SysAdminOuVeterinario)]
+        [SwaggerResponse(statusCode: 403, description: "Perfil sem permissão para esta operação")]
         [EnableRateLimiting("escrita")]
         [SwaggerOperation(
             Summary = "Inativa uma espécie",
@@ -311,23 +255,10 @@ namespace Arkive_API.Presentation.Controllers
         {
             _logger.LogInformation("Inativando espécie {Id}", id);
 
-            try
-            {
-                var especie = await _especieUseCase.InativarAsync(id);
+            var resultado = await _especieUseCase.InativarAsync(id);
 
-                if (especie is null)
-                {
-                    _logger.LogWarning("Espécie {Id} não encontrada", id);
-                    return NotFound();
-                }
-
-                return Ok(especie);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar {Method} {Path}", HttpContext.Request.Method, HttpContext.Request.Path);
-                return BadRequest(ex.Message);
-            }
+            if (!resultado.IsSuccess) return StatusCode(resultado.StatusCode, resultado.Error);
+            return Ok(resultado.Value);
         }
     }
 }
