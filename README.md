@@ -560,6 +560,8 @@ Prints de todos os endpoints testados estão na pasta `prints/`, organizados por
 
 ```
 prints/
+├── Auditoria/         (2 endpoints)
+├── Auth/              (5 cenários)
 ├── CategoriaDoenca/   (8 endpoints)
 ├── Doenca/            (10 endpoints)
 ├── Especie/           (8 endpoints)
@@ -567,12 +569,14 @@ prints/
 ├── Health/            (2 endpoints)
 ├── Predisposicao/     (7 endpoints)
 ├── Raca/              (9 endpoints)
-├── Testes/            (22 evidências - execução por trait)
-└── Telemetria/        (1 evidência - Application Insights)
+├── Testes/            (30 evidências - execução por trait)
+└── Telemetria/        (3 evidências - Application Insights)
 ```
 
 | Controller | Endpoints | Evidência |
 | :--- | :---: | :--- |
+| **Auth** | 5 cenários | [Visualizar Prints](prints/Auth/) |
+| **Auditoria** | 2 endpoints | [Visualizar Prints](prints/Auditoria/) |
 | **CategoriaDoenca** | 8 endpoints | [Visualizar Prints](prints/CategoriaDoenca/) |
 | **Doenca** | 10 endpoints | [Visualizar Prints](prints/Doenca/) |
 | **Especie** | 8 endpoints | [Visualizar Prints](prints/Especie/) |
@@ -581,14 +585,14 @@ prints/
 | **Raca** | 9 endpoints | [Visualizar Prints](prints/Raca/) |
 | **Health** | 2 endpoints | [Visualizar Prints](prints/Health/) |
 
-> **Total:** 52 endpoints testados e documentados.
+> **Total:** 59 endpoints/cenários testados e documentados.
 
 Além dos prints por endpoint, também há evidências de execução da suíte de testes e de telemetria:
 
 | Evidência | Itens | Descrição | Link |
 | :--- | :---: | :--- | :--- |
-| **Testes** | 22 prints | Execução por trait (`Controller`, `Domain`, `Helper`, `Repository`, `UseCase`) | [Visualizar Prints](prints/Testes/) |
-| **Telemetria** | 1 print | Application Insights (OpenTelemetry) | [Visualizar Prints](prints/Telemetria/) |
+| **Testes** | 30 prints | Execução por trait (`Controller`, `Domain`, `Helper`, `Repository`, `UseCase`) | [Visualizar Prints](prints/Testes/) |
+| **Telemetria** | 3 prints | Application Insights (OpenTelemetry) - janelas de 30 min, 1 h e 30 dias | [Visualizar Prints](prints/Telemetria/) |
 
 ---
 
